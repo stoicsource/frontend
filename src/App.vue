@@ -1,28 +1,30 @@
 <template>
   <div id="app">
-    <md-field>
-      <label for="translations">Translations</label>
-      <md-select v-model="selectedTranslations" name="translations" id="translations" multiple>
-        <md-option v-for="translation in translationMeta" :key="translation.key" :value="translation.key">{{ translation.author }} ({{ translation.year }})</md-option>
-      </md-select>
-    </md-field>
-    <div v-if="loading">loading...</div>
-    <div v-if="translations">
-      <table style="width: 100%;">
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ translationInfo.author }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="section in translations" :key="section.SectionNumber">
-            <td>{{ section.SectionNumber }}</td>
-            <td v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ section[translationInfo.key] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <md-toolbar>
+      <md-field>
+        <label for="translations">Translations</label>
+        <md-select v-model="selectedTranslations" name="translations" id="translations" multiple>
+          <md-option v-for="translation in translationMeta" :key="translation.key" :value="translation.key">{{ translation.author }} ({{ translation.year }})</md-option>
+        </md-select>
+      </md-field>
+    </md-toolbar>
+    <md-content>
+      <div v-if="loading">loading...</div>
+      <div v-if="translations">
+        <md-table>
+          <md-table-row>
+            <md-table-head></md-table-head>
+            <md-table-head v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ translationInfo.author }}</md-table-head>
+          </md-table-row>
+
+          <md-table-row v-for="section in translations" :key="section.SectionNumber">
+            <md-table-cell>{{ section.SectionNumber }}</md-table-cell>
+            <md-table-cell v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ section[translationInfo.key] }}</md-table-cell>
+          </md-table-row>
+
+        </md-table>
+      </div>
+    </md-content>
   </div>
 </template>
 
@@ -34,10 +36,11 @@ export default {
   components: {},
   mounted () {
     this.loading = true;
+    let $sourceUrl = 'http://localhost:8080/meditations';
     // http://localhost:8080/meditations
     // https://api.littlestoic.com/meditations
     // https://sources.littlestoic.com/meditations
-    axios.get('https://sources.littlestoic.com/meditations')
+    axios.get($sourceUrl)
         .then(function (response) {
           this.translations = response.data;
         }.bind(this))
@@ -141,7 +144,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
 }
 
 td, th {
@@ -149,4 +152,10 @@ td, th {
   vertical-align: top;
   padding-bottom: 1em;
 }
+
+.md-menu-content.md-select-menu {
+  max-width: 480px;
+  max-height: 65vh;
+}
+
 </style>
