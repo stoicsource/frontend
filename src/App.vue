@@ -36,11 +36,7 @@ export default {
   components: {},
   mounted () {
     this.loading = true;
-    let $sourceUrl = 'http://localhost:8080/meditations';
-    // http://localhost:8080/meditations
-    // https://api.littlestoic.com/meditations
-    // https://sources.littlestoic.com/meditations
-    axios.get($sourceUrl)
+    axios.get(window.stoicsource.settings.apiUrl)
         .then(function (response) {
           this.translations = response.data;
         }.bind(this))
@@ -146,7 +142,7 @@ export default {
         year: 1747
       }
     ],
-    selectedTranslations: ['Casaubon', 'Farquharson', 'RendallV1']
+    selectedTranslations: ['Casaubon', 'Farquharson', 'RendallV2']
   })
 }
 </script>
