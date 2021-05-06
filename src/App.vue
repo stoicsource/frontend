@@ -51,15 +51,27 @@ export default {
         .then(function () {
           this.loading = false;
         }.bind(this));
+    this.readLocalStorage();
   },
   methods: {
     translationSelected (translationKey) {
       return this.selectedTranslations.includes(translationKey);
+    },
+    writeLocalStorage () {
+      localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
+    },
+    readLocalStorage () {
+      this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
     }
   },
   computed: {
     selectedTranslationMeta () {
       return this.translationMeta.filter((meta) => this.selectedTranslations.includes(meta.key));
+    }
+  },
+  watch: {
+    selectedTranslations() {
+      this.writeLocalStorage();
     }
   },
   data: () => ({
@@ -137,7 +149,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
