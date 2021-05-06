@@ -144,7 +144,7 @@ export default {
         label: 'Graves, R. (1792)'
       },
       {
-        key: 'Haines',
+        key: 'Haine',
         author: 'C. R. Haines',
         year: 1916,
         label: 'Haines, C. R. (1916)'
