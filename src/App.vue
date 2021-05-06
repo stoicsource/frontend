@@ -61,7 +61,9 @@ export default {
       localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
     },
     readLocalStorage () {
-      this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
+      if (localStorage.selectedTranslations) {
+        this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
+      }
     }
   },
   computed: {
