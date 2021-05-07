@@ -5,7 +5,7 @@
         <div class="mt-2">Translations</div>
         <v-select multiple :options="translationMeta" v-model="selectedTranslations" :reduce="translation => translation.key"></v-select>
 
-        <div class="mt-3">Sections</div>
+        <div class="mt-4">Chapters</div>
         <v-select multiple :options="sectionsFlat" v-model="selectedSections"></v-select>
 
         <div class="accordion mt-2" role="tablist">
@@ -15,16 +15,16 @@
             </b-card-header>
             <b-collapse :id="'collapseBook' + book.key" accordion="my-accordion" role="tabpanel">
               <b-card-body>
-                <b-card-text>
-                  <div v-for="chapter in book.sections" :key="book.key + '-' + chapter">
+                <b-card-text class="book-chapters">
+                  <a v-for="chapter in book.sections" :key="book.key + '-' + chapter" class="book-chapter" @click="selectSection(book.key + '.' + chapter)">
                     {{ book.key }}.{{ chapter }}
-                  </div>
+                  </a>
                 </b-card-text>
               </b-card-body>
             </b-collapse>
           </b-card>
         </div>
-
+        <span class="hint-text float-right">Select multiple chapters through the dropdown box, or an individual chapter through the list.</span>
       </div>
       <div class="col-12 col-lg-9">
         <div v-if="loading">loading...</div>
@@ -34,12 +34,10 @@
               <th></th>
               <th v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ translationInfo.author }}</th>
             </tr>
-
             <tr v-for="section in selectedSections" :key="section">
               <td>{{ section }}</td>
               <td v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ findSectionData(section)[translationInfo.key] }}</td>
             </tr>
-
           </table>
         </div>
       </div>
@@ -110,6 +108,9 @@ export default {
     findSectionData (sectionNumber) {
       let matches = this.translations.filter((section) => section.SectionNumber === sectionNumber);
       return matches.length > 0 ? matches[0] : [];
+    },
+    selectSection (sectionNumber) {
+      this.selectedSections = [sectionNumber];
     }
   },
   computed: {
@@ -126,7 +127,7 @@ export default {
     }
   },
   data: () => ({
-    selectedSections: [],
+    selectedSections: ['8.12'],
     loading: false,
     sectionsTree: [],
     sectionsFlat: [],
@@ -230,6 +231,21 @@ td, th {
   text-align: left;
   vertical-align: top;
   padding-bottom: 1em;
+}
+
+.book-chapters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .book-chapter {
+    margin-right: 1em;
+  }
+}
+
+.hint-text {
+  font-size: 0.8em;
+  color: #555;
 }
 
 </style>
