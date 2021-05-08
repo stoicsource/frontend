@@ -69,11 +69,9 @@ export default {
           this.loading = false;
         }.bind(this));
     this.readLocalStorage();
+    this.applyUrlParams();
   },
   methods: {
-    translationSelected (translationKey) {
-      return this.selectedTranslations.includes(translationKey);
-    },
     writeLocalStorage () {
       localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
       localStorage.selectedSections = JSON.stringify(this.selectedSections);
@@ -86,6 +84,14 @@ export default {
         this.selectedSections = JSON.parse(localStorage.selectedSections);
       }
     },
+    applyUrlParams () {
+      if (this.$route.params.chapter) {
+        this.selectedSections = [this.$route.params.chapter];
+      }
+      if (this.$route.params.translator) {
+        this.selectedTranslations = [this.$route.params.translator];
+      }
+    },
     extractSections () {
       this.sectionsTree = [];
       this.sectionsFlat = [];
@@ -94,7 +100,7 @@ export default {
 
         let numberParts = translation.SectionNumber.split('.');
         let book = numberParts[0];
-        let chapter = numberParts[1] ;
+        let chapter = numberParts[1];
 
         let bookSection = this.sectionsTree.find((section) => section.key === book);
         if (!bookSection) {
@@ -118,7 +124,8 @@ export default {
   },
   computed: {
     selectedTranslationMeta () {
-      return this.translationMeta.filter((meta) => this.selectedTranslations.includes(meta.key));
+      //return this.translationMeta.filter((meta) => this.selectedTranslations.includes(meta.key));
+      return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
     }
   },
   watch: {
@@ -127,6 +134,9 @@ export default {
     },
     selectedSections () {
       this.writeLocalStorage();
+    },
+    $route() {
+      this.applyUrlParams();
     }
   },
   data: () => ({
