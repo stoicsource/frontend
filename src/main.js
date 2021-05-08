@@ -16,7 +16,15 @@ Vue.component("v-select", vSelect);
 
 Vue.config.productionTip = false
 
-let router = new VueRouter();
+const routes = [
+  { path: '/:work', component: App },
+  { path: '/:work/:chapter', component: App },
+  { path: '/:work/:chapter/:translator', component: App },
+]
+
+const router = new VueRouter({
+  routes // short for `routes: routes`
+})
 
 new Vue({
   router,
