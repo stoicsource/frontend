@@ -5,10 +5,10 @@
         <div class="mt-2">Translations</div>
         <v-select multiple :options="translationMeta" v-model="selectedTranslations" :reduce="translation => translation.key"></v-select>
 
-        <div class="mt-4">Chapters</div>
+        <div class="mt-2 mt-lg-4">Chapters</div>
         <v-select multiple :options="sectionsFlat" v-model="selectedSections"></v-select>
 
-        <div class="accordion mt-2" role="tablist">
+        <div class="accordion mt-2 d-none d-lg-block" role="tablist">
           <b-card no-body class="mb-1" v-for="book in sectionsTree" :key="book.key">
             <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseBook' + book.key">
               Book {{ book.key }}
@@ -24,19 +24,22 @@
             </b-collapse>
           </b-card>
         </div>
-        <span class="hint-text float-right">Select multiple chapters through the dropdown box, or an individual chapter through the list.</span>
+        <span class="hint-text float-right d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</span>
       </div>
       <div class="col-12 col-lg-9">
         <div v-if="loading">loading...</div>
         <div v-if="translations">
           <table class="table">
             <tr>
-              <th></th>
+              <th class="d-none d-lg-table-cell"></th>
               <th v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ translationInfo.author }}</th>
             </tr>
             <tr v-for="section in selectedSections" :key="section">
-              <td>{{ section }}</td>
-              <td v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ findSectionData(section)[translationInfo.key] }}</td>
+              <td class="d-none d-lg-table-cell">{{ section }}</td>
+              <td v-for="(translationInfo, index) in selectedTranslationMeta" :key="translationInfo.key">
+                <span v-if="index === 0" class="d-lg-none"><strong>{{ section }}</strong></span>
+                {{ findSectionData(section)[translationInfo.key] }}
+              </td>
             </tr>
           </table>
         </div>
