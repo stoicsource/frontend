@@ -86,10 +86,10 @@ export default {
     },
     applyUrlParams () {
       if (this.$route.params.chapter) {
-        this.selectedSections = [this.$route.params.chapter];
+        this.selectedSections = this.$route.params.chapter.split(',');
       }
       if (this.$route.params.translator) {
-        this.selectedTranslations = [this.$route.params.translator];
+        this.selectedTranslations = this.$route.params.translator.split(',');
       }
     },
     extractSections () {
@@ -124,7 +124,6 @@ export default {
   },
   computed: {
     selectedTranslationMeta () {
-      //return this.translationMeta.filter((meta) => this.selectedTranslations.includes(meta.key));
       return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
     }
   },
@@ -147,85 +146,85 @@ export default {
     translations: null,
     translationMeta: [
       {
-        key: 'Casaubon',
+        key: 'casaubon',
         author: 'Meric Casaubon',
         year: 1634,
         label: 'Casaubon, Meric (1634)'
       },
       {
-        key: 'Chrystal',
+        key: 'chrystal',
         author: 'George William Chrystal',
         year: 1902,
         label: 'Chrystal, George William (1902)'
       },
       {
-        key: 'Collier',
+        key: 'collier',
         author: 'Jeremy Collier',
         year: 1702,
         label: 'Collier, Jeremy (1702)'
       },
       {
-        key: 'Farquharson',
+        key: 'farquharson',
         author: 'A. S. L. Farquharson',
         year: 1944,
         label: 'Farquharson, A. S. L. (1944)'
       },
       {
-        key: 'Graves',
+        key: 'graves',
         author: 'R. Graves',
         year: 1792,
         label: 'Graves, R. (1792)'
       },
       {
-        key: 'Haine',
+        key: 'haine',
         author: 'C. R. Haines',
         year: 1916,
         label: 'Haines, C. R. (1916)'
       },
       {
-        key: 'Jackson',
+        key: 'jackson',
         author: 'J. Jackson',
         year: 1906,
         label: 'Jackson, J. (1906)'
       },
       {
-        key: 'Long',
+        key: 'long',
         author: 'George Long',
         year: 1862,
         label: 'Long, George (1862)'
       },
       {
-        key: 'Maccormac',
+        key: 'maccormac',
         author: 'H. McCormac',
         year: 1844,
         label: 'McCormac, H. (1844)'
       },
       {
-        key: 'Hutcheson',
+        key: 'hutcheson',
         author: 'James Moor and Francis Hutcheson',
         year: 1742,
         label: 'Moor, James and Hutcheson, Francis (1742)'
       },
       {
-        key: 'RendallV1',
+        key: 'rendallv1',
         author: 'G. H. Rendall',
         year: 1898,
         label: 'Rendall, G. H. (1898)'
       },
       {
-        key: 'RendallV2',
+        key: 'rendallv2',
         author: 'G. H. Rendall',
         year: 1901,
         label: 'Rendall, G. H. (1901)'
       },
       {
-        key: 'Thomson',
+        key: 'thomson',
         author: 'James Thomson',
         year: 1747,
         label: 'Thomson, James (1747)'
       }
     ],
-    selectedTranslations: ['Casaubon', 'Farquharson', 'RendallV2']
+    selectedTranslations: ['casaubon', 'farquharson', 'long']
   })
 }
 </script>
