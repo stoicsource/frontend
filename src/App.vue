@@ -36,9 +36,10 @@
             </tr>
             <tr v-for="section in selectedSections" :key="section">
               <td class="d-none d-lg-table-cell">{{ section }}</td>
-              <td v-for="(translationInfo, index) in selectedTranslationMeta" :key="translationInfo.key">
+              <td v-for="(translationInfo, index) in selectedTranslationMeta" :key="translationInfo.key" class="translation-section">
                 <span v-if="index === 0" class="d-lg-none"><strong>{{ section }}</strong></span>
                 {{ findSectionData(section)[translationInfo.key] }}
+                <span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
               </td>
             </tr>
           </table>
@@ -120,6 +121,28 @@ export default {
     },
     selectSection (sectionNumber) {
       this.selectedSections = [sectionNumber];
+    },
+    quoteTranslation (section, key) {
+      let quotedSection = this.findSectionData(section);
+      let authorData = this.translationMeta.find(translation => translation.key === key);
+      let link = 'https://sources.littlestoic.com/#/meditations/' + quotedSection.SectionNumber + '/' + key;
+
+      let markdown = '> ' + quotedSection[key] + "\n";
+      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label +')*';
+      markdown += '[' + authorInfo + '](' + link + ')';
+
+
+      // [Rumi](https://en.wikipedia.org/wiki/Rumi)
+
+      navigator.clipboard.writeText(markdown).then(function() {
+        this.$bvToast.toast('Copied to clipboard', {
+          toaster: 'b-toaster-bottom-right',
+          variant: 'success',
+          autoHideDelay: 2500
+        })
+      }.bind(this), function() {
+        /* clipboard write failed */
+      });
     }
   },
   computed: {
@@ -259,5 +282,25 @@ td, th {
   font-size: 0.8em;
   color: #555;
 }
+
+.translation-section {
+  .quote-translation {
+    visibility: hidden;
+    display: inline-block;
+    margin-left: 0.5em;
+    padding: 0 5px;
+    color: gray;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 6px;
+  }
+
+  &:hover {
+    .quote-translation {
+      visibility: visible;
+    }
+  }
+}
+
 
 </style>
