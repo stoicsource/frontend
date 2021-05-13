@@ -61,6 +61,9 @@ export default {
         .then(function (response) {
           this.translations = response.data;
           this.extractSections();
+          this.selectRandomSection();
+          this.readLocalStorage();
+          this.applyUrlParams();
         }.bind(this))
         .catch(function (error) {
           // handle error
@@ -69,8 +72,6 @@ export default {
         .then(function () {
           this.loading = false;
         }.bind(this));
-    this.readLocalStorage();
-    this.applyUrlParams();
   },
   methods: {
     writeLocalStorage () {
@@ -84,6 +85,10 @@ export default {
       if (localStorage.selectedSections) {
         this.selectedSections = JSON.parse(localStorage.selectedSections);
       }
+    },
+    selectRandomSection () {
+      let sectionIndex = Math.floor(Math.random() * this.sectionsFlat.length - 1);
+      this.selectedSections = [this.sectionsFlat[sectionIndex]];
     },
     applyUrlParams () {
       if (this.$route.params.chapter) {
@@ -130,9 +135,6 @@ export default {
       let markdown = '> ' + quotedSection[key] + "\n";
       let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label +')*';
       markdown += '[' + authorInfo + '](' + link + ')';
-
-
-      // [Rumi](https://en.wikipedia.org/wiki/Rumi)
 
       navigator.clipboard.writeText(markdown).then(function() {
         this.$bvToast.toast('Copied to clipboard', {
