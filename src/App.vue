@@ -24,8 +24,14 @@
             </b-collapse>
           </b-card>
         </div>
-        <span class="hint-text float-right d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</span>
+        <div class="hint-text d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</div>
+        <div class="mt-2 mb-3">
+          <b-form-checkbox v-model="saveSelection" switch class="subtle-switch">
+            Save Selection
+          </b-form-checkbox>
+        </div>
       </div>
+
       <div class="col-12 col-lg-9">
         <div v-if="loading">loading...</div>
         <div v-if="translations">
@@ -75,10 +81,19 @@ export default {
   },
   methods: {
     writeLocalStorage () {
-      localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
-      localStorage.selectedSections = JSON.stringify(this.selectedSections);
+      localStorage.saveSelection = JSON.stringify(this.saveSelection);
+      if (this.saveSelection) {
+        localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
+        localStorage.selectedSections = JSON.stringify(this.selectedSections);
+      } else {
+        localStorage.removeItem('selectedTranslations');
+        localStorage.removeItem('selectedSections');
+      }
     },
     readLocalStorage () {
+      if (localStorage.saveSelection) {
+        this.saveSelection = JSON.parse(localStorage.saveSelection);
+      }
       if (localStorage.selectedTranslations) {
         this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
       }
@@ -89,6 +104,12 @@ export default {
     selectRandomSection () {
       let sectionIndex = Math.floor(Math.random() * this.sectionsFlat.length - 1);
       this.selectedSections = [this.sectionsFlat[sectionIndex]];
+
+      let keys = this.translationMeta.map(meta => meta.key);
+      for (let i = 0; i < 3; i++) {
+        let indexToSelect = Math.floor(Math.random() * keys.length)
+        this.selectedTranslations.push(keys.splice(indexToSelect, 1)[0]);
+      }
     },
     applyUrlParams () {
       if (this.$route.params.chapter) {
@@ -133,16 +154,16 @@ export default {
       let link = 'https://sources.littlestoic.com/#/meditations/' + quotedSection.SectionNumber + '/' + key;
 
       let markdown = '> ' + quotedSection[key] + "\n";
-      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label +')*';
+      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label + ')*';
       markdown += '[' + authorInfo + '](' + link + ')';
 
-      navigator.clipboard.writeText(markdown).then(function() {
+      navigator.clipboard.writeText(markdown).then(function () {
         this.$bvToast.toast('Copied to clipboard', {
           toaster: 'b-toaster-bottom-right',
           variant: 'success',
           autoHideDelay: 2500
         })
-      }.bind(this), function() {
+      }.bind(this), function () {
         /* clipboard write failed */
       });
     }
@@ -159,12 +180,16 @@ export default {
     selectedSections () {
       this.writeLocalStorage();
     },
-    $route() {
+    saveSelection () {
+      this.writeLocalStorage();
+    },
+    $route () {
       this.applyUrlParams();
     }
   },
   data: () => ({
-    selectedSections: ['8.12'],
+    saveSelection: true,
+    selectedSections: [],
     loading: false,
     sectionsTree: [],
     sectionsFlat: [],
@@ -249,7 +274,7 @@ export default {
         label: 'Thomson, James (1747)'
       }
     ],
-    selectedTranslations: ['casaubon', 'farquharson', 'long']
+    selectedTranslations: []
   })
 }
 </script>
@@ -304,5 +329,12 @@ td, th {
   }
 }
 
+.subtle-switch {
+  .custom-control-input:checked ~ .custom-control-label::before {
+    color: #444;
+    border-color: lightgray;
+    background-color: lightgray;
+  }
+}
 
 </style>
