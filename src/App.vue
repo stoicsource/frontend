@@ -52,17 +52,33 @@
         </div>
       </div>
     </div>
+
+    <b-modal id="quote-modal" title="Quote Translation">
+      <div>Markdown quote (can be pasted to reddit and other platforms)</div>
+      <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
+      <template #modal-footer="{ ok, cancel }">
+        <!-- Emulate built in modal footer ok and cancel button actions -->
+        <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
+          Copy to Clipboard
+        </b-button>
+        <b-button size="sm" variant="secondary" @click="cancel()">
+          Close
+        </b-button>
+      </template>
+    </b-modal>
   </div>
 </template>
 
 <script>
 const axios = require('axios');
+import Clipboard from 'clipboard'
 
 export default {
   name: 'App',
   components: {},
   mounted () {
     this.loading = true;
+    new Clipboard('#copy-button');
     axios.get(window.stoicsource.settings.apiUrl)
         .then(function (response) {
           this.translations = response.data;
@@ -157,15 +173,18 @@ export default {
       let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label + ')*';
       markdown += '[' + authorInfo + '](' + link + ')';
 
-      navigator.clipboard.writeText(markdown).then(function () {
-        this.$bvToast.toast('Markdown code copied to clipboard', {
-          toaster: 'b-toaster-bottom-right',
-          variant: 'success',
-          autoHideDelay: 2500
-        })
-      }.bind(this), function () {
-        /* clipboard write failed */
-      });
+      this.quoteText = markdown;
+      this.$bvModal.show('quote-modal');
+
+      // navigator.clipboard.writeText(markdown).then(function () {
+      //   this.$bvToast.toast('Markdown code copied to clipboard', {
+      //     toaster: 'b-toaster-bottom-right',
+      //     variant: 'success',
+      //     autoHideDelay: 2500
+      //   })
+      // }.bind(this), function () {
+      //   /* clipboard write failed */
+      // });
     }
   },
   computed: {
@@ -188,6 +207,7 @@ export default {
     }
   },
   data: () => ({
+    quoteText: '',
     saveSelection: true,
     selectedSections: [],
     loading: false,
