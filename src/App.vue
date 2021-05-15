@@ -151,14 +151,14 @@ export default {
     quoteTranslation (section, key) {
       let quotedSection = this.findSectionData(section);
       let authorData = this.translationMeta.find(translation => translation.key === key);
-      let link = 'https://sources.littlestoic.com/#/meditations/' + quotedSection.SectionNumber + '/' + key;
+      let link = 'https://sources.littlestoic.com/meditations/' + quotedSection.SectionNumber + '/' + key;
 
       let markdown = '> ' + quotedSection[key] + "\n";
       let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label + ')*';
       markdown += '[' + authorInfo + '](' + link + ')';
 
       navigator.clipboard.writeText(markdown).then(function () {
-        this.$bvToast.toast('Copied to clipboard', {
+        this.$bvToast.toast('Markdown code copied to clipboard', {
           toaster: 'b-toaster-bottom-right',
           variant: 'success',
           autoHideDelay: 2500
