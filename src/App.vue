@@ -57,7 +57,6 @@
       <div>Markdown quote (can be pasted to reddit and other platforms)</div>
       <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
       <template #modal-footer="{ ok, cancel }">
-        <!-- Emulate built in modal footer ok and cancel button actions -->
         <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
           Copy to Clipboard
         </b-button>
@@ -88,7 +87,6 @@ export default {
           this.applyUrlParams();
         }.bind(this))
         .catch(function (error) {
-          // handle error
           console.log(error);
         })
         .then(function () {
@@ -175,16 +173,6 @@ export default {
 
       this.quoteText = markdown;
       this.$bvModal.show('quote-modal');
-
-      // navigator.clipboard.writeText(markdown).then(function () {
-      //   this.$bvToast.toast('Markdown code copied to clipboard', {
-      //     toaster: 'b-toaster-bottom-right',
-      //     variant: 'success',
-      //     autoHideDelay: 2500
-      //   })
-      // }.bind(this), function () {
-      //   /* clipboard write failed */
-      // });
     }
   },
   computed: {
@@ -306,7 +294,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  /* margin-top: 60px; */
 }
 
 td, th {
