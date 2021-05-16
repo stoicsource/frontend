@@ -167,10 +167,10 @@ export default {
     quoteTranslation (section, key) {
       let quotedSection = this.findSectionData(section);
       let authorData = this.translationMeta.find(translation => translation.key === key);
-      let link = 'https://sources.littlestoic.com/meditations/' + quotedSection.SectionNumber + '/' + key;
+      let link = 'https://www.stoicsource.com/meditations/' + quotedSection.SectionNumber + '/' + key;
 
       let markdown = '> ' + quotedSection[key] + "\n";
-      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.label + ')*';
+      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.author + ')*';
       markdown += '[' + authorInfo + '](' + link + ')';
 
       this.quoteText = markdown;
