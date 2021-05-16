@@ -27,7 +27,7 @@
         <div class="hint-text d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</div>
         <div class="mt-2 mb-3">
           <b-form-checkbox v-model="saveSelection" switch class="subtle-switch">
-            Save Selection
+            Remember Selection
           </b-form-checkbox>
         </div>
       </div>
@@ -43,9 +43,11 @@
             <tr v-for="section in selectedSections" :key="section">
               <td class="d-none d-lg-table-cell">{{ section }}</td>
               <td v-for="(translationInfo, index) in selectedTranslationMeta" :key="translationInfo.key" class="translation-section">
-                <span v-if="index === 0" class="d-lg-none"><strong>{{ section }}</strong></span>
-                {{ findSectionData(section)[translationInfo.key] }}
-                <span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
+                <div class="translation-content">
+                  <span v-if="index === 0" class="d-lg-none"><strong>{{ section }}</strong></span>
+                  {{ findSectionData(section)[translationInfo.key] }}
+                  <span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
+                </div>
               </td>
             </tr>
           </table>
@@ -318,6 +320,11 @@ td, th {
 }
 
 .translation-section {
+  .translation-content {
+    max-width: 35em;
+    line-height: 1.6em;
+  }
+
   .quote-translation {
     visibility: hidden;
     display: inline-block;
