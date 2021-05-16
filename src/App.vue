@@ -8,6 +8,12 @@
         <div class="mt-2 mt-lg-4">Chapters</div>
         <v-select multiple :options="sectionsFlat" v-model="selectedSections"></v-select>
 
+        <div class="mt-2 mb-3">
+          <b-form-checkbox v-model="saveSelection" switch class="subtle-switch">
+            Remember Selection
+          </b-form-checkbox>
+        </div>
+
         <div class="accordion mt-2 d-none d-lg-block" role="tablist">
           <b-card no-body class="mb-1" v-for="book in sectionsTree" :key="book.key">
             <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseBook' + book.key">
@@ -25,10 +31,8 @@
           </b-card>
         </div>
         <div class="hint-text d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</div>
-        <div class="mt-2 mb-3">
-          <b-form-checkbox v-model="saveSelection" switch class="subtle-switch">
-            Remember Selection
-          </b-form-checkbox>
+        <div class="d-none d-lg-block mt-2 text-muted">
+          Feedback? Questions? <a href="mailto:feedback@stoicsource.com">Mail us</a>
         </div>
       </div>
 
@@ -67,6 +71,10 @@
         </b-button>
       </template>
     </b-modal>
+
+    <footer class="d-lg-none text-center text-muted">
+      Feedback? Questions? <a href="mailto:feedback@stoicsource.com">Mail us</a>
+    </footer>
   </div>
 </template>
 
@@ -348,6 +356,13 @@ td, th {
     color: #444;
     border-color: lightgray;
     background-color: lightgray;
+  }
+}
+
+.text-muted {
+  a {
+    color: #6c757d;
+    text-decoration: underline;
   }
 }
 
