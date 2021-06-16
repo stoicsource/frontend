@@ -32,7 +32,7 @@
         </div>
         <div class="hint-text d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</div>
         <div class="d-none d-lg-block mt-2 text-muted">
-          Feedback? Questions? <a href="mailto:feedback@stoicsource.com">Mail us</a>
+          Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
         </div>
       </div>
 
@@ -72,8 +72,24 @@
       </template>
     </b-modal>
 
+    <b-modal id="about-modal" title="About" cancel-disabled>
+      <p class="text-center">
+        Developed by Patrick Menke<br>
+        <a href="mailto:feedback@stoicsource.com">contact</a>
+      </p>
+      <p class="text-center">
+        Material assembled by George O'Ryan<br>
+        <a href="https://www.reddit.com/user/Sudden-Sand8907" target="_blank">reddit</a> | <a href="mailto:oryang7@gmail.com">contact</a>
+      </p>
+      <template #modal-footer="{ ok }">
+        <b-button size="sm" @click="ok()">
+          Close
+        </b-button>
+      </template>
+    </b-modal>
+
     <footer class="d-lg-none text-center text-muted">
-      Feedback? Questions? <a href="mailto:feedback@stoicsource.com">Mail us</a>
+      Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
     </footer>
   </div>
 </template>
@@ -183,6 +199,9 @@ export default {
 
       this.quoteText = markdown;
       this.$bvModal.show('quote-modal');
+    },
+    showAbout () {
+      this.$bvModal.show('about-modal');
     }
   },
   computed: {
@@ -360,7 +379,7 @@ td, th {
 }
 
 .text-muted {
-  a {
+  a, .link-style {
     color: #6c757d;
     text-decoration: underline;
   }
