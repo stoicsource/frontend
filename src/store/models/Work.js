@@ -1,15 +1,16 @@
 import { Model } from '@vuex-orm/core'
 
-export default class User extends Model {
-  // This is the name used as module name of the Vuex Store.
+import Edition from "@/store/models/Edition";
+
+export default class Work extends Model {
   static entity = 'works'
 
-  // List of all fields (schema) of the post model. `this.attr` is used
-  // for the generic field type. The argument is the default value.
   static fields () {
     return {
       id: this.attr(null),
-      name: this.attr('')
+      name: this.attr(''),
+
+      editions: this.hasMany(Edition, 'work_id')
     }
   }
 }
