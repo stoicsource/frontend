@@ -1,14 +1,8 @@
 <template>
   <div class="container-fluid">
-    <div>
-      <div>test stage</div>
-      <div v-for="work in works" :key="work.id">
-        {{ work.name }}
-      </div>
-
-    </div>
     <div class="row">
       <div class="col-12 col-lg-3">
+        <work-list></work-list>
         <div class="mt-2">Translations</div>
         <v-select multiple :options="translationMeta" v-model="selectedTranslations" :reduce="translation => translation.key"></v-select>
 
@@ -105,10 +99,11 @@
 const axios = require('axios');
 import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
+import WorkList from "@/components/WorkList";
 
 export default {
   name: 'App',
-  components: {},
+  components: { WorkList },
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
@@ -127,12 +122,6 @@ export default {
           this.loading = false;
         }.bind(this));
 
-    // Work.insert({ data: [
-    //     {
-    //       id: 1,
-    //       name: 'test 123'
-    //     }
-    //   ] });
     Work.api().get('https://127.0.0.1:8000/api/works')
   },
   methods: {
@@ -223,9 +212,6 @@ export default {
   computed: {
     selectedTranslationMeta () {
       return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
-    },
-    works () {
-      return Work.all()
     }
   },
   watch: {
