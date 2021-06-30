@@ -1,5 +1,12 @@
 <template>
   <div class="container-fluid">
+    <div>
+      <div>test stage</div>
+      <div v-for="work in works" :key="work.id">
+        {{ work.name }}
+      </div>
+
+    </div>
     <div class="row">
       <div class="col-12 col-lg-3">
         <div class="mt-2">Translations</div>
@@ -97,6 +104,7 @@
 <script>
 const axios = require('axios');
 import Clipboard from 'clipboard'
+import Work from '@/store/models/Work'
 
 export default {
   name: 'App',
@@ -118,6 +126,14 @@ export default {
         .then(function () {
           this.loading = false;
         }.bind(this));
+
+    // Work.insert({ data: [
+    //     {
+    //       id: 1,
+    //       name: 'test 123'
+    //     }
+    //   ] });
+    Work.api().get('https://127.0.0.1:8000/api/works')
   },
   methods: {
     writeLocalStorage () {
@@ -207,6 +223,9 @@ export default {
   computed: {
     selectedTranslationMeta () {
       return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
+    },
+    works () {
+      return Work.all()
     }
   },
   watch: {
