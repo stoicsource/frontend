@@ -10,7 +10,9 @@
         <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel">
           <b-card-body>
             <b-card-text class="">
-
+              <div v-for="edition in work.editions" :key="edition.id">
+                {{ edition.name }}
+              </div>
             </b-card-text>
           </b-card-body>
         </b-collapse>
@@ -26,7 +28,7 @@ import Work from '@/store/models/Work'
 export default {
   computed: {
     works () {
-      return Work.all()
+      return Work.query().withAll().all();
     }
   }
 }
