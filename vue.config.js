@@ -3,7 +3,7 @@ module.exports = {
     config
       .plugin('html')
       .tap(args => {
-        args[0].title = 'The Meditations by Marcus Aurelius'
+        args[0].title = 'Stoic Source'
         return args
       })
   }

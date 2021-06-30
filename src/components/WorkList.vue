@@ -14,6 +14,11 @@
                 {{ edition.name }}
               </div>
             </b-card-text>
+            <b-card-text class="">
+              <span v-for="tocEntry in work.tocEntries" :key="tocEntry.id">
+                {{ tocEntry.label }}
+              </span>
+            </b-card-text>
           </b-card-body>
         </b-collapse>
       </b-card>
