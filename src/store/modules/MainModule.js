@@ -1,14 +1,15 @@
 const mainModule = {
   namespaced: true,
   state: {
-    selectedWork: 1
+    selectedWorkId: null
   },
   actions: {
 
   },
   mutations: {
-    setSelectedWork (state, selectedWork) {
-      state.selectedWork = selectedWork;
+    setSelectedWorkId (state, selectedWorkId) {
+      selectedWorkId.name = selectedWorkId.name + '-mod';
+      state.selectedWorkId = selectedWorkId.id;
     }
   }
 };
