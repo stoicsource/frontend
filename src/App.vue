@@ -38,7 +38,7 @@
       </div>
 
       <div class="col-12 col-lg-9">
-        <content-view></content-view>
+        <content-view :editions="selectedEditions" :toc-entries="selectedTocEntries"></content-view>
       </div>
     </div>
 
@@ -82,6 +82,7 @@ import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
+import {mapState} from "vuex";
 
 export default {
   name: 'App',
@@ -194,6 +195,21 @@ export default {
   computed: {
     selectedTranslationMeta () {
       return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
+    },
+    ...mapState('app', [
+      'selectedWorkId'
+    ]),
+
+    selectedWork () {
+      return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries']).first();
+    },
+
+    selectedEditions () {
+      return this.selectedWork ? this.selectedWork.editions.filter((edition) => edition.selected) : [];
+    },
+
+    selectedTocEntries () {
+      return this.selectedWork ? this.selectedWork.tocEntries.filter((tocEntry) => tocEntry.selected) : [];
     }
   },
   watch: {
