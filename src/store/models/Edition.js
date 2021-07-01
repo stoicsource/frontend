@@ -13,7 +13,7 @@ export default class Edition extends Model {
       year: this.attr(''),
       work_id: this.attr(null),
 
-      checked: this.boolean(false),
+      selected: this.boolean(false),
 
       work: this.belongsTo(Work, 'work_id'),
       authors: this.belongsToMany(Author, AuthorEdition, 'edition_id', 'author_id')

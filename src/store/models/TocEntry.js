@@ -10,6 +10,8 @@ export default class TocEntry extends Model {
       work_id: this.attr(null),
       label: this.attr(''),
 
+      selected: this.boolean(false),
+
       work: this.belongsTo(Work, 'work_id')
     }
   }
