@@ -12,7 +12,7 @@
             <b-card-body>
               <b-card-text class="">
                 <div v-for="edition in work.editions" :key="edition.id">
-                  {{ edition.name }} ({{ edition.year }})
+                  {{ edition.name }} ({{ edition.authorsFormatted }})
                 </div>
               </b-card-text>
               <b-card-text class="">
