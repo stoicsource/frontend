@@ -1,39 +1,47 @@
 <template>
   <div class="work-list">
-    <div>Works</div>
+    <div v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-3">
+      {{ workAuthor.shortestName }}
 
-    <div class="accordion mt-2 d-none d-lg-block" role="tablist">
-      <b-card no-body class="mb-1" v-for="work in works" :key="work.id">
-        <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
-          {{ work.name }}
-        </b-card-header>
-        <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel">
-          <b-card-body>
-            <b-card-text class="">
-              <div v-for="edition in work.editions" :key="edition.id">
-                {{ edition.name }}
-              </div>
-            </b-card-text>
-            <b-card-text class="">
+      <div class="accordion mt-2 d-none d-lg-block" role="tablist">
+        <b-card no-body class="mb-1" v-for="work in sortedWorks(workAuthor.works)" :key="work.id">
+          <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
+            {{ work.name }}
+          </b-card-header>
+          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel">
+            <b-card-body>
+              <b-card-text class="">
+                <div v-for="edition in work.editions" :key="edition.id">
+                  {{ edition.name }} ({{ edition.year }})
+                </div>
+              </b-card-text>
+              <b-card-text class="">
               <span v-for="tocEntry in work.tocEntries" :key="tocEntry.id">
                 {{ tocEntry.label }}
               </span>
-            </b-card-text>
-          </b-card-body>
-        </b-collapse>
-      </b-card>
+              </b-card-text>
+            </b-card-body>
+          </b-collapse>
+        </b-card>
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import Work from '@/store/models/Work'
+import Author from "@/store/models/Author";
+import _ from 'lodash'
 
 export default {
   computed: {
-    works () {
-      return Work.query().withAll().all();
+    workAuthors () {
+      return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
+    }
+  },
+  methods: {
+    sortedWorks (works) {
+      return _.orderBy(works, 'name');
     }
   }
 }
