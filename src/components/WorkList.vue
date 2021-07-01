@@ -12,16 +12,14 @@
             <b-card-body>
               <b-card-text class="">
                 <div v-for="edition in work.editions" :key="edition.id">
-                  <b-form-checkbox v-model="edition.checked" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
+                  <b-form-checkbox v-model="edition.selected" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
                     {{ edition.authorsFormatted }} ({{ edition.year }})
                   </b-form-checkbox>
                 </div>
 
               </b-card-text>
               <b-card-text class="">
-              <span v-for="tocEntry in work.tocEntries" :key="tocEntry.id">
-                {{ tocEntry.label }}
-              </span>
+                <a v-for="tocEntry in work.tocEntries" :key="tocEntry.id" @click="selectTocEntry(tocEntry)" class="toc-link">{{ tocEntry.label }}</a>
               </b-card-text>
             </b-card-body>
           </b-collapse>
@@ -37,6 +35,7 @@ import {mapMutations} from 'vuex'
 import _ from 'lodash'
 import Author from "@/store/models/Author";
 import Edition from "@/store/models/Edition";
+import TocEntry from "@/store/models/TocEntry";
 
 export default {
   components: {},
@@ -63,7 +62,16 @@ export default {
       Edition.update({
         where: edition.id,
         data: {
-          checked: edition.checked
+          selected: edition.selected
+        }
+      })
+    },
+
+    selectTocEntry (tocEntry) {
+      TocEntry.update({
+        where: tocEntry.id,
+        data: {
+          selected: true
         }
       })
     }
@@ -72,3 +80,11 @@ export default {
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
+
+<style lang="scss" scoped>
+a.toc-link {
+  display: inline-block;
+  margin-left: 0.3em;
+  text-decoration: underline;
+}
+</style>
