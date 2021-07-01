@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import VuexORM from '@vuex-orm/core'
 import axios from 'axios'
 import VuexORMAxios from '@vuex-orm/plugin-axios'
+import MainModule from '@/store/modules/MainModule'
 import Work from '@/store/models/Work'
 import Edition from '@/store/models/Edition'
 import TocEntry from "@/store/models/TocEntry";
@@ -24,7 +25,8 @@ database.register(WorkAuthor)
 database.register(AuthorEdition)
 
 const store = new Vuex.Store({
-  plugins: [VuexORM.install(database)]
+  plugins: [VuexORM.install(database)],
+  modules: { app: MainModule }
 })
 
 export default store
