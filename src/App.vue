@@ -38,25 +38,7 @@
       </div>
 
       <div class="col-12 col-lg-9">
-        <div v-if="loading">loading...</div>
-        <div v-if="translations">
-          <table class="table">
-            <tr>
-              <th class="d-none d-lg-table-cell"></th>
-              <th v-for="translationInfo in selectedTranslationMeta" :key="translationInfo.key">{{ translationInfo.author }}</th>
-            </tr>
-            <tr v-for="section in selectedSections" :key="section">
-              <td class="d-none d-lg-table-cell">{{ section }}</td>
-              <td v-for="(translationInfo, index) in selectedTranslationMeta" :key="translationInfo.key" class="translation-section">
-                <div class="translation-content">
-                  <span v-if="index === 0" class="d-lg-none"><strong>{{ section }}</strong></span>
-                  {{ findSectionData(section)[translationInfo.key] }}
-                  <span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </div>
+        <content-view></content-view>
       </div>
     </div>
 
@@ -96,31 +78,31 @@
 </template>
 
 <script>
-const axios = require('axios');
 import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import WorkList from "@/components/WorkList";
+import ContentView from "@/components/ContentView";
 
 export default {
   name: 'App',
-  components: { WorkList },
+  components: { WorkList, ContentView },
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
-    axios.get(window.stoicsource.settings.apiUrl)
-        .then(function (response) {
-          this.translations = response.data;
-          this.extractSections();
-          this.selectRandomSection();
-          this.readLocalStorage();
-          this.applyUrlParams();
-        }.bind(this))
-        .catch(function (error) {
-          console.log(error);
-        })
-        .then(function () {
-          this.loading = false;
-        }.bind(this));
+    // axios.get(window.stoicsource.settings.apiUrl)
+    //     .then(function (response) {
+    //       this.translations = response.data;
+    //       this.extractSections();
+    //       this.selectRandomSection();
+    //       this.readLocalStorage();
+    //       this.applyUrlParams();
+    //     }.bind(this))
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     })
+    //     .then(function () {
+    //       this.loading = false;
+    //     }.bind(this));
 
     Work.api().get('https://127.0.0.1:8000/api/works')
   },
