@@ -61,6 +61,7 @@ export default {
 
       if (!contentItem) {
         this.loadContents();
+        return '';
       } else {
         return contentItem.content;
       }
