@@ -10,6 +10,7 @@ import TocEntry from "@/store/models/TocEntry";
 import Author from "@/store/models/Author";
 import WorkAuthor from "@/store/models/WorkAuthor";
 import AuthorEdition from "@/store/models/AuthorEdition";
+import Content from "@/store/models/Content";
 
 VuexORM.use(VuexORMAxios, { axios })
 
@@ -23,6 +24,7 @@ database.register(TocEntry)
 database.register(Author)
 database.register(WorkAuthor)
 database.register(AuthorEdition)
+database.register(Content)
 
 const store = new Vuex.Store({
   plugins: [VuexORM.install(database)],
