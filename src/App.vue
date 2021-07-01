@@ -3,35 +3,7 @@
     <div class="row">
       <div class="col-12 col-lg-3">
         <work-list></work-list>
-        <div class="mt-2">Translations</div>
-        <v-select multiple :options="translationMeta" v-model="selectedTranslations" :reduce="translation => translation.key"></v-select>
 
-        <div class="mt-2 mt-lg-4">Chapters</div>
-        <v-select multiple :options="sectionsFlat" v-model="selectedSections"></v-select>
-
-        <div class="mt-2 mb-3">
-          <b-form-checkbox v-model="saveSelection" switch class="subtle-switch">
-            Remember Selection
-          </b-form-checkbox>
-        </div>
-
-        <div class="accordion mt-2 d-none d-lg-block" role="tablist">
-          <b-card no-body class="mb-1" v-for="book in sectionsTree" :key="book.key">
-            <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseBook' + book.key">
-              Book {{ book.key }}
-            </b-card-header>
-            <b-collapse :id="'collapseBook' + book.key" accordion="my-accordion" role="tabpanel">
-              <b-card-body>
-                <b-card-text class="book-chapters">
-                  <a v-for="chapter in book.sections" :key="book.key + '-' + chapter" class="book-chapter" @click="selectSection(book.key + '.' + chapter)">
-                    {{ book.key }}.{{ chapter }}
-                  </a>
-                </b-card-text>
-              </b-card-body>
-            </b-collapse>
-          </b-card>
-        </div>
-        <div class="hint-text d-none d-lg-inline-block">Select multiple chapters through the dropdown box, or an individual chapter through the list.</div>
         <div class="d-none d-lg-block mt-2 text-muted">
           Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
         </div>
@@ -90,20 +62,6 @@ export default {
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
-    // axios.get(window.stoicsource.settings.apiUrl)
-    //     .then(function (response) {
-    //       this.translations = response.data;
-    //       this.extractSections();
-    //       this.selectRandomSection();
-    //       this.readLocalStorage();
-    //       this.applyUrlParams();
-    //     }.bind(this))
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     })
-    //     .then(function () {
-    //       this.loading = false;
-    //     }.bind(this));
 
     Work.api().get('https://127.0.0.1:8000/api/works')
   },
@@ -129,16 +87,6 @@ export default {
         this.selectedSections = JSON.parse(localStorage.selectedSections);
       }
     },
-    selectRandomSection () {
-      let sectionIndex = Math.floor(Math.random() * this.sectionsFlat.length - 1);
-      this.selectedSections = [this.sectionsFlat[sectionIndex]];
-
-      let keys = this.translationMeta.map(meta => meta.key);
-      for (let i = 0; i < 3; i++) {
-        let indexToSelect = Math.floor(Math.random() * keys.length)
-        this.selectedTranslations.push(keys.splice(indexToSelect, 1)[0]);
-      }
-    },
     applyUrlParams () {
       if (this.$route.params.chapter) {
         this.selectedSections = this.$route.params.chapter.split(',');
@@ -146,47 +94,6 @@ export default {
       if (this.$route.params.translator) {
         this.selectedTranslations = this.$route.params.translator.split(',');
       }
-    },
-    extractSections () {
-      this.sectionsTree = [];
-      this.sectionsFlat = [];
-      this.translations.forEach((translation) => {
-        this.sectionsFlat.push(translation.SectionNumber);
-
-        let numberParts = translation.SectionNumber.split('.');
-        let book = numberParts[0];
-        let chapter = numberParts[1];
-
-        let bookSection = this.sectionsTree.find((section) => section.key === book);
-        if (!bookSection) {
-          bookSection = {
-            key: book,
-            sections: []
-          };
-          this.sectionsTree.push(bookSection);
-        }
-
-        bookSection.sections.push(chapter);
-      });
-    },
-    findSectionData (sectionNumber) {
-      let matches = this.translations.filter((section) => section.SectionNumber === sectionNumber);
-      return matches.length > 0 ? matches[0] : [];
-    },
-    selectSection (sectionNumber) {
-      this.selectedSections = [sectionNumber];
-    },
-    quoteTranslation (section, key) {
-      let quotedSection = this.findSectionData(section);
-      let authorData = this.translationMeta.find(translation => translation.key === key);
-      let link = 'https://www.stoicsource.com/meditations/' + quotedSection.SectionNumber + '/' + key;
-
-      let markdown = '> ' + quotedSection[key] + "\n";
-      let authorInfo = '*Marcus Aurelius, Meditations ' + quotedSection.SectionNumber + ' (Translation by ' + authorData.author + ')*';
-      markdown += '[' + authorInfo + '](' + link + ')';
-
-      this.quoteText = markdown;
-      this.$bvModal.show('quote-modal');
     },
     showAbout () {
       this.$bvModal.show('about-modal');
@@ -228,93 +135,7 @@ export default {
   },
   data: () => ({
     quoteText: '',
-    saveSelection: true,
-    selectedSections: [],
-    loading: false,
-    sectionsTree: [],
-    sectionsFlat: [],
-    translations: null,
-    translationMeta: [
-      {
-        key: 'casaubon',
-        author: 'Meric Casaubon',
-        year: 1634,
-        label: 'Casaubon, Meric (1634)'
-      },
-      {
-        key: 'chrystal',
-        author: 'George William Chrystal',
-        year: 1902,
-        label: 'Chrystal, George William (1902)'
-      },
-      {
-        key: 'collier',
-        author: 'Jeremy Collier',
-        year: 1702,
-        label: 'Collier, Jeremy (1702)'
-      },
-      {
-        key: 'farquharson',
-        author: 'A. S. L. Farquharson',
-        year: 1944,
-        label: 'Farquharson, A. S. L. (1944)'
-      },
-      {
-        key: 'graves',
-        author: 'R. Graves',
-        year: 1792,
-        label: 'Graves, R. (1792)'
-      },
-      {
-        key: 'haine',
-        author: 'C. R. Haines',
-        year: 1916,
-        label: 'Haines, C. R. (1916)'
-      },
-      {
-        key: 'jackson',
-        author: 'J. Jackson',
-        year: 1906,
-        label: 'Jackson, J. (1906)'
-      },
-      {
-        key: 'long',
-        author: 'George Long',
-        year: 1862,
-        label: 'Long, George (1862)'
-      },
-      {
-        key: 'maccormac',
-        author: 'H. McCormac',
-        year: 1844,
-        label: 'McCormac, H. (1844)'
-      },
-      {
-        key: 'hutcheson',
-        author: 'James Moor and Francis Hutcheson',
-        year: 1742,
-        label: 'Moor, James and Hutcheson, Francis (1742)'
-      },
-      {
-        key: 'rendallv1',
-        author: 'G. H. Rendall',
-        year: 1898,
-        label: 'Rendall, G. H. (1898)'
-      },
-      {
-        key: 'rendallv2',
-        author: 'G. H. Rendall',
-        year: 1901,
-        label: 'Rendall, G. H. (1901)'
-      },
-      {
-        key: 'thomson',
-        author: 'James Thomson',
-        year: 1747,
-        label: 'Thomson, James (1747)'
-      }
-    ],
-    selectedTranslations: []
+    saveSelection: true
   })
 }
 </script>
