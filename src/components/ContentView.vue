@@ -10,7 +10,7 @@
       <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
         <div class="translation-content">
           <span v-if="index === 0" class="d-lg-none"><strong>{{ tocEntry.label }}</strong></span>
-          {{ getContent(tocEntry, edition) }}
+          <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
         </div>
       </td>
     </tr>
