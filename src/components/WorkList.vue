@@ -19,7 +19,9 @@
 
               </b-card-text>
               <b-card-text class="">
-                <a v-for="tocEntry in work.tocEntries" :key="tocEntry.id" @click="selectTocEntry(tocEntry)" class="toc-link">{{ tocEntry.label }}</a>
+                <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+                  <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="selectTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': tocEntry.selected }">{{ tocEntry.label }}</a>
+                </div>
               </b-card-text>
             </b-card-body>
           </b-collapse>
@@ -40,8 +42,7 @@ import TocEntry from "@/store/models/TocEntry";
 export default {
   components: {},
   data () {
-    return {
-    }
+    return {}
   },
   computed: {
     workAuthors () {
@@ -73,6 +74,25 @@ export default {
           selected: true
         }
       })
+    },
+
+    tocGroups (tocEntries) {
+      let groups = {};
+
+      tocEntries.forEach(function (tocEntry) {
+        let labelParts = tocEntry.label.split('.')
+        if (labelParts.length === 1) {
+          return [tocEntries];
+        }
+
+        let chapter = labelParts[0];
+        if (!(chapter in groups)) {
+          groups[chapter] = [];
+        }
+        groups[chapter].push(tocEntry);
+      });
+
+      return groups;
     }
   }
 }
@@ -85,5 +105,9 @@ a.toc-link {
   display: inline-block;
   margin-left: 0.3em;
   text-decoration: underline;
+
+  &.selected {
+    font-weight: bold;
+  }
 }
 </style>
