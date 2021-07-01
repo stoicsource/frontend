@@ -28,7 +28,9 @@ export default {
   },
   components: {},
   data () {
-    return {}
+    return {
+      isLoading: false
+    }
   },
   watch: {
     'editions': function () {
@@ -40,12 +42,14 @@ export default {
   },
   computed: {},
   methods: {
-    loadContents () {
-      if (this.editions.length > 0 && this.tocEntries.length > 0) {
+    async loadContents () {
+      if (!this.isLoading && this.editions.length > 0 && this.tocEntries.length > 0) {
         let editionParams = this.editions.map((edition) => 'editions[]=' + edition.id);
         let tocParams = this.tocEntries.map((tocEntry) => 'toc_entries[]=' + tocEntry.id);
 
-        Content.api().get('https://127.0.0.1:8000/api/contents?' + editionParams.join('&') + '&' + tocParams.join('&'));
+        this.isLoading = true;
+        await Content.api().get('https://127.0.0.1:8000/api/contents?' + editionParams.join('&') + '&' + tocParams.join('&'));
+        this.isLoading = false;
       }
     },
 

@@ -41,7 +41,6 @@ export default {
   components: {},
   data () {
     return {
-      test: []
     }
   },
   computed: {
