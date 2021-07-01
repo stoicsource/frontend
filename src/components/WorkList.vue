@@ -81,11 +81,8 @@ export default {
 
       tocEntries.forEach(function (tocEntry) {
         let labelParts = tocEntry.label.split('.')
-        if (labelParts.length === 1) {
-          return [tocEntries];
-        }
 
-        let chapter = labelParts[0];
+        let chapter = labelParts.length > 1 ? labelParts[0] : '0';
         if (!(chapter in groups)) {
           groups[chapter] = [];
         }
