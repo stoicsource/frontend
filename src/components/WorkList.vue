@@ -8,11 +8,13 @@
           <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
             {{ work.name }}
           </b-card-header>
-          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="setSelectedWork(work.id)">
+          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="setSelectedWorkId(work)">
             <b-card-body>
               <b-card-text class="">
                 <div v-for="edition in work.editions" :key="edition.id">
-                  {{ edition.authorsFormatted }} ({{ edition.year }})
+                  <b-form-checkbox v-model="edition.checked" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
+                    {{ edition.authorsFormatted }} ({{ edition.year }})
+                  </b-form-checkbox>
                 </div>
 
               </b-card-text>
@@ -34,6 +36,7 @@
 import {mapMutations} from 'vuex'
 import _ from 'lodash'
 import Author from "@/store/models/Author";
+import Edition from "@/store/models/Edition";
 
 export default {
   components: {},
@@ -49,11 +52,20 @@ export default {
   },
   methods: {
     ...mapMutations('app', [
-      'setSelectedWork'
+      'setSelectedWorkId'
     ]),
 
     sortedWorks (works) {
       return _.orderBy(works, 'name');
+    },
+
+    toggleEdition (edition) {
+      Edition.update({
+        where: edition.id,
+        data: {
+          checked: edition.checked
+        }
+      })
     }
   }
 }
