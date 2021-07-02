@@ -22,4 +22,12 @@ export default class Work extends Model {
   get authorsFormatted () {
     return this.authors.map((author) => author.name ).join(',');
   }
+
+  hasSelectedEditions () {
+    return this.editions.some((edition) => edition.selected );
+  }
+
+  hasSelectedTocEntries () {
+    return this.tocEntries.some((tocEntry) => tocEntry.selected );
+  }
 }
