@@ -20,7 +20,7 @@
               </b-card-text>
               <b-card-text class="">
                 <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
-                  <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="selectTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': tocEntry.selected }">{{ tocEntry.label }}</a>
+                  <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': tocEntry.selected }">{{ tocEntry.label }}</a>
                 </div>
               </b-card-text>
             </b-card-body>
@@ -67,11 +67,11 @@ export default {
       })
     },
 
-    selectTocEntry (tocEntry) {
+    toggleTocEntry (tocEntry) {
       TocEntry.update({
         where: tocEntry.id,
         data: {
-          selected: true
+          selected: !tocEntry.selected
         }
       })
     },

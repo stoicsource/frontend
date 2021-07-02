@@ -6,7 +6,10 @@
     </tr>
 
     <tr v-for="tocEntry in tocEntries" :key="tocEntry.id">
-      <td class="d-none d-lg-table-cell">{{ tocEntry.label }}</td>
+      <td class="d-none d-lg-table-cell text-center toc-label-cell">
+        {{ tocEntry.label }}<br>
+        <a @click="deselectTocEntry(tocEntry)" class="btn btn-outline-secondary btn-sm deselect-toc-link">X</a>
+      </td>
       <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
         <div class="translation-content">
           <span v-if="index === 0" class="d-lg-none"><strong>{{ tocEntry.label }}</strong></span>
@@ -20,6 +23,7 @@
 <script>
 //<span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
 import Content from "@/store/models/Content";
+import TocEntry from "@/store/models/TocEntry";
 
 export default {
   props: {
@@ -73,7 +77,30 @@ export default {
       } else {
         return contentItem.content;
       }
+    },
+
+    deselectTocEntry (tocEntry) {
+      TocEntry.update({
+        where: tocEntry.id,
+        data: {
+          selected: false
+        }
+      })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.toc-label-cell {
+  .deselect-toc-link {
+    visibility: hidden;
+  }
+
+  &:hover {
+    .deselect-toc-link {
+      visibility: visible;
+    }
+  }
+}
+</style>
