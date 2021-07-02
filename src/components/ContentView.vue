@@ -14,6 +14,7 @@
         <div class="translation-content">
           <span v-if="index === 0" class="d-lg-none"><strong>{{ tocEntry.label }}</strong></span>
           <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
+          <div v-if="getContent(tocEntry, edition) === '' && isLoading">Loading</div>
         </div>
       </td>
     </tr>
