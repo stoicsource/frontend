@@ -34,8 +34,7 @@ export default {
   data () {
     return {
       isLoading: false,
-      requestedEditions: [],
-      requestedTocEntries: []
+      lastRequestParamString: ''
     }
   },
   watch: {
@@ -50,18 +49,19 @@ export default {
   methods: {
     async loadContents () {
       if (!this.isLoading &&
-          this.editions.length > 0 && this.tocEntries.length > 0 &&
-          (this.editions.length !== this.requestedEditions.length || this.tocEntries.length !== this.requestedTocEntries.length) // Todo: replace with comparison of IDs
+          this.editions.length > 0 && this.tocEntries.length > 0
       ) {
         let editionParams = this.editions.map((edition) => 'editions[]=' + edition.id);
         let tocParams = this.tocEntries.map((tocEntry) => 'toc_entries[]=' + tocEntry.id);
 
-        this.isLoading = true;
-        await Content.api().get('https://127.0.0.1:8000/api/contents?' + editionParams.join('&') + '&' + tocParams.join('&'));
-        this.isLoading = false;
+        let paramString = editionParams.join('&') + '&' + tocParams.join('&');
 
-        this.requestedEditions = this.editions;
-        this.requestedTocEntries = this.tocEntries;
+        if (paramString !== this.lastRequestParamString) {
+          this.isLoading = true;
+          await Content.api().get('https://127.0.0.1:8000/api/contents?' + paramString);
+          this.isLoading = false;
+          this.lastRequestParamString = paramString;
+        }
       }
     },
 
