@@ -7,8 +7,10 @@
 
     <tr v-for="tocEntry in tocEntries" :key="tocEntry.id">
       <td class="d-none d-lg-table-cell text-center toc-label-cell">
+        <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1" class="btn btn-outline-secondary btn-sm hover-button">Previous</a>
         {{ tocEntry.label }}<br>
-        <a @click="deselectTocEntry(tocEntry)" class="btn btn-outline-secondary btn-sm deselect-toc-link">X</a>
+        <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">X</a>
+        <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1" class="btn btn-outline-secondary btn-sm hover-button">Next</a>
       </td>
       <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
         <div class="translation-content">
@@ -24,7 +26,6 @@
 <script>
 //<span class="quote-translation" @click="quoteTranslation(section, translationInfo.key)">quote</span>
 import Content from "@/store/models/Content";
-import TocEntry from "@/store/models/TocEntry";
 
 export default {
   props: {
@@ -81,27 +82,42 @@ export default {
     },
 
     deselectTocEntry (tocEntry) {
-      TocEntry.update({
-        where: tocEntry.id,
-        data: {
-          selected: false
-        }
-      })
-    }
+      tocEntry.setSelected(false);
+    },
+
+    previousTocEntry (tocEntry) {
+      let previousEntry = tocEntry.getPrevious();
+      if (previousEntry) {
+        previousEntry.setSelected(true);
+        tocEntry.setSelected(false);
+      }
+    },
+
+    nextTocEntry (tocEntry) {
+      let nextEntry = tocEntry.getNext();
+      if (nextEntry) {
+        nextEntry.setSelected(true);
+        tocEntry.setSelected(false);
+      }
+    },
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .toc-label-cell {
-  .deselect-toc-link {
+  .hover-button {
     visibility: hidden;
   }
 
   &:hover {
-    .deselect-toc-link {
+    .hover-button {
       visibility: visible;
     }
   }
+}
+
+.btn {
+  display: block;
 }
 </style>

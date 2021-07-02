@@ -108,7 +108,7 @@ export default {
     ]),
 
     selectedWork () {
-      return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries']).first();
+      return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
     },
 
     selectedEditions () {
