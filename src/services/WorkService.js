@@ -16,14 +16,23 @@ export default {
 
       let editionsBySelectedAuthors = work.editions.filter((edition) => edition.authors.some((author) => allSelectedAuthorIDs.includes(author.id)));
 
-      editionsBySelectedAuthors.forEach((edition) => {
+      if (editionsBySelectedAuthors.length > 0) {
+        editionsBySelectedAuthors.forEach((edition) => {
+          Edition.update({
+            where: edition.id,
+            data: {
+              selected: true
+            }
+          })
+        })
+      } else {
         Edition.update({
-          where: edition.id,
+          where: work.editions[0].id,
           data: {
             selected: true
           }
         })
-      })
+      }
     }
 
     if (!work.hasSelectedTocEntries()) {
