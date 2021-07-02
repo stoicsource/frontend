@@ -8,8 +8,7 @@ const mainModule = {
   },
   mutations: {
     setSelectedWorkId (state, selectedWorkId) {
-      selectedWorkId.name = selectedWorkId.name + '-mod';
-      state.selectedWorkId = selectedWorkId.id;
+      state.selectedWorkId = selectedWorkId;
     }
   }
 };

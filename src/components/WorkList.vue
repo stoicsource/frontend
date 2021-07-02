@@ -8,7 +8,7 @@
           <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
             {{ work.name }}
           </b-card-header>
-          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="setSelectedWorkId(work)">
+          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="selectWork(work)">
             <b-card-body>
               <b-card-text class="">
                 <div v-for="edition in work.editions" :key="edition.id">
@@ -38,6 +38,7 @@ import _ from 'lodash'
 import Author from "@/store/models/Author";
 import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
+import WorkService from "@/services/WorkService";
 
 export default {
   components: {},
@@ -56,6 +57,12 @@ export default {
 
     sortedWorks (works) {
       return _.orderBy(works, 'name');
+    },
+
+    selectWork (work) {
+      this.setSelectedWorkId(work.id);
+
+      WorkService.workSelectDefaults(work);
     },
 
     toggleEdition (edition) {
