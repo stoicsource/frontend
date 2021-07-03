@@ -23,4 +23,8 @@ export default class Edition extends Model {
   get authorsFormatted () {
     return this.authors.map((author) => author.name ).join(',');
   }
+
+  get authorsShortnames () {
+    return this.authors.map((author) => author.shortestName ).join(',');
+  }
 }
