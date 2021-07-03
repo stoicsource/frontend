@@ -27,6 +27,16 @@ export default class TocEntry extends Model {
     return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder);
   }
 
+  hasPrevious () {
+    let targetSortOrder = this.sort_order - 1;
+    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder) !== undefined;
+  }
+
+  hasNext () {
+    let targetSortOrder = this.sort_order + 1;
+    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder) !== undefined;
+  }
+
   setSelected (selected) {
     TocEntry.update({
       where: this.id,
