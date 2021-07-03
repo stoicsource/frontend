@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-12 col-lg-3">
+      <div class="col-12 col-lg-3 sticky-sidebar">
         <work-list></work-list>
 
         <div class="d-none d-lg-block mt-2 text-muted">
@@ -209,4 +209,10 @@ td, th {
   }
 }
 
+.col-12.sticky-sidebar {
+  position: sticky;
+  height: 100vh;
+  top: 0;
+  overflow-y: scroll;
+}
 </style>
