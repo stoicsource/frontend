@@ -8,7 +8,7 @@
           <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
             {{ work.name }}
           </b-card-header>
-          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="selectWork(work)">
+          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)">
             <b-card-body>
               <b-card-text class="">
                 <div v-for="edition in work.editions" :key="edition.id">
