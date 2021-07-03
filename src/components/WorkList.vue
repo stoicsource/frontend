@@ -11,10 +11,21 @@
           <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)">
             <b-card-body>
               <b-card-text class="">
-                <div v-for="edition in work.editions" :key="edition.id">
-                  <b-form-checkbox v-model="edition.selected" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
-                    {{ edition.authorsFormatted }} ({{ edition.year }})
-                  </b-form-checkbox>
+                <div class="edition-selection">
+                  <div v-if="!worksWithEditionsFoldedOut.includes(work.id)" class="overview-collapsed" @click="openEditionSelection(work.id)">
+                    <span v-for="(edition, index) in work.selectedEditions" :key="edition.id">
+                      <span v-if="index !== 0">, </span>
+                      {{ edition.authorsShortnames }} ({{ edition.year }})
+                    </span>
+                  </div>
+                  <div v-if="worksWithEditionsFoldedOut.includes(work.id)">
+                    <div v-for="edition in work.editions" :key="edition.id">
+                      <b-form-checkbox v-model="edition.selected" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
+                        {{ edition.authorsFormatted }} ({{ edition.year }})
+                      </b-form-checkbox>
+                    </div>
+                    <div @click="closeEditionSelection(work.id)">close</div>
+                  </div>
                 </div>
 
               </b-card-text>
@@ -43,7 +54,9 @@ import WorkService from "@/services/WorkService";
 export default {
   components: {},
   data () {
-    return {}
+    return {
+      worksWithEditionsFoldedOut: []
+    }
   },
   computed: {
     workAuthors () {
@@ -97,6 +110,14 @@ export default {
       });
 
       return groups;
+    },
+
+    openEditionSelection (workId) {
+      this.worksWithEditionsFoldedOut.push(workId);
+    },
+
+    closeEditionSelection (workId) {
+      this.worksWithEditionsFoldedOut.splice(this.worksWithEditionsFoldedOut.indexOf(workId), 1);
     }
   }
 }

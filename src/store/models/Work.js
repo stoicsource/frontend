@@ -24,6 +24,10 @@ export default class Work extends Model {
     return this.authors.map((author) => author.name ).join(',');
   }
 
+  get selectedEditions () {
+    return this.editions.filter((edition) => edition.selected );
+  }
+
   hasSelectedEditions () {
     return this.editions.some((edition) => edition.selected );
   }
