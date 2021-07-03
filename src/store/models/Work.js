@@ -12,6 +12,7 @@ export default class Work extends Model {
     return {
       id: this.attr(null),
       name: this.attr(''),
+      url_slug: this.attr(''),
 
       editions: this.hasMany(Edition, 'work_id'),
       tocEntries: this.hasMany(TocEntry, 'work_id'),
