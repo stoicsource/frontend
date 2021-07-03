@@ -11,23 +11,19 @@
           <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)">
             <b-card-body>
               <b-card-text class="">
-                <div class="edition-selection">
-                  <div v-if="!worksWithEditionsFoldedOut.includes(work.id)" class="overview-collapsed" @click="openEditionSelection(work.id)">
-                    <span v-for="(edition, index) in work.selectedEditions" :key="edition.id">
+                <div v-b-toggle="'collapseWorkEditions' + work.id">
+                  <span v-for="(edition, index) in work.selectedEditions" :key="edition.id">
                       <span v-if="index !== 0">, </span>
                       {{ edition.authorsShortnames }} ({{ edition.year }})
                     </span>
-                  </div>
-                  <div v-if="worksWithEditionsFoldedOut.includes(work.id)">
-                    <div v-for="edition in work.editions" :key="edition.id">
-                      <b-form-checkbox v-model="edition.selected" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
-                        {{ edition.authorsFormatted }} ({{ edition.year }})
-                      </b-form-checkbox>
-                    </div>
-                    <div @click="closeEditionSelection(work.id)">close</div>
-                  </div>
                 </div>
-
+                <b-collapse :id="'collapseWorkEditions' + work.id">
+                  <div v-for="edition in work.editions" :key="edition.id">
+                    <b-form-checkbox v-model="edition.selected" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
+                      {{ edition.authorsFormatted }} ({{ edition.year }})
+                    </b-form-checkbox>
+                  </div>
+                </b-collapse>
               </b-card-text>
               <b-card-text class="">
                 <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
