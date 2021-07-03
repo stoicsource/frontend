@@ -13,6 +13,7 @@ export default class Author extends Model {
       name: this.attr(''),
       shortName: this.attr(''),
       year: this.attr(''),
+      url_slug: this.attr(''),
 
       works: this.belongsToMany(Work, WorkAuthor, 'author_id', 'work_id'),
       editions: this.belongsToMany(Edition, AuthorEdition, 'author_id', 'edition_id')
