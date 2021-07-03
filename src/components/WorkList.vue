@@ -51,7 +51,7 @@ export default {
   components: {},
   data () {
     return {
-      worksWithEditionsFoldedOut: []
+
     }
   },
   computed: {
@@ -106,14 +106,6 @@ export default {
       });
 
       return groups;
-    },
-
-    openEditionSelection (workId) {
-      this.worksWithEditionsFoldedOut.push(workId);
-    },
-
-    closeEditionSelection (workId) {
-      this.worksWithEditionsFoldedOut.splice(this.worksWithEditionsFoldedOut.indexOf(workId), 1);
     }
   }
 }
