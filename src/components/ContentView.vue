@@ -7,16 +7,16 @@
 
     <tr v-for="tocEntry in tocEntries" :key="tocEntry.id">
       <td class="d-none d-lg-table-cell text-center toc-label-cell">
-        <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1" class="btn btn-outline-secondary btn-sm hover-button">Previous</a>
+        <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">Previous</a>
         {{ tocEntry.label }}<br>
         <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">X</a>
-        <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1" class="btn btn-outline-secondary btn-sm hover-button">Next</a>
+        <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">Next</a>
       </td>
       <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
         <div class="translation-content">
           <span v-if="index === 0" class="d-lg-none"><strong>{{ tocEntry.label }}</strong></span>
           <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
-          <div v-if="getContent(tocEntry, edition) === '' && isLoading">Loading</div>
+          <div v-if="getContent(tocEntry, edition) === '' && isLoading">loading...</div>
         </div>
       </td>
     </tr>
