@@ -43,7 +43,9 @@ import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
-import {mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
+import TocEntry from "@/store/models/TocEntry";
+import Edition from "@/store/models/Edition";
 
 export default {
   name: 'App',
@@ -59,9 +61,10 @@ export default {
     new Clipboard('#copy-button');
 
     Work.api().get('https://127.0.0.1:8000/api/works')
-        // .then(function (response) {
-        //
-        // })
+        .then(function () {
+          this.readLocalStorage();
+          this.applyUrlParams();
+        }.bind(this))
         .catch(function (error) {
           alert(error.message);
         })
@@ -72,6 +75,10 @@ export default {
 
   },
   methods: {
+    ...mapMutations('app', [
+      'setSelectedWorkId'
+    ]),
+
     writeLocalStorage () {
       localStorage.saveSelection = JSON.stringify(this.saveSelection);
       if (this.saveSelection) {
@@ -94,11 +101,41 @@ export default {
       }
     },
     applyUrlParams () {
-      if (this.$route.params.chapter) {
-        this.selectedSections = this.$route.params.chapter.split(',');
+      if (this.$route.params.work) {
+        let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
+        this.setSelectedWorkId(matchingWork ? matchingWork.id : null);
+      }
+      if (this.$route.params.toc && this.selectedWorkId) {
+        let tocLabels = this.$route.params.toc.split(',');
+
+        tocLabels.forEach((tocLabel) => {
+          let tocEntry = TocEntry.query().where('label', tocLabel).first();
+
+          if (tocEntry) {
+            TocEntry.update({
+              where: tocEntry.id,
+              data: {
+                selected: true
+              }
+            });
+          }
+        });
       }
       if (this.$route.params.translator) {
-        this.selectedTranslations = this.$route.params.translator.split(',');
+        let author_slugs = this.$route.params.translator.split(',');
+
+        author_slugs.forEach((slug) => {
+          this.selectedWork.editions.forEach((edition) => {
+            if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
+              Edition.update({
+                where: edition.id,
+                data: {
+                  selected: true
+                }
+              });
+            }
+          });
+        });
       }
     },
     showAbout () {
