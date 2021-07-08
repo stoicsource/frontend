@@ -11,22 +11,9 @@
         </div>
 
         <div class="col-12 col-lg-9">
-          <content-view :editions="selectedEditions" :toc-entries="selectedTocEntries"></content-view>
+          <content-view :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
         </div>
       </div>
-
-      <b-modal id="quote-modal" title="Quote Translation">
-        <div>Markdown quote (can be pasted to reddit and other platforms)</div>
-        <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
-        <template #modal-footer="{ ok, cancel }">
-          <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
-            Copy to Clipboard
-          </b-button>
-          <b-button size="sm" variant="secondary" @click="cancel()">
-            Close
-          </b-button>
-        </template>
-      </b-modal>
 
       <b-modal id="about-modal" title="About" cancel-disabled>
         <p class="text-center">
@@ -64,7 +51,6 @@ export default {
   data () {
     return {
       loading: false,
-      quoteText: '',
       saveSelection: true
     }
   },
@@ -131,12 +117,12 @@ export default {
       return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
     },
 
-    selectedEditions () {
-      return this.selectedWork ? this.selectedWork.editions.filter((edition) => edition.selected) : [];
+    selectedEditionIds () {
+      return this.selectedWork ? this.selectedWork.editions.filter((edition) => edition.selected).map(edition => edition.id) : [];
     },
 
-    selectedTocEntries () {
-      return this.selectedWork ? this.selectedWork.tocEntries.filter((tocEntry) => tocEntry.selected) : [];
+    selectedTocEntryIds () {
+      return this.selectedWork ? this.selectedWork.tocEntries.filter((tocEntry) => tocEntry.selected).map(entry => entry.id) : [];
     }
   },
   watch: {
@@ -184,30 +170,6 @@ td, th {
 .hint-text {
   font-size: 0.8em;
   color: #555;
-}
-
-.translation-section {
-  .translation-content {
-    max-width: 35em;
-    line-height: 1.6em;
-  }
-
-  .quote-translation {
-    visibility: hidden;
-    display: inline-block;
-    margin-left: 0.5em;
-    padding: 0 5px;
-    color: gray;
-    cursor: pointer;
-    border: 1px solid lightgray;
-    border-radius: 6px;
-  }
-
-  &:hover {
-    .quote-translation {
-      visibility: visible;
-    }
-  }
 }
 
 .subtle-switch {
