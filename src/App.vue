@@ -1,52 +1,54 @@
 <template>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-12 col-lg-3 sticky-sidebar">
-        <work-list></work-list>
+  <b-overlay :show="loading" rounded="sm">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12 col-lg-3 sticky-sidebar">
+          <work-list></work-list>
 
-        <div class="d-none d-lg-block mt-2 text-muted">
-          Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
+          <div class="d-none d-lg-block mt-2 text-muted">
+            Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-9">
+          <content-view :editions="selectedEditions" :toc-entries="selectedTocEntries"></content-view>
         </div>
       </div>
 
-      <div class="col-12 col-lg-9">
-        <content-view :editions="selectedEditions" :toc-entries="selectedTocEntries"></content-view>
-      </div>
+      <b-modal id="quote-modal" title="Quote Translation">
+        <div>Markdown quote (can be pasted to reddit and other platforms)</div>
+        <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
+        <template #modal-footer="{ ok, cancel }">
+          <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
+            Copy to Clipboard
+          </b-button>
+          <b-button size="sm" variant="secondary" @click="cancel()">
+            Close
+          </b-button>
+        </template>
+      </b-modal>
+
+      <b-modal id="about-modal" title="About" cancel-disabled>
+        <p class="text-center">
+          Developed by Patrick Menke<br>
+          <a href="mailto:feedback@stoicsource.com">contact</a>
+        </p>
+        <p class="text-center">
+          Material assembled by George O'Ryan<br>
+          <a href="https://www.reddit.com/user/Sudden-Sand8907" target="_blank">reddit</a> | <a href="mailto:oryang7@gmail.com">contact</a>
+        </p>
+        <template #modal-footer="{ ok }">
+          <b-button size="sm" @click="ok()">
+            Close
+          </b-button>
+        </template>
+      </b-modal>
+
+      <footer class="d-lg-none text-center text-muted">
+        Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
+      </footer>
     </div>
-
-    <b-modal id="quote-modal" title="Quote Translation">
-      <div>Markdown quote (can be pasted to reddit and other platforms)</div>
-      <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
-          Copy to Clipboard
-        </b-button>
-        <b-button size="sm" variant="secondary" @click="cancel()">
-          Close
-        </b-button>
-      </template>
-    </b-modal>
-
-    <b-modal id="about-modal" title="About" cancel-disabled>
-      <p class="text-center">
-        Developed by Patrick Menke<br>
-        <a href="mailto:feedback@stoicsource.com">contact</a>
-      </p>
-      <p class="text-center">
-        Material assembled by George O'Ryan<br>
-        <a href="https://www.reddit.com/user/Sudden-Sand8907" target="_blank">reddit</a> | <a href="mailto:oryang7@gmail.com">contact</a>
-      </p>
-      <template #modal-footer="{ ok }">
-        <b-button size="sm" @click="ok()">
-          Close
-        </b-button>
-      </template>
-    </b-modal>
-
-    <footer class="d-lg-none text-center text-muted">
-      Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
-    </footer>
-  </div>
+  </b-overlay>
 </template>
 
 <script>
@@ -58,12 +60,30 @@ import {mapState} from "vuex";
 
 export default {
   name: 'App',
-  components: { WorkList, ContentView },
+  components: {WorkList, ContentView},
+  data () {
+    return {
+      loading: false,
+      quoteText: '',
+      saveSelection: true
+    }
+  },
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
 
     Work.api().get('https://127.0.0.1:8000/api/works')
+        // .then(function (response) {
+        //
+        // })
+        .catch(function (error) {
+          alert(error.message);
+        })
+        .then(function () {
+          this.loading = false;
+        }.bind(this));
+
+
   },
   methods: {
     writeLocalStorage () {
@@ -132,11 +152,7 @@ export default {
     $route () {
       this.applyUrlParams();
     }
-  },
-  data: () => ({
-    quoteText: '',
-    saveSelection: true
-  })
+  }
 }
 </script>
 
