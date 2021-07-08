@@ -1,5 +1,5 @@
 <template>
-  <b-overlay :show="loading" rounded="sm">
+  <b-overlay :show="loading">
     <div class="container-fluid">
       <div class="row">
         <div class="col-12 col-lg-3 sticky-sidebar">
