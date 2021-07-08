@@ -19,8 +19,8 @@ Vue.config.productionTip = false
 
 const routes = [
   { path: '/:work', component: App },
-  { path: '/:work/:chapter', component: App },
-  { path: '/:work/:chapter/:translator', component: App }
+  { path: '/:work/:toc', component: App },
+  { path: '/:work/:toc/:translator', component: App }
 
   /*
   {
