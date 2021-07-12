@@ -78,7 +78,7 @@ export default {
 
         if (paramString !== this.lastRequestParamString) {
           this.isLoading = true;
-          await Content.api().get('https://127.0.0.1:8000/api/contents?' + paramString);
+          await Content.api().get(process.env.VUE_APP_API_URL + '/contents?' + paramString);
           this.isLoading = false;
           this.lastRequestParamString = paramString;
         }
@@ -123,7 +123,7 @@ export default {
       let content = this.getContent(tocEntry, edition);
       let editionAuthor = edition.authors[0];
       let workAuthor = edition.work.authors[0];
-      let link = 'https://www.stoicsource.com/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
+      let link = window.location.origin + '/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
 
       let markdown = '> ' + content + "\n";
       let authorInfo = '*' + workAuthor.name + ', ' + edition.work.name + ' ' + tocEntry.label + ' (Translation by ' + editionAuthor.name + ')*';
