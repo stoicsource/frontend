@@ -103,7 +103,10 @@ export default {
     applyUrlParams () {
       if (this.$route.params.work) {
         let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
-        this.setSelectedWorkId(matchingWork ? matchingWork.id : null);
+        if (matchingWork) {
+          this.setSelectedWorkId(matchingWork.id);
+          this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id); // might be more elegant to do this via v-model
+        }
       }
       if (this.$route.params.toc && this.selectedWorkId) {
         let tocLabels = this.$route.params.toc.split(',');
