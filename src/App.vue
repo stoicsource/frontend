@@ -60,7 +60,7 @@ export default {
     this.loading = true;
     new Clipboard('#copy-button');
 
-    Work.api().get('https://127.0.0.1:8000/api/works')
+    Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
           this.readLocalStorage();
           this.applyUrlParams();
