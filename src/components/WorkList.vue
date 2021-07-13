@@ -11,11 +11,13 @@
           <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)">
             <b-card-body>
               <b-card-text class="">
-                <div v-b-toggle="'collapseWorkEditions' + work.id">
+                <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
                   <span v-for="(edition, index) in work.selectedEditions" :key="edition.id">
                       <span v-if="index !== 0">, </span>
                       {{ edition.authorsShortnames }} ({{ edition.year }})
                     </span>
+                  <font-awesome-icon icon="angle-down" />
+                  <font-awesome-icon icon="angle-up" />
                 </div>
                 <b-collapse :id="'collapseWorkEditions' + work.id">
                   <div v-for="edition in work.editions" :key="edition.id">
@@ -50,9 +52,7 @@ import WorkService from "@/services/WorkService";
 export default {
   components: {},
   data () {
-    return {
-
-    }
+    return {}
   },
   computed: {
     workAuthors () {
@@ -121,6 +121,20 @@ a.toc-link {
 
   &.selected {
     font-weight: bold;
+  }
+}
+
+.edition-collapser {
+  &.collapsed {
+    .fa-angle-up {
+      display: none;
+    }
+  }
+
+  &.not-collapsed {
+    .fa-angle-down {
+      display: none;
+    }
   }
 }
 </style>
