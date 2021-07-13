@@ -8,7 +8,7 @@
           <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
             {{ work.name }}
           </b-card-header>
-          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)">
+          <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @show="selectWork(work)" v-model="work.selected">
             <b-card-body>
               <b-card-text class="">
                 <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
@@ -42,7 +42,6 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
 import _ from 'lodash'
 import Author from "@/store/models/Author";
 import Edition from "@/store/models/Edition";
@@ -60,16 +59,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('app', [
-      'setSelectedWorkId'
-    ]),
-
     sortedWorks (works) {
       return _.orderBy(works, 'name');
     },
 
     selectWork (work) {
-      this.setSelectedWorkId(work.id);
+      work.select();
 
       WorkService.workSelectDefaults(work);
     },
