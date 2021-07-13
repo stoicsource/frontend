@@ -1,16 +1,8 @@
 const mainModule = {
   namespaced: true,
-  state: {
-    selectedWorkId: null
-  },
-  actions: {
-
-  },
-  mutations: {
-    setSelectedWorkId (state, selectedWorkId) {
-      state.selectedWorkId = selectedWorkId;
-    }
-  }
+  state: {},
+  actions: {},
+  mutations: {}
 };
 
 export default mainModule;

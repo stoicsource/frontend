@@ -43,7 +43,6 @@ import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
-import {mapMutations, mapState} from "vuex";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
 
@@ -75,10 +74,6 @@ export default {
 
   },
   methods: {
-    ...mapMutations('app', [
-      'setSelectedWorkId'
-    ]),
-
     writeLocalStorage () {
       localStorage.saveSelection = JSON.stringify(this.saveSelection);
       if (this.saveSelection) {
@@ -104,11 +99,11 @@ export default {
       if (this.$route.params.work) {
         let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
         if (matchingWork) {
-          this.setSelectedWorkId(matchingWork.id);
-          this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id); // might be more elegant to do this via v-model
+          matchingWork.select();
+          // this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id); // might be more elegant to do this via v-model
         }
       }
-      if (this.$route.params.toc && this.selectedWorkId) {
+      if (this.$route.params.toc && this.selectedWork) {
         let tocLabels = this.$route.params.toc.split(',');
 
         tocLabels.forEach((tocLabel) => {
@@ -149,12 +144,10 @@ export default {
     selectedTranslationMeta () {
       return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
     },
-    ...mapState('app', [
-      'selectedWorkId'
-    ]),
 
     selectedWork () {
-      return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
+      //return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
+      return Work.getSelectedWork(['editions.authors', 'tocEntries.work.tocEntries']);
     },
 
     selectedEditionIds () {
