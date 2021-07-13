@@ -26,11 +26,14 @@ export default {
           })
         })
       } else {
-        Edition.update({
-          where: work.editions[0].id,
-          data: {
-            selected: true
-          }
+        let latestTwo = Edition.query().where('work_id', work.id).orderBy('year', 'desc').limit(2).get();
+        latestTwo.forEach((edition) => {
+          Edition.update({
+            where: edition.id,
+            data: {
+              selected: true
+            }
+          })
         })
       }
     }
