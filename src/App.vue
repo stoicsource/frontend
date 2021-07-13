@@ -2,7 +2,18 @@
   <b-overlay :show="loading">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 col-lg-3 sticky-sidebar">
+        <div class="d-md-none">
+          <div v-b-toggle="'mobileWorkSelection'">
+            {{ selectedWork ? selectedWork.name : 'Loading Data' }}
+            <font-awesome-icon icon="angle-down" />
+            <font-awesome-icon icon="angle-up" />
+          </div>
+          <b-collapse id="mobileWorkSelection">
+            <work-list></work-list>
+          </b-collapse>
+        </div>
+
+        <div class="col-12 col-md-3 sticky-sidebar d-none d-md-block">
           <work-list></work-list>
 
           <div class="d-none d-lg-block mt-2 text-muted">
@@ -10,7 +21,7 @@
           </div>
         </div>
 
-        <div class="col-12 col-lg-9">
+        <div class="col-12 col-md-9">
           <content-view :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
         </div>
       </div>
@@ -61,6 +72,7 @@ export default {
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
+          this.setDefaults();
           this.readLocalStorage();
           this.applyUrlParams();
         }.bind(this))
@@ -74,6 +86,13 @@ export default {
 
   },
   methods: {
+    setDefaults () {
+      let meditations = Work.query().where('name', 'The Meditations').first();
+      if (meditations) {
+        meditations.select();
+      }
+    },
+
     writeLocalStorage () {
       localStorage.saveSelection = JSON.stringify(this.saveSelection);
       if (this.saveSelection) {

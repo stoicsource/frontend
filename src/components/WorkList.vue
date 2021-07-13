@@ -3,7 +3,7 @@
     <div v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-3">
       {{ workAuthor.shortestName }}
 
-      <div class="accordion mt-2 d-none d-lg-block" role="tablist">
+      <div class="accordion mt-2 d-lg-block" role="tablist">
         <b-card no-body class="mb-1" v-for="work in sortedWorks(workAuthor.works)" :key="work.id">
           <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
             {{ work.name }}
