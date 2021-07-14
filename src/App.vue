@@ -2,11 +2,11 @@
   <b-overlay :show="loading">
     <div class="container-fluid">
       <div class="row">
-        <div class="d-md-none">
-          <div v-b-toggle="'mobileWorkSelection'">
-            {{ selectedWork ? selectedWork.name : 'Loading Data' }}
-            <font-awesome-icon icon="angle-down" />
-            <font-awesome-icon icon="angle-up" />
+        <div class="d-md-none bg-light" id="selector-mobile">
+          <div v-b-toggle="'mobileWorkSelection'" class="selection-overview">
+            <div class="work-name">{{ selectedWork ? selectedWork.name : 'Loading Data' }}</div>
+            <font-awesome-icon icon="angle-down"/>
+            <font-awesome-icon icon="angle-up"/>
           </div>
           <b-collapse id="mobileWorkSelection">
             <work-list></work-list>
@@ -244,5 +244,40 @@ td, th {
   height: 100vh;
   top: 0;
   overflow-y: scroll;
+}
+
+#selector-mobile {
+  width: 100vw;
+
+  .selection-overview {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75em;
+
+    &.collapsed {
+      .fa-angle-up {
+        display: none;
+      }
+    }
+
+    &.not-collapsed {
+      .fa-angle-down {
+        display: none;
+      }
+    }
+
+    .work-name {
+      font-size: 1.2em;
+    }
+
+    svg {
+      font-size: 1.4em;
+      color: #444;
+    }
+  }
+
+  #mobileWorkSelection {
+    padding: 0 0.7em;
+  }
 }
 </style>
