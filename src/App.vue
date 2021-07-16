@@ -56,6 +56,7 @@ import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
+import WorkService from "@/services/WorkService";
 
 export default {
   name: 'App',
@@ -87,9 +88,10 @@ export default {
   },
   methods: {
     setDefaults () {
-      let meditations = Work.query().where('name', 'The Meditations').first();
+      let meditations = Work.query().where('name', 'The Meditations').with('tocEntries').first();
       if (meditations) {
         meditations.select();
+        WorkService.workSelectDefaults(meditations);
       }
     },
 

@@ -15,7 +15,12 @@
         </td>
         <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
           <div class="translation-content">
-            <span v-if="index === 0" class="d-lg-none"><strong>{{ tocEntry.label }}</strong></span>
+            <div class="mobile-controls d-lg-none" v-if="index === 0">
+              <span><strong>{{ tocEntry.label }}</strong></span>
+              <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="arrow-alt-circle-up" /></a>
+              <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="times-circle" /></a>
+              <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="arrow-alt-circle-down" /></a>
+            </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
             <div v-if="getContent(tocEntry, edition) === '' && isLoading">loading...</div>
             <span v-else class="quote-translation" @click="quoteTranslation(tocEntry, edition)">quote</span>
@@ -174,6 +179,16 @@ export default {
         visibility: visible;
       }
     }
+  }
+}
+
+.mobile-controls {
+  float: left;
+  margin-right: 0.5em;
+  margin-bottom: 0.25em;
+
+  a {
+    margin-top: 0.2em;
   }
 }
 </style>

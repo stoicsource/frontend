@@ -5,7 +5,7 @@ import { BootstrapVue } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons'
+import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -14,6 +14,9 @@ import "vue-select/dist/vue-select.css";
 
 library.add(faAngleUp)
 library.add(faAngleDown)
+library.add(faArrowAltCircleDown)
+library.add(faArrowAltCircleUp)
+library.add(faTimesCircle)
 
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
