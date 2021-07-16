@@ -66,7 +66,7 @@ export default {
 
     selectWork (work) {
       if (work.id !== Work.getSelectedWork().id) {
-        console.log(work);
+        // console.log(work);
         work.select();
 
         WorkService.workSelectDefaults(work);
