@@ -72,7 +72,6 @@ export default {
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
-          this.setDefaults();
           this.readLocalStorage();
           this.applyUrlParams();
         }.bind(this))
@@ -86,22 +85,25 @@ export default {
 
   },
   methods: {
-    setDefaults () {
-      let meditations = Work.query().where('name', 'The Meditations').with('tocEntries').first();
-      if (meditations) {
-        meditations.select();
-        WorkService.workSelectDefaults(meditations);
-      }
-    },
-
     writeLocalStorage () {
-      // localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
+      //localStorage.selectedWorkId = JSON.stringify(this.selectedTranslations);
 
     },
     readLocalStorage () {
-      // if (localStorage.selectedTranslations) {
-      //   this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
-      // }
+      if (localStorage.selectedWorkId) {
+        // this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
+        let workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
+        if (workToSelect) {
+          workToSelect.select();
+          WorkService.workSelectDefaults(workToSelect);
+        }
+      } else {
+        let meditations = Work.query().where('name', 'The Meditations').with('tocEntries').first();
+        if (meditations) {
+          meditations.select();
+          WorkService.workSelectDefaults(meditations);
+        }
+      }
 
     },
     applyUrlParams () {
@@ -152,12 +154,12 @@ export default {
       if (work.id !== Work.getSelectedWork().id) {
         work.select();
         WorkService.workSelectDefaults(work);
+        localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
       }
     }
   },
   computed: {
     selectedWork () {
-      //return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
       return Work.getSelectedWork(['editions.authors', 'tocEntries.work.tocEntries']);
     },
 
@@ -170,9 +172,6 @@ export default {
     }
   },
   watch: {
-    selectedWork () {
-      this.writeLocalStorage();
-    },
     $route () {
       this.applyUrlParams();
     }
