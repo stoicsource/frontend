@@ -46,8 +46,6 @@ import _ from 'lodash'
 import Author from "@/store/models/Author";
 import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
-import WorkService from "@/services/WorkService";
-import Work from "@/store/models/Work";
 
 export default {
   components: {},
@@ -65,12 +63,7 @@ export default {
     },
 
     selectWork (work) {
-      if (work.id !== Work.getSelectedWork().id) {
-        // console.log(work);
-        work.select();
-
-        WorkService.workSelectDefaults(work);
-      }
+      this.$emit('update-selected-work', work);
     },
 
     toggleEdition (edition) {

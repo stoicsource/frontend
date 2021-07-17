@@ -14,7 +14,7 @@
         </div>
 
         <div class="col-12 col-md-3 sticky-sidebar d-none d-md-block">
-          <work-list></work-list>
+          <work-list v-on:update-selected-work="onWorkSelected"></work-list>
 
           <div class="d-none d-lg-block mt-2 text-muted">
             Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
@@ -63,8 +63,7 @@ export default {
   components: {WorkList, ContentView},
   data () {
     return {
-      loading: false,
-      saveSelection: true
+      loading: false
     }
   },
   mounted () {
@@ -96,25 +95,14 @@ export default {
     },
 
     writeLocalStorage () {
-      localStorage.saveSelection = JSON.stringify(this.saveSelection);
-      if (this.saveSelection) {
-        localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
-        localStorage.selectedSections = JSON.stringify(this.selectedSections);
-      } else {
-        localStorage.removeItem('selectedTranslations');
-        localStorage.removeItem('selectedSections');
-      }
+      // localStorage.selectedTranslations = JSON.stringify(this.selectedTranslations);
+
     },
     readLocalStorage () {
-      if (localStorage.saveSelection) {
-        this.saveSelection = JSON.parse(localStorage.saveSelection);
-      }
-      if (localStorage.selectedTranslations) {
-        this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
-      }
-      if (localStorage.selectedSections) {
-        this.selectedSections = JSON.parse(localStorage.selectedSections);
-      }
+      // if (localStorage.selectedTranslations) {
+      //   this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
+      // }
+
     },
     applyUrlParams () {
       if (this.$route.params.work) {
@@ -159,13 +147,15 @@ export default {
     },
     showAbout () {
       this.$bvModal.show('about-modal');
+    },
+    onWorkSelected (work) {
+      if (work.id !== Work.getSelectedWork().id) {
+        work.select();
+        WorkService.workSelectDefaults(work);
+      }
     }
   },
   computed: {
-    selectedTranslationMeta () {
-      return this.translationMeta.filter((meta) => this.selectedTranslations.some((translation) => translation.toLowerCase() === meta.key.toLowerCase()));
-    },
-
     selectedWork () {
       //return Work.query().where('id', this.selectedWorkId).with(['editions.authors', 'tocEntries.work.tocEntries']).first();
       return Work.getSelectedWork(['editions.authors', 'tocEntries.work.tocEntries']);
@@ -180,13 +170,7 @@ export default {
     }
   },
   watch: {
-    selectedTranslations () {
-      this.writeLocalStorage();
-    },
-    selectedSections () {
-      this.writeLocalStorage();
-    },
-    saveSelection () {
+    selectedWork () {
       this.writeLocalStorage();
     },
     $route () {
