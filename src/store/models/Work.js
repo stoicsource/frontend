@@ -10,7 +10,7 @@ export default class Work extends Model {
 
   static fields () {
     return {
-      id: this.attr(null),
+      id: this.attr(null, id => Number(id)),
       name: this.attr(''),
       url_slug: this.attr(''),
 
