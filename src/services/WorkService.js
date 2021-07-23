@@ -1,20 +1,25 @@
 import Edition from "@/store/models/Edition";
-import TocEntry from "@/store/models/TocEntry";
-import Author from "@/store/models/Author";
+import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
   workSelectDefaults (work) {
-    if (!work.hasSelectedEditions()) {
-      //let allSelectedAuthors = Author.query().has('editions', (query) => { return query.where('selected', true).count() > 0 }).all();
-      //let allSelectedAuthors = Author.query().where('hasSelectedEditions', true).all();
-      let allAuthors = Author.query().with('editions').all();
-      let allSelectedAuthors = allAuthors.filter((author) => author.hasSelectedEditions );
+    // console.log(work);
+    // let selectionInfo = store.getters['app/getSelectionInfoForWork'](work.id);
+    let selectionInfo = SelectionInfo.find(work.id);
 
-      let allSelectedAuthorIDs = allSelectedAuthors.map(author => author.id);
+    if (!selectionInfo) {
+      selectionInfo = new SelectionInfo();
+      selectionInfo.workId = work.id;
+    }
 
-      //let editionsOfSelectedAuthors = Edition.query().where('authors')
-
-      let editionsBySelectedAuthors = work.editions.filter((edition) => edition.authors.some((author) => allSelectedAuthorIDs.includes(author.id)));
+    if (selectionInfo.editions.length === 0) {
+      // console.log('creating defaults for work ' + work.name);
+      // let allAuthors = Author.query().with('editions').all();
+      // let allSelectedAuthors = allAuthors.filter((author) => author.hasSelectedEditions);
+      //
+      // let allSelectedAuthorIDs = allSelectedAuthors.map(author => author.id);
+      //
+      let editionsBySelectedAuthors = []; // work.editions.filter((edition) => edition.authors.some((author) => allSelectedAuthorIDs.includes(author.id)));
 
       if (editionsBySelectedAuthors.length > 0) {
         editionsBySelectedAuthors.forEach((edition) => {
@@ -27,24 +32,13 @@ export default {
         })
       } else {
         let latestTwo = Edition.query().where('work_id', work.id).orderBy('year', 'desc').limit(2).get();
-        latestTwo.forEach((edition) => {
-          Edition.update({
-            where: edition.id,
-            data: {
-              selected: true
-            }
-          })
-        })
-      }
-    }
 
-    if (!work.hasSelectedTocEntries()) {
-      TocEntry.update({
-        where: work.tocEntries[0].id,
-        data: {
-          selected: true
-        }
-      })
+        selectionInfo.editions = latestTwo.map(edition => edition.id);
+      }
+
+      selectionInfo.tocEntries = work.tocEntries.length > 0 ? [work.tocEntries[0].id] : [];
+
+      SelectionInfo.insert({ data: selectionInfo });
     }
   }
 }

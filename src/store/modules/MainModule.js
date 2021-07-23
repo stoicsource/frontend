@@ -1,8 +1,16 @@
 const mainModule = {
   namespaced: true,
-  state: {},
+  state: {
+    activeWork: null
+  },
+  getters: {
+  },
   actions: {},
-  mutations: {}
+  mutations: {
+    setActiveWork (state, work) {
+      state.activeWork = work
+    }
+  }
 };
 
 export default mainModule;

@@ -57,6 +57,8 @@ import ContentView from "@/components/ContentView";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
 import WorkService from "@/services/WorkService";
+import {mapMutations, mapState} from "vuex";
+import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
   name: 'App',
@@ -85,25 +87,27 @@ export default {
 
   },
   methods: {
+    ...mapMutations('app', ['setActiveWork']),
+
     writeLocalStorage () {
       //localStorage.selectedWorkId = JSON.stringify(this.selectedTranslations);
 
     },
     readLocalStorage () {
-      if (localStorage.selectedWorkId) {
-        // this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
-        let workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
-        if (workToSelect) {
-          workToSelect.select();
-          WorkService.workSelectDefaults(workToSelect);
-        }
-      } else {
-        let meditations = Work.query().where('name', 'The Meditations').with('tocEntries').first();
-        if (meditations) {
-          meditations.select();
-          WorkService.workSelectDefaults(meditations);
-        }
-      }
+      // if (localStorage.selectedWorkId) {
+      //   // this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
+      //   let workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
+      //   if (workToSelect) {
+      //     workToSelect.select();
+      //     WorkService.workSelectDefaults(workToSelect);
+      //   }
+      // } else {
+      //   let meditations = Work.query().where('name', 'The Meditations').with('tocEntries').first();
+      //   if (meditations) {
+      //     meditations.select();
+      //     WorkService.workSelectDefaults(meditations);
+      //   }
+      // }
 
     },
     applyUrlParams () {
@@ -151,24 +155,34 @@ export default {
       this.$bvModal.show('about-modal');
     },
     onWorkSelected (work) {
-      if (work.id !== Work.getSelectedWork().id) {
-        work.select();
+      if (!this.activeWork || work.id !== this.activeWork.id) {
+        this.setActiveWork(work);
         WorkService.workSelectDefaults(work);
         localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
       }
     }
   },
   computed: {
+    ...mapState('app', ['activeWork']),
+
     selectedWork () {
-      return Work.getSelectedWork(['editions.authors', 'tocEntries.work.tocEntries']);
+      return this.activeWork;
     },
 
     selectedEditionIds () {
-      return this.selectedWork ? this.selectedWork.editions.filter((edition) => edition.selected).map(edition => edition.id) : [];
+      if (this.selectedWork) {
+        let selectionInfo = SelectionInfo.find(this.selectedWork.id);
+        return selectionInfo.editions;
+      }
+      return [];
     },
 
     selectedTocEntryIds () {
-      return this.selectedWork ? this.selectedWork.tocEntries.filter((tocEntry) => tocEntry.selected).map(entry => entry.id) : [];
+      if (this.selectedWork) {
+        let selectionInfo = SelectionInfo.find(this.selectedWork.id);
+        return selectionInfo.tocEntries;
+      }
+      return [];
     }
   },
   watch: {
