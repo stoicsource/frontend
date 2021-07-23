@@ -23,8 +23,4 @@ export default class Author extends Model {
   get shortestName () {
     return this.shortName > '' ? this.shortName : this.name;
   }
-
-  get hasSelectedEditions () {
-    return this.editions.some(edition => edition.selected);
-  }
 }

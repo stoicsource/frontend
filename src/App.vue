@@ -22,7 +22,7 @@
         </div>
 
         <div class="col-12 col-md-9">
-          <content-view :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
+          <content-view v-if="selectedWork" :work-id="selectedWork.id" :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
         </div>
       </div>
 
