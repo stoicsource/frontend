@@ -11,6 +11,7 @@ import Author from "@/store/models/Author";
 import WorkAuthor from "@/store/models/WorkAuthor";
 import AuthorEdition from "@/store/models/AuthorEdition";
 import Content from "@/store/models/Content";
+import SelectionInfo from "@/store/models/SelectionInfo";
 
 VuexORM.use(VuexORMAxios, { axios })
 
@@ -25,6 +26,7 @@ database.register(Author)
 database.register(WorkAuthor)
 database.register(AuthorEdition)
 database.register(Content)
+database.register(SelectionInfo)
 
 const store = new Vuex.Store({
   plugins: [VuexORM.install(database)],
