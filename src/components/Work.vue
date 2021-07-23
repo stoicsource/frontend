@@ -87,17 +87,10 @@ export default {
     toggleTocEntry (tocEntry) {
       let entryIndex = this.selectionInfo.tocEntries.indexOf(tocEntry.id);
       if (entryIndex >= 0) {
-        this.selectionInfo.tocEntries.splice(entryIndex, 1);
+        this.selectionInfo.deselectTocEntry(tocEntry.id);
       } else {
-        this.selectionInfo.tocEntries.push(tocEntry.id);
+        this.selectionInfo.selectTocEntry(tocEntry.id);
       }
-
-      SelectionInfo.update({
-        where: this.work.id,
-        data: {
-          tocEntries: this.selectionInfo.tocEntries
-        }
-      })
     },
 
     tocGroups (tocEntries) {

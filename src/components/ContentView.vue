@@ -48,9 +48,11 @@
 import Content from "@/store/models/Content";
 import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
+import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
   props: {
+    workId: Number,
     editionIds: Array,
     tocEntryIds: Array,
   },
@@ -69,6 +71,10 @@ export default {
 
     tocEntries () {
       return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').get();
+    },
+
+    selectionInfo () {
+      return SelectionInfo.find(this.workId);
     }
   },
   methods: {
@@ -105,22 +111,22 @@ export default {
     },
 
     deselectTocEntry (tocEntry) {
-      tocEntry.setSelected(false);
+      this.selectionInfo.deselectTocEntry(tocEntry.id);
     },
 
     previousTocEntry (tocEntry) {
       let previousEntry = tocEntry.getPrevious();
       if (previousEntry) {
-        previousEntry.setSelected(true);
-        tocEntry.setSelected(false);
+        this.selectionInfo.selectTocEntry(previousEntry.id);
+        this.selectionInfo.deselectTocEntry(tocEntry.id);
       }
     },
 
     nextTocEntry (tocEntry) {
       let nextEntry = tocEntry.getNext();
       if (nextEntry) {
-        nextEntry.setSelected(true);
-        tocEntry.setSelected(false);
+        this.selectionInfo.selectTocEntry(nextEntry.id);
+        this.selectionInfo.deselectTocEntry(tocEntry.id);
       }
     },
 

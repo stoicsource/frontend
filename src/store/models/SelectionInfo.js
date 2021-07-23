@@ -13,4 +13,29 @@ export default class SelectionInfo extends Model {
       tocEntries: this.attr([])
     }
   }
+
+  selectTocEntry (tocEntryId) {
+    this.tocEntries.push(tocEntryId);
+
+    SelectionInfo.update({
+      where: this.workId,
+      data: {
+        tocEntries: this.tocEntries
+      }
+    })
+  }
+
+  deselectTocEntry (tocEntryId) {
+    let entryIndex = this.tocEntries.indexOf(tocEntryId);
+    if (entryIndex >= 0) {
+      this.tocEntries.splice(entryIndex, 1);
+
+      SelectionInfo.update({
+        where: this.workId,
+        data: {
+          tocEntries: this.tocEntries
+        }
+      })
+    }
+  }
 }
