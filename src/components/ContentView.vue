@@ -15,7 +15,7 @@
         </td>
         <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
           <div class="translation-content">
-            <div class="mobile-controls d-lg-none" v-if="index === 0">
+            <div class="mobile-controls d-lg-none bg-light" v-if="index === 0">
               <span><strong>{{ tocEntry.label }}</strong></span>
               <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
                 <font-awesome-icon icon="arrow-alt-circle-up"/>
@@ -211,12 +211,12 @@ export default {
   top: 6px;
   margin-right: 0.75em;
   margin-bottom: 0.5em;
-  background-color: #EEE;
   border-radius: 3px;
   padding: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 1px solid rgb(222, 226, 230);
 
   a {
     margin-top: 0.2em;
