@@ -89,9 +89,11 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    writeLocalStorage () {
-      //localStorage.selectedWorkId = JSON.stringify(this.selectedTranslations);
-
+    writeSelectionInfoToLocalStorage () {
+      if (!this.loading) {
+        let allInfo = SelectionInfo.all();
+        localStorage.selectionInfo = JSON.stringify(allInfo);
+      }
     },
     readLocalStorage () {
       let workToSelect = null;
@@ -102,16 +104,18 @@ export default {
       }
 
       this.setActiveWork(workToSelect);
+      this.$root.$emit('bv::toggle::collapse', 'collapseWork' + workToSelect.id);
 
-      // this.selectedTranslations = JSON.parse(localStorage.selectedTranslations);
-
+      if (localStorage.selectionInfo) {
+        SelectionInfo.create( { data: JSON.parse(localStorage.selectionInfo) })
+      }
     },
     applyUrlParams () {
       // if (this.$route.params.work) {
       //   let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
       //   if (matchingWork) {
       //     matchingWork.select();
-      //     this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id); // might be more elegant to do this via v-model
+      //     this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id);
       //   }
       // }
       // if (this.$route.params.toc && this.selectedWork) {
@@ -167,6 +171,7 @@ export default {
 
     selectedEditionIds () {
       if (this.selectedWork) {
+        this.writeSelectionInfoToLocalStorage();
         let selectionInfo = SelectionInfo.find(this.selectedWork.id);
         return selectionInfo.editions;
       }
@@ -175,6 +180,7 @@ export default {
 
     selectedTocEntryIds () {
       if (this.selectedWork) {
+        this.writeSelectionInfoToLocalStorage();
         let selectionInfo = SelectionInfo.find(this.selectedWork.id);
         return selectionInfo.tocEntries;
       }
