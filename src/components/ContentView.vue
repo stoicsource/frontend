@@ -17,14 +17,21 @@
           <div class="translation-content">
             <div class="mobile-controls d-lg-none" v-if="index === 0">
               <span><strong>{{ tocEntry.label }}</strong></span>
-              <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="arrow-alt-circle-up" /></a>
-              <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="times-circle" /></a>
-              <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button"><font-awesome-icon icon="arrow-alt-circle-down" /></a>
+              <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="arrow-alt-circle-up"/>
+              </a>
+              <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="times-circle"/>
+              </a>
+              <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="arrow-alt-circle-down"/>
+              </a>
             </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
-            <div v-if="getContent(tocEntry, edition) === '' && isLoading">loading...</div>
-            <span v-else class="quote-translation" @click="quoteTranslation(tocEntry, edition)">quote</span>
+            <p v-if="isLoading"><b-spinner  label="Loading..."></b-spinner></p>
+            <span class="quote-translation" @click="quoteTranslation(tocEntry, edition)">quote</span>
           </div>
+
         </td>
       </tr>
     </table>
@@ -104,7 +111,7 @@ export default {
 
       if (!contentItem) {
         this.loadContents();
-        return '';
+        return '...';
       } else {
         return contentItem.content;
       }
@@ -148,6 +155,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.table th, .table td {
+  &:nth-child(2) {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
+}
+
 .toc-label-cell {
   .hover-button {
     visibility: hidden;
@@ -190,8 +207,16 @@ export default {
 
 .mobile-controls {
   float: left;
-  margin-right: 0.5em;
-  margin-bottom: 0.25em;
+  position: relative;
+  top: 6px;
+  margin-right: 0.75em;
+  margin-bottom: 0.5em;
+  background-color: #EEE;
+  border-radius: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   a {
     margin-top: 0.2em;
