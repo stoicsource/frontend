@@ -1,3 +1,5 @@
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 module.exports = {
   productionSourceMap: false,
   chainWebpack: config => {
@@ -7,5 +9,9 @@ module.exports = {
         args[0].title = 'Stoic Source'
         return args
       })
+
+    config
+      .plugin('webpack-bundle-analyzer')
+      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   }
 }

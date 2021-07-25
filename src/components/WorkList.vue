@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import orderBy from 'lodash.orderby';
 import Author from "@/store/models/Author";
 import Work from "@/components/Work";
 
@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     sortedWorks (works) {
-      return _.orderBy(works, 'name');
+      return orderBy(works, 'name');
     },
 
     emitUpdate(args) {
