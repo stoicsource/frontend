@@ -102,15 +102,17 @@ export default {
       }
     },
     readLocalStorage () {
-      let workToSelect = null;
-      if (localStorage.selectedWorkId) {
-        workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
-      } else {
-        workToSelect = Work.query().where('name', 'The Meditations').with('tocEntries').first();
-      }
+      if (!this.$route.params.work) {
+        let workToSelect = null;
+        if (localStorage.selectedWorkId) {
+          workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
+        } else {
+          workToSelect = Work.query().where('name', 'The Meditations').with('tocEntries').first();
+        }
 
-      this.setActiveWork(workToSelect);
-      this.$root.$emit('bv::toggle::collapse', 'collapseWork' + workToSelect.id);
+        this.setActiveWork(workToSelect);
+        this.$root.$emit('bv::toggle::collapse', 'collapseWork' + workToSelect.id);
+      }
 
       if (localStorage.selectionInfo) {
         SelectionInfo.create( { data: JSON.parse(localStorage.selectionInfo) })
