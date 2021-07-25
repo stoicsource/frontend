@@ -4,7 +4,7 @@
       <div class="row">
         <div class="d-md-none bg-light" id="selector-mobile">
           <div v-b-toggle="'mobileWorkSelection'" class="selection-overview">
-            <div class="work-name">{{ selectedWork ? selectedWork.name : 'Loading Data' }}</div>
+            <div class="work-name">{{ selectedWork ? selectedWork.name : mobileLoadingStatus }}</div>
             <font-awesome-icon icon="angle-down"/>
             <font-awesome-icon icon="angle-up"/>
           </div>
@@ -54,8 +54,6 @@ import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
-// import TocEntry from "@/store/models/TocEntry";
-// import Edition from "@/store/models/Edition";
 import WorkService from "@/services/WorkService";
 import {mapMutations, mapState} from "vuex";
 import SelectionInfo from "@/store/models/SelectionInfo";
@@ -67,17 +65,22 @@ export default {
   components: {WorkList, ContentView},
   data () {
     return {
-      loading: false
+      loading: false,
+      mobileLoadingStatus: 'Loading Data'
     }
   },
   mounted () {
     this.loading = true;
+    this.mobileLoadingStatus = 'Initiating...';
     new Clipboard('#copy-button');
+    this.mobileLoadingStatus = 'Fetching Data...';
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
+          this.mobileLoadingStatus = 'Processing Data...';
           this.readLocalStorage();
           this.applyUrlParams();
+          this.mobileLoadingStatus = 'Setting up...';
         }.bind(this))
         .catch(function (error) {
           alert(error.message);
