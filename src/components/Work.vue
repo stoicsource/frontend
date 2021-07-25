@@ -134,7 +134,13 @@ a.toc-link {
 }
 
 .edition-collapser {
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+
   &.collapsed {
+    border-color: lightgray;
+
     .fa-angle-up {
       display: none;
     }
