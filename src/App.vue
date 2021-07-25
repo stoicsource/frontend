@@ -83,6 +83,7 @@ export default {
           this.mobileLoadingStatus = 'Setting up...';
         }.bind(this))
         .catch(function (error) {
+          console.log(error);
           alert(error.message);
         })
         .then(function () {
