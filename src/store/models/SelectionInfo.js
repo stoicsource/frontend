@@ -1,4 +1,4 @@
-import { Model } from '@vuex-orm/core'
+import {Model} from '@vuex-orm/core'
 
 export default class SelectionInfo extends Model {
   static entity = 'selectionInfo'
@@ -37,6 +37,15 @@ export default class SelectionInfo extends Model {
         }
       })
     }
+  }
+
+  replaceTocEntry (tocEntryId) {
+    SelectionInfo.update({
+      where: this.workId,
+      data: {
+        tocEntries: [tocEntryId]
+      }
+    })
   }
 
   deselectAllTocEntries () {

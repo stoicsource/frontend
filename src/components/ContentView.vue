@@ -28,7 +28,9 @@
               </a>
             </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
-            <p v-if="isLoading"><b-spinner  label="Loading..."></b-spinner></p>
+            <p v-if="isLoading">
+              <b-spinner label="Loading..."></b-spinner>
+            </p>
             <span class="quote-translation" @click="quoteTranslation(tocEntry, edition)">quote</span>
           </div>
 
@@ -124,16 +126,14 @@ export default {
     previousTocEntry (tocEntry) {
       let previousEntry = tocEntry.getPrevious();
       if (previousEntry) {
-        this.selectionInfo.selectTocEntry(previousEntry.id);
-        this.selectionInfo.deselectTocEntry(tocEntry.id);
+        this.selectionInfo.replaceTocEntry(previousEntry.id);
       }
     },
 
     nextTocEntry (tocEntry) {
       let nextEntry = tocEntry.getNext();
       if (nextEntry) {
-        this.selectionInfo.selectTocEntry(nextEntry.id);
-        this.selectionInfo.deselectTocEntry(tocEntry.id);
+        this.selectionInfo.replaceTocEntry(nextEntry.id);
       }
     },
 

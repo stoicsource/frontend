@@ -69,19 +69,21 @@ export default {
     },
 
     toggleEdition (edition) {
-      let entryIndex = this.selectionInfo.editions.indexOf(edition.id);
-      if (entryIndex >= 0 && this.selectionInfo.editions.length > 1) {
-        this.selectionInfo.editions.splice(entryIndex, 1);
-      } else {
-        this.selectionInfo.editions.push(edition.id);
-      }
-
-      SelectionInfo.update({
-        where: this.work.id,
-        data: {
-          editions: this.selectionInfo.editions
+      setTimeout(function () {
+        let entryIndex = this.selectionInfo.editions.indexOf(edition.id);
+        if (entryIndex >= 0 && this.selectionInfo.editions.length > 1) {
+          this.selectionInfo.editions.splice(entryIndex, 1);
+        } else {
+          this.selectionInfo.editions.push(edition.id);
         }
-      })
+
+        SelectionInfo.update({
+          where: this.work.id,
+          data: {
+            editions: this.selectionInfo.editions
+          }
+        })
+      }.bind(this), 1);
     },
 
     toggleTocEntry (tocEntry) {
