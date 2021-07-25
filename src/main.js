@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App.vue'
-import { BootstrapVue } from 'bootstrap-vue'
+import { CardPlugin, CollapsePlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -19,7 +19,15 @@ library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
 
 Vue.use(VueRouter)
-Vue.use(BootstrapVue)
+
+Vue.use(CardPlugin)
+Vue.use(CollapsePlugin)
+Vue.use(OverlayPlugin)
+Vue.use(FormCheckboxPlugin)
+Vue.use(SpinnerPlugin)
+Vue.use(ModalPlugin)
+Vue.use(ButtonPlugin)
+
 Vue.component("v-select", vSelect);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
