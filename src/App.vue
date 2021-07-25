@@ -59,6 +59,8 @@ import ContentView from "@/components/ContentView";
 import WorkService from "@/services/WorkService";
 import {mapMutations, mapState} from "vuex";
 import SelectionInfo from "@/store/models/SelectionInfo";
+import TocEntry from "@/store/models/TocEntry";
+import Edition from "@/store/models/Edition";
 
 export default {
   name: 'App',
@@ -111,45 +113,49 @@ export default {
       }
     },
     applyUrlParams () {
-      // if (this.$route.params.work) {
-      //   let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
-      //   if (matchingWork) {
-      //     matchingWork.select();
-      //     this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id);
-      //   }
-      // }
-      // if (this.$route.params.toc && this.selectedWork) {
-      //   let tocLabels = this.$route.params.toc.split(',');
-      //
-      //   tocLabels.forEach((tocLabel) => {
-      //     let tocEntry = TocEntry.query().where('label', tocLabel).first();
-      //
-      //     if (tocEntry) {
-      //       TocEntry.update({
-      //         where: tocEntry.id,
-      //         data: {
-      //           selected: true
-      //         }
-      //       });
-      //     }
-      //   });
-      // }
-      // if (this.$route.params.translator) {
-      //   let author_slugs = this.$route.params.translator.split(',');
-      //
-      //   author_slugs.forEach((slug) => {
-      //     this.selectedWork.editions.forEach((edition) => {
-      //       if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
-      //         Edition.update({
-      //           where: edition.id,
-      //           data: {
-      //             selected: true
-      //           }
-      //         });
-      //       }
-      //     });
-      //   });
-      // }
+      if (this.$route.params.work) {
+        let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
+        if (matchingWork) {
+          this.setActiveWork(matchingWork);
+          this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id);
+        }
+      }
+
+      if (this.$route.params.toc && this.selectedWork) {
+        let selectionInfo = SelectionInfo.find(this.selectedWork.id);
+        if (!selectionInfo) {
+          selectionInfo = new SelectionInfo();
+          selectionInfo.workId = this.selectedWork.id;
+        }
+
+        selectionInfo.tocEntries = [];
+        selectionInfo.deselectAllTocEntries();
+        let tocLabels = this.$route.params.toc.split(',');
+        tocLabels.forEach((tocLabel) => {
+          let tocEntry = TocEntry.query().where('label', tocLabel).where('work_id', this.selectedWork.id).first();
+
+          if (tocEntry) {
+            selectionInfo.selectTocEntry(tocEntry.id);
+          }
+        });
+
+        if (this.$route.params.translator) {
+          let author_slugs = this.$route.params.translator.split(',');
+
+          selectionInfo.editions = [];
+          selectionInfo.deselectAllEditions();
+          let editions = Edition.query().where('work_id', this.selectedWork.id).with('authors').all();
+          author_slugs.forEach((slug) => {
+            editions.forEach((edition) => {
+              if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
+                selectionInfo.selectEdition(edition.id);
+              }
+            });
+          });
+        }
+
+        SelectionInfo.insert({ data: selectionInfo });
+      }
     },
     showAbout () {
       this.$bvModal.show('about-modal');
