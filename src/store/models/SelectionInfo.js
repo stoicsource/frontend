@@ -38,4 +38,47 @@ export default class SelectionInfo extends Model {
       })
     }
   }
+
+  deselectAllTocEntries () {
+    SelectionInfo.update({
+      where: this.workId,
+      data: {
+        tocEntries: []
+      }
+    })
+  }
+
+  selectEdition (editionId) {
+    this.editions.push(editionId);
+
+    SelectionInfo.update({
+      where: this.workId,
+      data: {
+        editions: this.editions
+      }
+    })
+  }
+
+  deselectEdition (editionId) {
+    let entryIndex = this.editions.indexOf(editionId);
+    if (entryIndex >= 0) {
+      this.editions.splice(entryIndex, 1);
+
+      SelectionInfo.update({
+        where: this.workId,
+        data: {
+          editions: this.editions
+        }
+      })
+    }
+  }
+
+  deselectAllEditions () {
+    SelectionInfo.update({
+      where: this.workId,
+      data: {
+        editions: []
+      }
+    })
+  }
 }
