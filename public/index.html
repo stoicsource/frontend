@@ -7,11 +7,6 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
-    <script type="text/javascript">
-      window.stoicsource = window.stoicsource || {};
-      window.stoicsource.settings = window.stoicsource.settings || {};
-      window.stoicsource.settings.apiUrl = "<%= (NODE_ENV == 'development' ? 'http://localhost:8080/meditations.json' : 'https://www.stoicsource.com/meditations.json') %>";
-    </script>
 
     <!-- Matomo -->
     <script type="text/javascript">
