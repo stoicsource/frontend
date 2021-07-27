@@ -185,7 +185,7 @@ export default {
       if (this.selectedWork) {
         this.writeSelectionInfoToLocalStorage();
         let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-        return selectionInfo.editions;
+        return selectionInfo ? selectionInfo.editions: [];
       }
       return [];
     },
@@ -194,7 +194,7 @@ export default {
       if (this.selectedWork) {
         this.writeSelectionInfoToLocalStorage();
         let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-        return selectionInfo.tocEntries;
+        return selectionInfo ? selectionInfo.tocEntries : [];
       }
       return [];
     }
