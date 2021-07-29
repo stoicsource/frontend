@@ -1,11 +1,21 @@
 <template>
   <b-overlay :show="loading">
-    <router-view></router-view>
+    <b-navbar toggleable="lg" type="dark" variant="primary" sticky class="modified-nav">
+      <b-navbar-brand v-if="selectedWork">
+        <span>{{ selectedWork.name }}</span><br>
+        <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
+      </b-navbar-brand>
+
+      <!-- Right aligned nav items -->
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item @click="showWorkSelect">Switch</b-nav-item>
+      </b-navbar-nav>
+
+    </b-navbar>
+
     <div class="container-fluid">
       <div class="row">
         <div class="col-12 col-md-3 sticky-sidebar">
-          <b-button variant="primary" @click="showWorkSelect" class="w-100 mt-2 mb-2">Select Work</b-button>
-
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
           <div class="d-none d-lg-block mt-2 text-muted">
@@ -18,8 +28,13 @@
         </div>
       </div>
 
-      <b-modal id="workselect-modal" title="Select Work" ok-disabled>
+      <b-modal id="workselect-modal" title="Select Work">
         <work-select v-on:work-selected="onWorkSelected"></work-select>
+        <template #modal-footer="{ cancel }">
+          <b-button size="sm" @click="cancel()">
+            Cancel
+          </b-button>
+        </template>
       </b-modal>
 
       <b-modal id="about-modal" title="About" cancel-disabled>
@@ -112,9 +127,9 @@ export default {
       } else {
         let workToSelect = null;
         if (localStorage.selectedWorkId) {
-          workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
+          workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with(['tocEntries', 'authors']).first();
         } else {
-          workToSelect = Work.query().where('name', 'The Meditations').with('tocEntries').first();
+          workToSelect = Work.query().where('name', 'The Meditations').with(['tocEntries', 'authors']).first();
         }
 
         promise = this.loadAndActivateWork(workToSelect);
@@ -240,8 +255,6 @@ export default {
 </script>
 
 <style lang="scss">
-$primary-color: #0B54A1;
-
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -272,8 +285,21 @@ td, th {
   }
 }
 
-.btn.btn-primary {
-  background-color: $primary-color;
-  border-color: $primary-color;
+.navbar.modified-nav.navbar-dark {
+  padding-bottom: 0;
+
+  .navbar-brand {
+    padding-top: 0;
+
+    .nav-author-name {
+      position: relative;
+      top: -7px;
+      font-size: 0.7em;
+    }
+  }
+
+  .nav-link {
+    color: rgba(255, 255, 255, 1);
+  }
 }
 </style>

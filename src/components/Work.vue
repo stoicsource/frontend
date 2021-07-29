@@ -3,8 +3,7 @@
   <div class="work">
     <b-card no-body>
       <b-card-header header-tag="header" class="p-1">
-        <strong>{{ work.name }}</strong><br>
-        <small>{{ work.authorsFormatted }}</small>
+        Editions and TOC
       </b-card-header>
       <b-card-body>
         <b-card-text class="">
