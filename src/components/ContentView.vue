@@ -3,7 +3,7 @@
     <table class="table">
       <tr>
         <th class="d-none d-lg-table-cell"></th>
-        <th v-for="edition in editions" :key="edition.id">{{ edition.authorsFormatted }} ({{ edition.year }})</th>
+        <th v-for="edition in editions" :key="edition.id">{{ edition.authorsFormatted }} <span class="d-none d-md-inline">({{ edition.year }})</span></th>
       </tr>
 
       <tr v-for="tocEntry in tocEntries" :key="tocEntry.id">
@@ -156,6 +156,7 @@ export default {
 
 <style lang="scss" scoped>
 .table th, .table td {
+
   &:nth-child(2) {
     padding-left: 0;
   }
@@ -163,6 +164,10 @@ export default {
   &:last-child {
     padding-right: 0;
   }
+}
+
+.table th {
+  font-weight: 500;
 }
 
 .toc-label-cell {
