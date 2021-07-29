@@ -62,25 +62,26 @@ export default {
   components: {WorkSelect, ContentView, WorkComponent},
   data () {
     return {
-      loading: false,
-      mobileLoadingStatus: 'Loading Data'
+      loading: false
     }
   },
   mounted () {
     this.loading = true;
-    this.mobileLoadingStatus = 'Initiating...';
     new Clipboard('#copy-button');
-    this.mobileLoadingStatus = 'Fetching Data...';
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
-          this.mobileLoadingStatus = 'Processing Data...';
-          this.readLocalStorage();
-          this.applyUrlParams();
-          this.mobileLoadingStatus = 'Setting up...';
-          if (!this.selectedWork) {
-            this.showWorkSelect();
-          }
+          // this.determineInitialWorkSelection();
+          // this.initSelection();
+          // if (!this.selectedWork) {
+          //   this.showWorkSelect();
+          // }
+
+          Promise.all([this.determineInitialWorkSelection(), this.initSelection()]).then(function () {
+            if (!this.selectedWork) {
+              this.showWorkSelect();
+            }
+          }.bind(this));
         }.bind(this))
         .catch(function (error) {
           console.log(error);
@@ -101,8 +102,14 @@ export default {
         localStorage.selectionInfo = JSON.stringify(allInfo);
       }
     },
-    readLocalStorage () {
-      if (!this.$route.params.work) {
+    determineInitialWorkSelection () {
+      let promise = Promise.resolve();
+      if (this.$route.params.work) {
+        let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
+        if (matchingWork) {
+          promise = this.loadAndActivateWork(matchingWork);
+        }
+      } else {
         let workToSelect = null;
         if (localStorage.selectedWorkId) {
           workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with('tocEntries').first();
@@ -110,58 +117,55 @@ export default {
           workToSelect = Work.query().where('name', 'The Meditations').with('tocEntries').first();
         }
 
-        this.setActiveWork(workToSelect);
-        this.$root.$emit('bv::toggle::collapse', 'collapseWork' + workToSelect.id);
+        promise = this.loadAndActivateWork(workToSelect);
       }
-
-      if (localStorage.selectionInfo) {
-        SelectionInfo.create( { data: JSON.parse(localStorage.selectionInfo) })
-      }
+      return promise;
     },
-    applyUrlParams () {
-      if (this.$route.params.work) {
-        let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
-        if (matchingWork) {
-          this.setActiveWork(matchingWork);
-          this.$root.$emit('bv::toggle::collapse', 'collapseWork' + matchingWork.id);
-        }
+    initSelection () {
+      let promise = Promise.resolve();
+      if (localStorage.selectionInfo) {
+        promise = SelectionInfo.create({data: JSON.parse(localStorage.selectionInfo)})
       }
 
-      if (this.$route.params.toc && this.selectedWork) {
-        let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-        if (!selectionInfo) {
-          selectionInfo = new SelectionInfo();
-          selectionInfo.workId = this.selectedWork.id;
-        }
-
-        selectionInfo.tocEntries = [];
-        selectionInfo.deselectAllTocEntries();
-        let tocLabels = this.$route.params.toc.split(',');
-        tocLabels.forEach((tocLabel) => {
-          let tocEntry = TocEntry.query().where('label', tocLabel).where('work_id', this.selectedWork.id).first();
-
-          if (tocEntry) {
-            selectionInfo.selectTocEntry(tocEntry.id);
+      promise.then(function () {
+        if (this.$route.params.toc && this.selectedWork) {
+          let selectionInfo = SelectionInfo.find(this.selectedWork.id);
+          if (!selectionInfo) {
+            selectionInfo = new SelectionInfo();
+            selectionInfo.workId = this.selectedWork.id;
           }
-        });
 
-        if (this.$route.params.translator) {
-          let author_slugs = this.$route.params.translator.split(',');
+          selectionInfo.tocEntries = [];
+          selectionInfo.deselectAllTocEntries();
+          let tocLabels = this.$route.params.toc.split(',');
+          tocLabels.forEach((tocLabel) => {
+            let tocEntry = TocEntry.query().where('label', tocLabel).where('work_id', this.selectedWork.id).first();
 
-          selectionInfo.editions = [];
-          selectionInfo.deselectAllEditions();
-          let editions = Edition.query().where('work_id', this.selectedWork.id).with('authors').all();
-          author_slugs.forEach((slug) => {
-            editions.forEach((edition) => {
-              if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
-                selectionInfo.selectEdition(edition.id);
-              }
-            });
+            if (tocEntry) {
+              selectionInfo.selectTocEntry(tocEntry.id);
+            }
           });
-        }
 
-        SelectionInfo.insert({ data: selectionInfo });
-      }
+          if (this.$route.params.translator) {
+            let author_slugs = this.$route.params.translator.split(',');
+
+            selectionInfo.editions = [];
+            selectionInfo.deselectAllEditions();
+            let editions = Edition.query().where('work_id', this.selectedWork.id).with('authors').all();
+            author_slugs.forEach((slug) => {
+              editions.forEach((edition) => {
+                if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
+                  selectionInfo.selectEdition(edition.id);
+                }
+              });
+            });
+          }
+
+          SelectionInfo.insert({data: selectionInfo});
+        }
+      }.bind(this));
+
+      return promise;
     },
     showAbout () {
       this.$bvModal.show('about-modal');
@@ -169,22 +173,34 @@ export default {
     showWorkSelect () {
       this.$bvModal.show('workselect-modal');
     },
+    loadAndActivateWork (work) {
+      this.loading = true;
+
+      let hasEditions = Edition.query().where('work_id', work.id).exists();
+      let hasToc = TocEntry.query().where('work_id', work.id).exists();
+      let promise = Promise.resolve(true);
+      if (!hasEditions || !hasToc) {
+        promise = Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
+      }
+
+      promise.then(function () {
+        this.setActiveWork(work);
+        WorkService.workSelectDefaults(work);
+        localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
+      }.bind(this))
+          .catch(function (error) {
+            console.log(error);
+            alert(error.message);
+          })
+          .then(function () {
+            this.loading = false;
+          }.bind(this));
+
+      return promise;
+    },
     onWorkSelected (work) {
       if (!this.activeWork || work.id !== this.activeWork.id) {
-        this.loading = true;
-        Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
-            .then(function () {
-              this.setActiveWork(work);
-              WorkService.workSelectDefaults(work);
-              localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
-            }.bind(this))
-            .catch(function (error) {
-              console.log(error);
-              alert(error.message);
-            })
-            .then(function () {
-              this.loading = false;
-            }.bind(this));
+        this.loadAndActivateWork(work);
       }
       this.$bvModal.hide('workselect-modal');
     }
@@ -200,7 +216,7 @@ export default {
       if (this.selectedWork) {
         this.writeSelectionInfoToLocalStorage();
         let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-        return selectionInfo ? selectionInfo.editions: [];
+        return selectionInfo ? selectionInfo.editions : [];
       }
       return [];
     },
