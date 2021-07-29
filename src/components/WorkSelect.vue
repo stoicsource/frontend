@@ -40,6 +40,10 @@ export default {
 
 <style lang="scss" scoped>
 
+.work-list {
+  margin-top: -1em;
+}
+
 .author-name {
   color: #666;
 }
