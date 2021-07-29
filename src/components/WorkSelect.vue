@@ -2,7 +2,7 @@
   <div class="work-list">
     <div v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-3">
       <div class="author-name">{{ workAuthor.shortestName }}</div>
-      <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" @click="selectWork(work)">
+      <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" @click="selectWork(work)" variant="outline-primary">
         {{ work.name }}
       </b-button>
     </div>
