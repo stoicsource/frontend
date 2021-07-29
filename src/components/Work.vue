@@ -9,14 +9,16 @@
       <b-card-body>
         <b-card-text class="">
           <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
-            <span v-for="(edition, index) in selectedEditions" :key="edition.id">
-              <span v-if="index !== 0">, </span>
-              <span>{{ edition.authorsShortnames }} ({{ edition.year }})</span>
-            </span>
+            <div>
+              <span v-for="(edition, index) in selectedEditions" :key="edition.id">
+                <span v-if="index !== 0">, </span>
+                <span>{{ edition.authorsShortnames }} ({{ edition.year }})</span>
+              </span>
+            </div>
             <font-awesome-icon icon="angle-down"/>
             <font-awesome-icon icon="angle-up"/>
           </div>
-          <b-collapse :id="'collapseWorkEditions' + work.id">
+          <b-collapse :id="'collapseWorkEditions' + work.id" class="edition-list">
             <div v-for="edition in work.editions" :key="edition.id">
               <b-form-checkbox :checked="isEditionSelected(edition)" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
                 {{ edition.authorsFormatted }} ({{ edition.year }})
@@ -137,6 +139,8 @@ a.toc-link {
   padding: 3px 6px;
   border: 1px solid transparent;
   border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
 
   &.collapsed {
     border-color: lightgray;
@@ -151,6 +155,10 @@ a.toc-link {
       display: none;
     }
   }
+}
+
+.edition-list {
+  padding-left: 0.5em;
 }
 
 .author-name {
