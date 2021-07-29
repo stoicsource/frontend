@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { CardPlugin, CollapsePlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin } from 'bootstrap-vue'
+import { CardPlugin, NavbarPlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
@@ -8,9 +8,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
 import "vue-select/dist/vue-select.css";
+
+import "./sass/app.scss"
 
 library.add(faAngleUp)
 library.add(faAngleDown)
@@ -19,7 +19,7 @@ library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
 
 Vue.use(CardPlugin)
-Vue.use(CollapsePlugin)
+Vue.use(NavbarPlugin)
 Vue.use(OverlayPlugin)
 Vue.use(FormCheckboxPlugin)
 Vue.use(SpinnerPlugin)
