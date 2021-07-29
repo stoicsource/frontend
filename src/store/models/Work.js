@@ -21,6 +21,6 @@ export default class Work extends Model {
   }
 
   get authorsFormatted () {
-    return this.authors.map((author) => author.name ).join(',');
+    return this.authors.map((author) => author.shortName ).join(',');
   }
 }

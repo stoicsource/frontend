@@ -185,7 +185,8 @@ export default {
 
       promise.then(function () {
         this.setActiveWork(work);
-        WorkService.workSelectDefaults(work);
+        let workWithRelations = Work.query().where('id', work.id).with(['tocEntries', 'editions']).first();
+        WorkService.workSelectDefaults(workWithRelations);
         localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
       }.bind(this))
           .catch(function (error) {
