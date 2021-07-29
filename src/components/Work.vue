@@ -3,15 +3,16 @@
   <div class="work">
     <b-card no-body>
       <b-card-header header-tag="header" class="p-1">
-        {{ work.name }}
+        <strong>{{ work.name }}</strong><br>
+        <small>{{ work.authorsFormatted }}</small>
       </b-card-header>
       <b-card-body>
         <b-card-text class="">
           <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
-                  <span v-for="(edition, index) in selectedEditions" :key="edition.id">
-                      <span v-if="index !== 0">, </span>
-                      {{ edition.authorsShortnames }} ({{ edition.year }})
-                    </span>
+            <span v-for="(edition, index) in selectedEditions" :key="edition.id">
+              <span v-if="index !== 0">, </span>
+              <span>{{ edition.authorsShortnames }} ({{ edition.year }})</span>
+            </span>
             <font-awesome-icon icon="angle-down"/>
             <font-awesome-icon icon="angle-up"/>
           </div>
@@ -49,7 +50,7 @@ export default {
   },
   computed: {
     work () {
-      return Work.query().whereId(this.workId).with(['tocEntries', 'editions.authors']).first();
+      return Work.query().whereId(this.workId).with(['tocEntries', 'editions.authors', 'authors']).first();
     },
 
     selectionInfo () {
