@@ -282,8 +282,8 @@ td, th {
 .col-12.sticky-sidebar {
   @media (min-width: 768px) {
     position: sticky;
-    height: 90vh;
-    top: 0;
+    height: calc(100vh - 90px);
+    top: 80px;
     overflow-y: scroll;
   }
 }
