@@ -1,20 +1,12 @@
 <template>
   <b-overlay :show="loading">
+    <router-view></router-view>
     <div class="container-fluid">
       <div class="row">
-        <div class="d-md-none bg-light" id="selector-mobile">
-          <div v-b-toggle="'mobileWorkSelection'" class="selection-overview">
-            <div class="work-name">{{ selectedWork ? selectedWork.name : mobileLoadingStatus }}</div>
-            <font-awesome-icon icon="angle-down"/>
-            <font-awesome-icon icon="angle-up"/>
-          </div>
-          <b-collapse id="mobileWorkSelection">
-            <work-list></work-list>
-          </b-collapse>
-        </div>
-
         <div class="col-12 col-md-3 sticky-sidebar d-none d-md-block">
-          <work-list v-on:update-selected-work="onWorkSelected"></work-list>
+          <b-button variant="primary" @click="showWorkSelect">Select Work</b-button>
+
+          <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
           <div class="d-none d-lg-block mt-2 text-muted">
             Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
@@ -25,6 +17,10 @@
           <content-view v-if="selectedWork" :work-id="selectedWork.id" :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
         </div>
       </div>
+
+      <b-modal id="workselect-modal" title="Select Work" ok-disabled>
+        <work-select v-on:work-selected="onWorkSelected"></work-select>
+      </b-modal>
 
       <b-modal id="about-modal" title="About" cancel-disabled>
         <p class="text-center">
@@ -52,17 +48,18 @@
 <script>
 import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
-import WorkList from "@/components/WorkList";
 import ContentView from "@/components/ContentView";
 import WorkService from "@/services/WorkService";
 import {mapMutations, mapState} from "vuex";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
+import WorkSelect from "@/components/WorkSelect";
+import WorkComponent from "@/components/Work";
 
 export default {
   name: 'App',
-  components: {WorkList, ContentView},
+  components: {WorkSelect, ContentView, WorkComponent},
   data () {
     return {
       loading: false,
@@ -81,6 +78,9 @@ export default {
           this.readLocalStorage();
           this.applyUrlParams();
           this.mobileLoadingStatus = 'Setting up...';
+          if (!this.selectedWork) {
+            this.showWorkSelect();
+          }
         }.bind(this))
         .catch(function (error) {
           console.log(error);
@@ -166,12 +166,27 @@ export default {
     showAbout () {
       this.$bvModal.show('about-modal');
     },
+    showWorkSelect () {
+      this.$bvModal.show('workselect-modal');
+    },
     onWorkSelected (work) {
       if (!this.activeWork || work.id !== this.activeWork.id) {
-        this.setActiveWork(work);
-        WorkService.workSelectDefaults(work);
-        localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
+        this.loading = true;
+        Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
+            .then(function () {
+              this.setActiveWork(work);
+              WorkService.workSelectDefaults(work);
+              localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
+            }.bind(this))
+            .catch(function (error) {
+              console.log(error);
+              alert(error.message);
+            })
+            .then(function () {
+              this.loading = false;
+            }.bind(this));
       }
+      this.$bvModal.hide('workselect-modal');
     }
   },
   computed: {
