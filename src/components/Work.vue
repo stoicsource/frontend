@@ -2,37 +2,33 @@
 
   <div class="work">
     <b-card no-body>
-      <b-card-header header-tag="header" class="p-1" role="tab" v-b-toggle="'collapseWork' + work.id">
+      <b-card-header header-tag="header" class="p-1">
         {{ work.name }}
       </b-card-header>
-      <b-collapse :id="'collapseWork' + work.id" accordion="work-accordion" role="tabpanel" @shown="selectWork(work)">
-        <b-overlay :show="selectedEditions.length === 0">
-          <b-card-body>
-            <b-card-text class="">
-              <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
+      <b-card-body>
+        <b-card-text class="">
+          <div v-b-toggle="'collapseWorkEditions' + work.id" class="edition-collapser">
                   <span v-for="(edition, index) in selectedEditions" :key="edition.id">
                       <span v-if="index !== 0">, </span>
                       {{ edition.authorsShortnames }} ({{ edition.year }})
                     </span>
-                <font-awesome-icon icon="angle-down"/>
-                <font-awesome-icon icon="angle-up"/>
-              </div>
-              <b-collapse :id="'collapseWorkEditions' + work.id">
-                <div v-for="edition in work.editions" :key="edition.id">
-                  <b-form-checkbox :checked="isEditionSelected(edition)" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
-                    {{ edition.authorsFormatted }} ({{ edition.year }})
-                  </b-form-checkbox>
-                </div>
-              </b-collapse>
-            </b-card-text>
-            <b-card-text class="">
-              <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
-                <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
-              </div>
-            </b-card-text>
-          </b-card-body>
-        </b-overlay>
-      </b-collapse>
+            <font-awesome-icon icon="angle-down"/>
+            <font-awesome-icon icon="angle-up"/>
+          </div>
+          <b-collapse :id="'collapseWorkEditions' + work.id">
+            <div v-for="edition in work.editions" :key="edition.id">
+              <b-form-checkbox :checked="isEditionSelected(edition)" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
+                {{ edition.authorsFormatted }} ({{ edition.year }})
+              </b-form-checkbox>
+            </div>
+          </b-collapse>
+        </b-card-text>
+        <b-card-text class="">
+          <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+            <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+          </div>
+        </b-card-text>
+      </b-card-body>
     </b-card>
   </div>
 </template>
@@ -43,6 +39,7 @@ import Work from "@/store/models/Work";
 import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
+  name: 'work',
   components: {},
   props: {
     workId: Number

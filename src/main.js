@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import App from './App.vue'
 import { CardPlugin, CollapsePlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
+import router from "@/router/router";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -18,8 +18,6 @@ library.add(faArrowAltCircleDown)
 library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
 
-Vue.use(VueRouter)
-
 Vue.use(CardPlugin)
 Vue.use(CollapsePlugin)
 Vue.use(OverlayPlugin)
@@ -32,26 +30,6 @@ Vue.component("v-select", vSelect);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
-
-
-const routes = [
-  { path: '/:work', component: App },
-  { path: '/:work/:toc', component: App },
-  { path: '/:work/:toc/:translator', component: App }
-
-  /*
-  {
-      path: '/:catchAll(.*)',
-      component: NotFoundComponent,
-      name: 'NotFound'
-    }
-   */
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  routes
-})
 
 new Vue({
   store,
