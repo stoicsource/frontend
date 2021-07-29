@@ -12,7 +12,7 @@ export default {
       selectionInfo.workId = work.id;
     }
 
-    if (selectionInfo.editions.length === 0) {
+    if (selectionInfo.editions.length === 0 || selectionInfo.tocEntries.length === 0) {
       // console.log('creating defaults for work ' + work.name);
       // let allAuthors = Author.query().with('editions').all();
       // let allSelectedAuthors = allAuthors.filter((author) => author.hasSelectedEditions);
