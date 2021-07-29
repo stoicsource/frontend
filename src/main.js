@@ -5,7 +5,7 @@ import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBookOpen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import "vue-select/dist/vue-select.css";
@@ -17,6 +17,7 @@ library.add(faAngleDown)
 library.add(faArrowAltCircleDown)
 library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
+library.add(faBookOpen)
 
 Vue.use(CardPlugin)
 Vue.use(NavbarPlugin)

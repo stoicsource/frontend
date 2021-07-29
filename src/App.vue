@@ -8,14 +8,17 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <b-nav-item @click="showWorkSelect">Switch</b-nav-item>
+        <b-nav-item @click="showWorkSelect" class="nav-work-selector">
+          <font-awesome-icon icon="book-open" />
+          <span class="d-none d-md-inline">Switch to different Work</span>
+        </b-nav-item>
       </b-navbar-nav>
 
     </b-navbar>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 col-md-3 sticky-sidebar">
+        <div class="col-12 col-md-3 sticky-sidebar pt-2">
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
           <div class="d-none d-lg-block mt-2 text-muted">
@@ -279,7 +282,7 @@ td, th {
 .col-12.sticky-sidebar {
   @media (min-width: 768px) {
     position: sticky;
-    height: 100vh;
+    height: 90vh;
     top: 0;
     overflow-y: scroll;
   }
@@ -300,6 +303,25 @@ td, th {
 
   .nav-link {
     color: rgba(255, 255, 255, 1);
+  }
+
+  .nav-work-selector {
+    font-size: 2em;
+    color: white;
+    position: relative;
+    top: -3px;
+    left: -8px;
+    border-left: 1px solid lightgray;
+    padding-left: 0.8em;
+
+    @media (min-width: 768px) {
+      font-size: 1.2em;
+      border: none;
+
+      svg {
+        margin-right: 0.5em;
+      }
+    }
   }
 }
 </style>
