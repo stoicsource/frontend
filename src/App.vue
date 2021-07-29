@@ -89,16 +89,12 @@ export default {
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         .then(function () {
-          // this.determineInitialWorkSelection();
-          // this.initSelection();
-          // if (!this.selectedWork) {
-          //   this.showWorkSelect();
-          // }
-
-          Promise.all([this.determineInitialWorkSelection(), this.initSelection()]).then(function () {
-            if (!this.selectedWork) {
-              this.showWorkSelect();
-            }
+          this.determineInitialWorkSelection().then(function () {
+            this.initSelection().then(function () {
+              if (!this.selectedWork) {
+                this.showWorkSelect();
+              }
+            }.bind(this))
           }.bind(this));
         }.bind(this))
         .catch(function (error) {
