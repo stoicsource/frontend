@@ -223,6 +223,8 @@ export default {
 </script>
 
 <style lang="scss">
+$primary-color: #0B54A1;
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -235,29 +237,6 @@ td, th {
   text-align: left;
   vertical-align: top;
   padding-bottom: 1em;
-}
-
-.book-chapters {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-
-  .book-chapter {
-    margin-right: 1em;
-  }
-}
-
-.hint-text {
-  font-size: 0.8em;
-  color: #555;
-}
-
-.subtle-switch {
-  .custom-control-input:checked ~ .custom-control-label::before {
-    color: #444;
-    border-color: lightgray;
-    background-color: lightgray;
-  }
 }
 
 .text-muted {
@@ -274,38 +253,8 @@ td, th {
   overflow-y: scroll;
 }
 
-#selector-mobile {
-  width: 100vw;
-
-  .selection-overview {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.75em;
-
-    &.collapsed {
-      .fa-angle-up {
-        display: none;
-      }
-    }
-
-    &.not-collapsed {
-      .fa-angle-down {
-        display: none;
-      }
-    }
-
-    .work-name {
-      font-size: 1.2em;
-    }
-
-    svg {
-      font-size: 1.4em;
-      color: #444;
-    }
-  }
-
-  #mobileWorkSelection {
-    padding: 0 0.7em;
-  }
+.btn.btn-primary {
+  background-color: $primary-color;
+  border-color: $primary-color;
 }
 </style>
