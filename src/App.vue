@@ -3,7 +3,7 @@
     <router-view></router-view>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 col-md-3 sticky-sidebar d-none d-md-block">
+        <div class="col-12 col-md-3 sticky-sidebar">
           <b-button variant="primary" @click="showWorkSelect" class="w-100 mt-2 mb-2">Select Work</b-button>
 
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
@@ -264,10 +264,12 @@ td, th {
 }
 
 .col-12.sticky-sidebar {
-  position: sticky;
-  height: 100vh;
-  top: 0;
-  overflow-y: scroll;
+  @media (min-width: 768px) {
+    position: sticky;
+    height: 100vh;
+    top: 0;
+    overflow-y: scroll;
+  }
 }
 
 .btn.btn-primary {

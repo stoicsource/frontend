@@ -142,6 +142,12 @@ a.toc-link {
   display: flex;
   justify-content: space-between;
 
+  svg {
+    position: relative;
+    top: 4px;
+    right: 2px;
+  }
+
   &.collapsed {
     border-color: lightgray;
 
