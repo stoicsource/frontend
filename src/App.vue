@@ -18,10 +18,10 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 col-md-3 sticky-sidebar pt-2">
+        <div class="col-12 col-md-3 sticky-sidebar pt-3">
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
-          <div class="d-none d-lg-block mt-2 text-muted">
+          <div class="d-none d-lg-block mt-2 text-muted text-center">
             Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
           </div>
         </div>
