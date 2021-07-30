@@ -1,7 +1,7 @@
 <template>
   <div>
     <table class="table">
-      <tr>
+      <tr :class="{ 'd-none d-lg-table-row' : editions.length === 1 }">
         <th class="d-none d-lg-table-cell"></th>
         <th v-for="edition in editions" :key="edition.id">{{ edition.authorsFormatted }} <span class="d-none d-md-inline">({{ edition.year }})</span></th>
       </tr>

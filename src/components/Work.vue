@@ -4,7 +4,7 @@
       <div>
           <span v-for="(edition, index) in selectedEditions" :key="edition.id">
             <span v-if="index !== 0">, </span>
-            <span>{{ edition.authorsShortnames }} ({{ edition.year }})</span>
+            <span>{{ selectedEditions.length > 1 ? edition.authorsShortnames : edition.authorsFormatted }} ({{ edition.year }})</span>
           </span>
       </div>
       <font-awesome-icon icon="angle-down"/>
