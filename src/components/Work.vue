@@ -19,8 +19,19 @@
       </div>
       <b-card-text class="mt-3">
         <div><strong>Table of Contents</strong></div>
-        <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
-          <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+        <div v-if="work.tocEntries.length < 100">
+          <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+            <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+          </div>
+        </div>
+        <div v-else class="mb-4">
+          <b-tabs pills>
+            <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
+              <div class="mt-2">
+                <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="toggleTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+              </div>
+            </b-tab>
+          </b-tabs>
         </div>
       </b-card-text>
     </b-collapse>
@@ -122,8 +133,9 @@ export default {
 <style lang="scss" scoped>
 a.toc-link {
   display: inline-block;
-  margin-left: 0.3em;
+  margin-left: 0.5em;
   text-decoration: underline;
+  color: #222;
 
   &.selected {
     font-weight: bold;
@@ -158,11 +170,8 @@ a.toc-link {
   }
 }
 
-.edition-list {
-  padding-left: 0.5em;
-}
-
 .author-name {
   color: #666;
 }
+
 </style>
