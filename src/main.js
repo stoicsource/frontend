@@ -4,8 +4,10 @@ import { CardPlugin, NavbarPlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlu
 import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
+
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBookOpen } from '@fortawesome/free-solid-svg-icons'
+// https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free
+import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import "vue-select/dist/vue-select.css";
@@ -17,7 +19,7 @@ library.add(faAngleDown)
 library.add(faArrowAltCircleDown)
 library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
-library.add(faBookOpen)
+library.add(faBars)
 
 Vue.use(CardPlugin)
 Vue.use(NavbarPlugin)
