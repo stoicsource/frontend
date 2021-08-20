@@ -28,10 +28,18 @@
               </a>
             </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
+            <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
+              {{ getContentItem(tocEntry, edition).notes }}
+            </p>
             <p v-if="isLoading">
               <b-spinner label="Loading..."></b-spinner>
             </p>
-            <span class="quote-translation" @click="quoteTranslation(tocEntry, edition)">quote</span>
+            <div>
+              <span class="content-action" @click="linkTranslation(tocEntry, edition)" title="link"><font-awesome-icon icon="link"/></span>
+              <span class="content-action" @click="quoteTranslation(tocEntry, edition)" title="quote"><font-awesome-icon icon="quote-right"/></span>
+              <!--<span class="content-action" @click="quoteTranslation(tocEntry, edition)" title="show translator notes"><font-awesome-icon icon="comment-alt"/></span>-->
+              <!-- getContent(tocEntry, edition) -->
+            </div>
           </div>
 
         </td>
@@ -54,6 +62,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2'
 import Content from "@/store/models/Content";
 import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
@@ -105,11 +114,15 @@ export default {
       }
     },
 
-    getContent (tocEntry, edition) {
-      let contentItem = Content.query()
+    getContentItem (tocEntry, edition) {
+      return Content.query()
           .where('toc_entry_id', tocEntry.id)
           .where('edition_id', edition.id)
           .first();
+    },
+
+    getContent (tocEntry, edition) {
+      let contentItem = this.getContentItem(tocEntry, edition)
 
       if (!contentItem) {
         this.loadContents();
@@ -135,6 +148,19 @@ export default {
       if (nextEntry) {
         this.selectionInfo.replaceTocEntry(nextEntry.id);
       }
+    },
+
+    linkTranslation (tocEntry, edition) {
+      let editionAuthor = edition.authors[0];
+      let link = window.location.origin + '/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
+
+      Swal.fire({
+        title: 'Link to this content:',
+        input: 'text',
+        inputValue: link,
+        showCancelButton: false,
+        confirmButtonText: 'Close'
+      });
     },
 
     quoteTranslation (tocEntry, edition) {
@@ -191,22 +217,32 @@ export default {
     max-width: 35em;
     line-height: 1.6em;
 
-    .quote-translation {
+    .content-action {
       visibility: hidden;
       display: inline-block;
-      margin-left: 0.5em;
       padding: 0 5px;
       color: gray;
       cursor: pointer;
       border: 1px solid lightgray;
       border-radius: 6px;
+
+      &:not(:first-child) {
+        margin-left: 0.5em;
+      }
     }
 
     &:hover {
-      .quote-translation {
+      .content-action {
         visibility: visible;
       }
     }
+  }
+
+  .translator-notes {
+    font-size: 0.8em;
+    line-height: 1.3em;
+    font-style: italic;
+    color: #444;
   }
 }
 

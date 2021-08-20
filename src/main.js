@@ -7,7 +7,7 @@ import router from "@/router/router";
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 // https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free
-import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBars, faQuoteRight, faCommentAlt, faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import "vue-select/dist/vue-select.css";
@@ -20,6 +20,10 @@ library.add(faArrowAltCircleDown)
 library.add(faArrowAltCircleUp)
 library.add(faTimesCircle)
 library.add(faBars)
+library.add(faQuoteRight)
+library.add(faCommentAlt)
+library.add(faLink)
+
 
 Vue.use(CardPlugin)
 Vue.use(NavbarPlugin)
