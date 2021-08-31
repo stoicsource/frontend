@@ -12,7 +12,7 @@
     </div>
     <b-collapse :id="'collapseWorkEditions' + work.id" class="edition-list" :visible="!isMobile()">
       <div><strong>Translations</strong></div>
-      <div v-for="edition in work.editions" :key="edition.id">
+      <div v-for="edition in sortedEditions" :key="edition.id">
         <b-form-checkbox :checked="isEditionSelected(edition)" :name="'check-button-' + edition.id" switch @change="toggleEdition(edition)">
           {{ edition.authorsFormatted }} ({{ edition.year }})
         </b-form-checkbox>
@@ -63,6 +63,11 @@ export default {
 
     selectedEditions () {
       return this.selectionInfo ? Edition.query().whereIdIn(this.selectionInfo.editions).with('authors').all() : [];
+    },
+
+    sortedEditions () {
+      let editionsIds = this.work.editions.map((edition) => edition.id)
+      return Edition.query().whereIdIn(editionsIds).orderBy('year').with('authors').all();
     }
   },
   methods: {
