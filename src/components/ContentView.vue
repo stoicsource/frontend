@@ -88,7 +88,7 @@ export default {
     },
 
     tocEntries () {
-      return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy('label').get();
+      return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
     },
 
     selectionInfo () {
