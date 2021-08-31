@@ -84,11 +84,11 @@ export default {
   },
   computed: {
     editions () {
-      return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).get();
+      return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).orderBy('year').get();
     },
 
     tocEntries () {
-      return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').get();
+      return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy('label').get();
     },
 
     selectionInfo () {
