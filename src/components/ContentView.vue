@@ -15,6 +15,9 @@
         </td>
         <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
           <div class="translation-content">
+            <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
+              <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
+            </p>
             <div class="mobile-controls d-lg-none bg-light" v-if="index === 0">
               <span><strong>{{ tocEntry.label }}</strong></span>
               <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
