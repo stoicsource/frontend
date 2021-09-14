@@ -173,7 +173,7 @@ export default {
       let link = window.location.origin + '/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
 
       let markdown = '> ' + content + "\n";
-      let authorInfo = '*' + workAuthor.name + ', ' + edition.work.name + ' ' + tocEntry.label + ' (Translation by ' + editionAuthor.name + ')*';
+      let authorInfo = '*' + workAuthor.shortName + ', ' + edition.work.name + ' ' + tocEntry.label + ' (Trans. by ' + editionAuthor.name + ')*';
       markdown += '[' + authorInfo + '](' + link + ')';
 
       this.quoteText = markdown;
