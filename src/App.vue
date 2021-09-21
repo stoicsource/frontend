@@ -22,7 +22,7 @@
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
           <div class="d-none d-lg-block mt-2 text-muted text-center">
-            Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
+            Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
           </div>
         </div>
 
@@ -40,24 +40,10 @@
         </template>
       </b-modal>
 
-      <b-modal id="about-modal" title="About" cancel-disabled>
-        <p class="text-center">
-          Developed by Patrick Menke<br>
-          <a href="mailto:feedback@stoicsource.com">contact</a>
-        </p>
-        <p class="text-center">
-          Material assembled by George O'Ryan<br>
-          <a href="https://www.reddit.com/user/Sudden-Sand8907" target="_blank">reddit</a> | <a href="mailto:oryang7@gmail.com">contact</a>
-        </p>
-        <template #modal-footer="{ ok }">
-          <b-button size="sm" @click="ok()">
-            Close
-          </b-button>
-        </template>
-      </b-modal>
+      <contact-form></contact-form>
 
       <footer class="d-lg-none text-center text-muted">
-        Feedback? Questions? <span @click="showAbout" class="link-style">Mail us</span>
+        Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
       </footer>
     </div>
   </b-overlay>
@@ -74,10 +60,11 @@ import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
 import WorkSelect from "@/components/WorkSelect";
 import WorkComponent from "@/components/Work";
+import ContactForm from "@/components/ContactForm";
 
 export default {
   name: 'App',
-  components: {WorkSelect, ContentView, WorkComponent},
+  components: {WorkSelect, ContentView, WorkComponent, ContactForm},
   data () {
     return {
       loading: false
@@ -181,8 +168,8 @@ export default {
 
       return promise;
     },
-    showAbout () {
-      this.$bvModal.show('about-modal');
+    showContact () {
+      this.$bvModal.show('contact-modal');
     },
     showWorkSelect () {
       this.$bvModal.show('workselect-modal');
@@ -218,6 +205,9 @@ export default {
         this.loadAndActivateWork(work);
       }
       this.$bvModal.hide('workselect-modal');
+    },
+    sendContact () {
+      alert('ok')
     }
   },
   computed: {
