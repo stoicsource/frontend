@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { CardPlugin, NavbarPlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin, TabsPlugin, FormPlugin, FormTextareaPlugin, FormInputPlugin } from 'bootstrap-vue'
+import { CardPlugin, NavbarPlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin, TabsPlugin, FormPlugin, FormTextareaPlugin, FormInputPlugin, FormGroupPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
@@ -36,6 +36,7 @@ Vue.use(TabsPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormTextareaPlugin)
 Vue.use(FormInputPlugin)
+Vue.use(FormGroupPlugin )
 
 Vue.component("v-select", vSelect);
 Vue.component('font-awesome-icon', FontAwesomeIcon)
