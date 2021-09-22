@@ -42,7 +42,7 @@
 
       <contact-form></contact-form>
 
-      <footer class="d-lg-none text-center text-muted">
+      <footer class="d-lg-none text-center text-muted mb-3">
         Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
       </footer>
     </div>
