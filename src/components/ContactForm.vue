@@ -3,7 +3,7 @@
     <b-form>
       <ValidationProvider name="Name" rules="required" v-slot="{ errors }">
         <b-form-group>
-          <b-form-input v-model="contactName" placeholder="Name" name="email" required></b-form-input>
+          <b-form-input v-model="contactName" placeholder="Name" name="email" required autofocus></b-form-input>
           <span>{{ errors[0] }}</span>
         </b-form-group>
       </ValidationProvider>
