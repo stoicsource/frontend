@@ -1,6 +1,5 @@
 <template>
   <div>
-    ws: {{ workSlug }}
     <table v-if="work && tocEntry" class="table">
       <tr>
         <td class="d-none d-lg-table-cell text-center toc-label-cell">
@@ -67,6 +66,8 @@ import Content from "@/store/models/Content";
 // import Edition from "@/store/models/Edition";
 // import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
+import WorkService from "@/services/WorkService";
+import {mapMutations} from "vuex";
 
 export default {
   props: {
@@ -83,6 +84,19 @@ export default {
       quoteText: ''
     }
   },
+  created() {
+    // watch the params of the route to fetch the data again
+    this.$watch(
+        () => this.$route.params,
+        () => {
+          this.fetchData()
+        },
+        // fetch the data when the view is created and the data is
+        // already being observed
+        { immediate: true }
+    )
+  },
+
   computed: {
     work () {
       return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries']).first();
@@ -112,6 +126,14 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('app', ['setActiveWork']),
+
+    fetchData() {
+      let work = Work.query().where('url_slug', this.$route.params.workSlug).first()
+      WorkService.loadFullWork(work);
+      this.setActiveWork(work);
+    },
+
     async loadContents () {
       if (!this.isLoading &&
           this.editions.length > 0 && this.tocEntries.length > 0

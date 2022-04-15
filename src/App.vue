@@ -5,6 +5,9 @@
         <span>{{ selectedWork.name }}</span><br>
         <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
       </b-navbar-brand>
+      <b-navbar-brand v-else>
+        <span>StoicSource</span>
+      </b-navbar-brand>
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
@@ -165,7 +168,7 @@ export default {
       this.$bvModal.show('contact-modal');
     },
     showWorkSelect () {
-      this.$bvModal.show('workselect-modal');
+      this.$router.push({ name: 'authorSelect' })
     },
     loadAndActivateWork (work) {
       this.loading = true;
@@ -207,7 +210,7 @@ export default {
     ...mapState('app', ['activeWork']),
 
     selectedWork () {
-      return this.activeWork;
+      return this.activeWork ? Work.query().whereId(this.activeWork.id).with(['authors']).first() : null;
     },
 
     selectedEditionIds () {

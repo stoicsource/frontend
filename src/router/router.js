@@ -7,7 +7,7 @@ import ContentView from "@/components/ContentView";
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/', component: AuthorSelect },
+  { path: '/', component: AuthorSelect, name: 'authorSelect' },
   { path: '/:author/works', component: WorkSelect, props: true },
   { path: '/:workSlug', component: ContentView, props: true },
   { path: '/:workSlug/:toc', component: ContentView, props: true },

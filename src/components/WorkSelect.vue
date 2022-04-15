@@ -1,8 +1,8 @@
 <template>
-  <div class="work-list">
+  <div class="work-list" v-if="workAuthor">
 
     <div class="author-name">{{ workAuthor.shortestName }}</div>
-    <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" @click="selectWork(work)" variant="outline-primary">
+    <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" variant="outline-primary" :to="'/' + work.url_slug">
       {{ work.name }}
     </b-button>
 

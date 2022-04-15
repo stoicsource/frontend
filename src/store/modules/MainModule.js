@@ -10,9 +10,9 @@ const mainModule = {
   actions: {},
   mutations: {
     setActiveWork (state, work) {
-      if (!state.activeWork || state.activeWork.id !== work.id) {
-        state.activeWork = work;
+      state.activeWork = work;
 
+      if (!state.activeWork || state.activeWork.id !== work.id) {
         WorkService.workSelectDefaults(work);
       }
     }
