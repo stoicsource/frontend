@@ -4,7 +4,7 @@
     <div class="author-name">{{ workAuthor.shortestName }}</div>
 
     <b-list-group>
-      <b-list-group-item v-for="work in sortedWorks(workAuthor.works)" :key="work.id" :to="'/' + work.url_slug">{{ work.name }}</b-list-group-item>
+      <b-list-group-item v-for="work in sortedWorks(workAuthor.works)" :key="work.id" :to="'/' + workAuthor.url_slug + '/' + work.url_slug">{{ work.name }}</b-list-group-item>
     </b-list-group>
   </div>
 </template>

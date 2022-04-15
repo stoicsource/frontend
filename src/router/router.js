@@ -9,9 +9,9 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', component: AuthorSelect, name: 'authorSelect' },
   { path: '/:author/works', component: WorkSelect, props: true },
-  { path: '/:workSlug', component: ContentView, props: true },
-  { path: '/:workSlug/:toc', component: ContentView, props: true },
-  { path: '/:workSlug/:toc/:translator', component: ContentView, props: true },
+  { path: '/:author/:workSlug', component: ContentView, props: true },
+  { path: '/:author/:workSlug/:tocSlug', component: ContentView, props: true, name: 'contentByToc' },
+  { path: '/:author/:workSlug/:tocSlug/:translator', component: ContentView, props: true },
   // { path: '/workselect', component: WorkSelect }
 
   /*

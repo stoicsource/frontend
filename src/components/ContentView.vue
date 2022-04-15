@@ -2,29 +2,11 @@
   <div>
     <table v-if="work && tocEntry" class="table">
       <tr>
-        <td class="d-none d-lg-table-cell text-center toc-label-cell">
-          <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">Previous</a>
-          {{ tocEntry.label }}<br>
-          <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">X</a>
-          <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">Next</a>
-        </td>
         <td class="translation-section">
           <div class="translation-content">
             <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
               <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
             </p>
-            <div class="mobile-controls d-lg-none bg-light">
-              <span><strong>{{ tocEntry.label }}</strong></span>
-              <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="arrow-alt-circle-up"/>
-              </a>
-              <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="times-circle"/>
-              </a>
-              <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="arrow-alt-circle-down"/>
-              </a>
-            </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
             <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
               {{ getContentItem(tocEntry, edition).notes }}
@@ -56,6 +38,17 @@
         </b-button>
       </template>
     </b-modal>
+
+    <div class="bottom-nav bg-light" v-if="work && tocEntry">
+      <b-button @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" variant="outline-secondary">
+        <font-awesome-icon icon="arrow-alt-circle-up"/>
+      </b-button>
+      <span><strong>{{ tocEntry.label }}</strong></span>
+      <a @click="nextTocEntry" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
+        <font-awesome-icon icon="arrow-alt-circle-down"/>
+      </a>
+
+    </div>
   </div>
 </template>
 
@@ -64,7 +57,7 @@ import Swal from 'sweetalert2'
 import Work from "@/store/models/Work";
 import Content from "@/store/models/Content";
 // import Edition from "@/store/models/Edition";
-// import TocEntry from "@/store/models/TocEntry";
+import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import WorkService from "@/services/WorkService";
 import {mapMutations} from "vuex";
@@ -72,6 +65,7 @@ import {mapMutations} from "vuex";
 export default {
   props: {
     workSlug: String,
+    tocSlug: String,
     workId: Number,
     editionIds: Array,
     tocEntryIds: Array,
@@ -84,7 +78,7 @@ export default {
       quoteText: ''
     }
   },
-  created() {
+  created () {
     // watch the params of the route to fetch the data again
     this.$watch(
         () => this.$route.params,
@@ -93,32 +87,27 @@ export default {
         },
         // fetch the data when the view is created and the data is
         // already being observed
-        { immediate: true }
+        {immediate: true}
     )
   },
 
   computed: {
     work () {
-      return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries']).first();
+      return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries', 'authors']).first();
     },
 
     editions () {
       //return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).orderBy('year').get();
-      return (this.work && this.work.editions) ? [this.work.editions[0]]: [];
+      return (this.work && this.work.editions) ? [this.work.editions[0]] : [];
     },
 
     edition () {
       return this.work ? this.work.editions[0] : null;
     },
 
-    tocEntries () {
-      // return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
-      return (this.work && this.work.tocEntries) ? [this.work.tocEntries[0]] : [];
-    },
-
     tocEntry () {
-      // return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
-      return this.work ? this.work.tocEntries[0] : null;
+      let tocSlug = this.tocSlug ? this.tocSlug : (this.work && this.work.tocEntries.length > 0 ? this.work.tocEntries[0].label : null);
+      return TocEntry.query().where('work_id', this.work.id).where('label', tocSlug).with(['work.tocEntries']).first();
     },
 
     selectionInfo () {
@@ -128,7 +117,7 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    fetchData() {
+    fetchData () {
       let work = Work.query().where('url_slug', this.$route.params.workSlug).first()
       WorkService.loadFullWork(work);
       this.setActiveWork(work);
@@ -136,12 +125,12 @@ export default {
 
     async loadContents () {
       if (!this.isLoading &&
-          this.editions.length > 0 && this.tocEntries.length > 0
+          this.edition && this.tocEntry
       ) {
-        let editionParams = this.editions.map((edition) => 'editions[]=' + edition.id);
-        let tocParams = this.tocEntries.map((tocEntry) => 'toc_entries[]=' + tocEntry.id);
+        let editionParams = 'editions[]=' + this.edition.id;
+        let tocParams = 'toc_entries[]=' + this.tocEntry.id;
 
-        let paramString = editionParams.join('&') + '&' + tocParams.join('&');
+        let paramString = editionParams + '&' + tocParams;
 
         if (paramString !== this.lastRequestParamString) {
           this.isLoading = true;
@@ -174,17 +163,29 @@ export default {
       this.selectionInfo.deselectTocEntry(tocEntry.id);
     },
 
-    previousTocEntry (tocEntry) {
-      let previousEntry = tocEntry.getPrevious();
+    previousTocEntry () {
+      let previousEntry = this.tocEntry ? this.tocEntry.getPrevious() : null;
       if (previousEntry) {
-        this.selectionInfo.replaceTocEntry(previousEntry.id);
+        this.$router.push({
+          name: 'contentByToc', params: {
+            author: this.work.authors[0].url_slug,
+            workSlug: this.work.url_slug,
+            tocSlug: previousEntry.label
+          }
+        });
       }
     },
 
-    nextTocEntry (tocEntry) {
-      let nextEntry = tocEntry.getNext();
+    nextTocEntry () {
+      let nextEntry = this.tocEntry ? this.tocEntry.getNext() : null;
       if (nextEntry) {
-        this.selectionInfo.replaceTocEntry(nextEntry.id);
+        this.$router.push({
+          name: 'contentByToc', params: {
+            author: this.work.authors[0].url_slug,
+            workSlug: this.work.url_slug,
+            tocSlug: nextEntry.label
+          }
+        });
       }
     },
 
@@ -300,5 +301,16 @@ export default {
   a {
     margin-top: 0.2em;
   }
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  min-height: 34px;
+  display: flex;
+  flex-direction: row;
+
 }
 </style>
