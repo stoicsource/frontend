@@ -7,6 +7,15 @@
             <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
               <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
             </p>
+            <div class="mobile-controls d-lg-none bg-light">
+              <span><strong>{{ tocEntry.label }}</strong></span>
+              <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="arrow-alt-circle-up"/>
+              </a>
+              <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="arrow-alt-circle-down"/>
+              </a>
+            </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
             <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
               {{ getContentItem(tocEntry, edition).notes }}
@@ -38,17 +47,6 @@
         </b-button>
       </template>
     </b-modal>
-
-    <div class="bottom-nav bg-light" v-if="work && tocEntry">
-      <b-button @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" variant="outline-secondary">
-        <font-awesome-icon icon="arrow-alt-circle-up"/>
-      </b-button>
-      <span><strong>{{ tocEntry.label }}</strong></span>
-      <a @click="nextTocEntry" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
-        <font-awesome-icon icon="arrow-alt-circle-down"/>
-      </a>
-
-    </div>
   </div>
 </template>
 
@@ -276,14 +274,22 @@ export default {
   }
 }
 
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  bottom: 20px;
-  width: 100vw;
-  min-height: 34px;
+.mobile-controls {
+  float: left;
+  position: relative;
+  top: 6px;
+  margin-right: 0.75em;
+  margin-bottom: 0.5em;
+  border-radius: 3px;
+  padding: 8px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgb(222, 226, 230);
 
+  a {
+    margin-top: 0.2em;
+  }
 }
+
 </style>
