@@ -1,8 +1,14 @@
 import Edition from "@/store/models/Edition";
 import SelectionInfo from "@/store/models/SelectionInfo";
+import TocEntry from "@/store/models/TocEntry";
+import Work from "@/store/models/Work";
 
 export default {
   workSelectDefaults (work) {
+    if (!work) {
+      return;
+    }
+
     // console.log(work);
     // let selectionInfo = store.getters['app/getSelectionInfoForWork'](work.id);
     let selectionInfo = SelectionInfo.find(work.id);
@@ -42,6 +48,16 @@ export default {
     }
   },
 
-  setActiveWork () {
+  loadFullWork (work) {
+    if (!work) {
+      return;
+    }
+
+    let hasEditions = Edition.query().where('work_id', work.id).exists();
+    let hasToc = TocEntry.query().where('work_id', work.id).exists();
+
+    if (!hasEditions || !hasToc) {
+      Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
+    }
   }
 }
