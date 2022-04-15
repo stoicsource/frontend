@@ -13,12 +13,11 @@
           <span class="d-none d-md-inline">Switch to different Work</span>
         </b-nav-item>
       </b-navbar-nav>
-
     </b-navbar>
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12 col-md-3 sticky-sidebar pt-3">
+        <div class="d-none col-12 col-md-3 sticky-sidebar pt-3">
           <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
 
           <div class="d-none d-lg-block mt-2 text-muted text-center">
@@ -27,18 +26,13 @@
         </div>
 
         <div class="col-12 col-md-9">
-          <content-view v-if="selectedWork" :work-id="selectedWork.id" :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
+          <router-view class="router-view"></router-view>
+
+
+          <content-view class="d-none" v-if="selectedWork" :work-id="selectedWork.id" :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
         </div>
       </div>
 
-      <b-modal id="workselect-modal" title="Select Work">
-        <work-select v-on:work-selected="onWorkSelected"></work-select>
-        <template #modal-footer="{ cancel }">
-          <b-button size="sm" @click="cancel()">
-            Cancel
-          </b-button>
-        </template>
-      </b-modal>
 
       <contact-form></contact-form>
 
@@ -58,13 +52,12 @@ import {mapMutations, mapState} from "vuex";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
-import WorkSelect from "@/components/WorkSelect";
 import WorkComponent from "@/components/Work";
 import ContactForm from "@/components/ContactForm";
 
 export default {
   name: 'App',
-  components: {WorkSelect, ContentView, WorkComponent, ContactForm},
+  components: { ContentView, WorkComponent, ContactForm},
   data () {
     return {
       loading: false
@@ -236,9 +229,9 @@ export default {
     }
   },
   watch: {
-    $route () {
-      this.applyUrlParams();
-    }
+    // $route () {
+    //   this.applyUrlParams();
+    // }
   }
 }
 </script>
@@ -272,6 +265,10 @@ td, th {
     top: 80px;
     overflow-y: scroll;
   }
+}
+
+.router-view {
+  min-height: 84vh;
 }
 
 .navbar.modified-nav.navbar-dark {

@@ -40,5 +40,8 @@ export default {
 
       SelectionInfo.insert({ data: selectionInfo });
     }
+  },
+
+  setActiveWork () {
   }
 }

@@ -1,20 +1,24 @@
 <template>
   <div>
-    ws: {{ workSlug }}
-    <table v-if="work && tocEntry" class="table">
-      <tr>
+    <table class="table">
+      <tr :class="{ 'd-none d-lg-table-row' : editions.length === 1 }">
+        <th class="d-none d-lg-table-cell"></th>
+        <th v-for="edition in editions" :key="edition.id">{{ edition.authorsFormatted }} <span class="d-none d-md-inline">({{ edition.year }})</span></th>
+      </tr>
+
+      <tr v-for="tocEntry in tocEntries" :key="tocEntry.id">
         <td class="d-none d-lg-table-cell text-center toc-label-cell">
           <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">Previous</a>
           {{ tocEntry.label }}<br>
           <a @click="deselectTocEntry(tocEntry)" v-if="tocEntries.length > 1" class="btn btn-outline-secondary btn-sm hover-button">X</a>
           <a @click="nextTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">Next</a>
         </td>
-        <td class="translation-section">
+        <td v-for="(edition, index) in editions" :key="edition.id" class="translation-section">
           <div class="translation-content">
             <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
               <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
             </p>
-            <div class="mobile-controls d-lg-none bg-light">
+            <div class="mobile-controls d-lg-none bg-light" v-if="index === 0">
               <span><strong>{{ tocEntry.label }}</strong></span>
               <a @click="previousTocEntry(tocEntry)" v-if="tocEntries.length === 1 && tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
                 <font-awesome-icon icon="arrow-alt-circle-up"/>
@@ -62,15 +66,13 @@
 
 <script>
 import Swal from 'sweetalert2'
-import Work from "@/store/models/Work";
 import Content from "@/store/models/Content";
-// import Edition from "@/store/models/Edition";
-// import TocEntry from "@/store/models/TocEntry";
+import Edition from "@/store/models/Edition";
+import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
   props: {
-    workSlug: String,
     workId: Number,
     editionIds: Array,
     tocEntryIds: Array,
@@ -84,27 +86,12 @@ export default {
     }
   },
   computed: {
-    work () {
-      return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries']).first();
-    },
-
     editions () {
-      //return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).orderBy('year').get();
-      return (this.work && this.work.editions) ? [this.work.editions[0]]: [];
-    },
-
-    edition () {
-      return this.work ? this.work.editions[0] : null;
+      return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).orderBy('year').get();
     },
 
     tocEntries () {
-      // return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
-      return (this.work && this.work.tocEntries) ? [this.work.tocEntries[0]] : [];
-    },
-
-    tocEntry () {
-      // return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
-      return this.work ? this.work.tocEntries[0] : null;
+      return TocEntry.query().whereIdIn(this.tocEntryIds).with('work.tocEntries').orderBy(tocEntry => isNaN(Number(tocEntry.label)) ? tocEntry.label : Number(tocEntry.label)).get();
     },
 
     selectionInfo () {
