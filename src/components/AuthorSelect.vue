@@ -11,7 +11,7 @@
           {{ workAuthor.works.length }} works available
         </span>
       </b-card-text>
-      <router-link v-if="workAuthor.works.length === 1" :to="'/' + workAuthor.works[0].url_slug" class="stretched-link"></router-link>
+      <router-link v-if="workAuthor.works.length === 1" :to="'/' + workAuthor.url_slug + '/' + workAuthor.works[0].url_slug" class="stretched-link"></router-link>
       <router-link v-else :to="'/' + workAuthor.url_slug + '/works'" class="stretched-link"></router-link>
     </b-card>
   </div>
