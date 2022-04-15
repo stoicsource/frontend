@@ -2,10 +2,10 @@
   <div class="work-list" v-if="workAuthor">
 
     <div class="author-name">{{ workAuthor.shortestName }}</div>
-    <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" variant="outline-primary" :to="'/' + work.url_slug">
-      {{ work.name }}
-    </b-button>
 
+    <b-list-group>
+      <b-list-group-item v-for="work in sortedWorks(workAuthor.works)" :key="work.id" :to="'/' + work.url_slug">{{ work.name }}</b-list-group-item>
+    </b-list-group>
   </div>
 </template>
 
