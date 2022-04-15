@@ -96,11 +96,6 @@ export default {
       return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries', 'authors']).first();
     },
 
-    editions () {
-      //return Edition.query().whereIdIn(this.editionIds).with(['authors', 'work.authors']).orderBy('year').get();
-      return (this.work && this.work.editions) ? [this.work.editions[0]] : [];
-    },
-
     edition () {
       return this.work ? this.work.editions[0] : null;
     },
@@ -157,10 +152,6 @@ export default {
       } else {
         return contentItem.content;
       }
-    },
-
-    deselectTocEntry (tocEntry) {
-      this.selectionInfo.deselectTocEntry(tocEntry.id);
     },
 
     previousTocEntry () {
@@ -285,28 +276,10 @@ export default {
   }
 }
 
-.mobile-controls {
-  float: left;
-  position: relative;
-  top: 6px;
-  margin-right: 0.75em;
-  margin-bottom: 0.5em;
-  border-radius: 3px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 1px solid rgb(222, 226, 230);
-
-  a {
-    margin-top: 0.2em;
-  }
-}
-
 .bottom-nav {
   position: fixed;
   left: 0;
-  bottom: 0;
+  bottom: 20px;
   width: 100vw;
   min-height: 34px;
   display: flex;
