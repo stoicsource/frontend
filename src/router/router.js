@@ -1,14 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import App from "@/App";
-// import WorkSelect from "@/components/WorkSelect";
+import AuthorSelect from "@/components/AuthorSelect";
+import WorkSelect from "@/components/WorkSelect";
+import ContentView from "@/components/ContentView";
 
 Vue.use(VueRouter)
 
 const routes = [
-  { path: '/:work', component: App },
-  { path: '/:work/:toc', component: App },
-  { path: '/:work/:toc/:translator', component: App },
+  { path: '/', component: AuthorSelect },
+  { path: '/:author/works', component: WorkSelect, props: true },
+  { path: '/:workSlug', component: ContentView, props: true },
+  { path: '/:workSlug/:toc', component: ContentView, props: true },
+  { path: '/:workSlug/:toc/:translator', component: ContentView, props: true },
   // { path: '/workselect', component: WorkSelect }
 
   /*

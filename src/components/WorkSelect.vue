@@ -1,11 +1,10 @@
 <template>
   <div class="work-list">
-    <div v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-3">
-      <div class="author-name">{{ workAuthor.shortestName }}</div>
-      <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" @click="selectWork(work)" variant="outline-primary">
-        {{ work.name }}
-      </b-button>
-    </div>
+
+    <div class="author-name">{{ workAuthor.shortestName }}</div>
+    <b-button v-for="work in sortedWorks(workAuthor.works)" :key="work.id" @click="selectWork(work)" variant="outline-primary">
+      {{ work.name }}
+    </b-button>
 
   </div>
 </template>
@@ -15,13 +14,14 @@ import orderBy from 'lodash.orderby';
 import Author from "@/store/models/Author";
 
 export default {
+  props: ['author'],
   components: {},
   data () {
     return {}
   },
   computed: {
-    workAuthors () {
-      return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
+    workAuthor () {
+      return Author.query().where('url_slug', this.author).withAllRecursive().first();
     }
   },
   methods: {
@@ -39,10 +39,6 @@ export default {
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style lang="scss" scoped>
-
-.work-list {
-  margin-top: -1em;
-}
 
 .author-name {
   color: #666;
