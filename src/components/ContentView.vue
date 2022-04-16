@@ -1,6 +1,37 @@
 <template>
   <div>
-    <table v-if="work && tocEntry" class="table">
+    <div class="work" v-if="work && tocEntry && edition">
+      <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc">
+        <span>Translation by: </span>
+
+        <b-dropdown :text="edition.authorsFormatted" class="m-md-2" size="sm" variant="outline-secondary">
+          <b-dropdown-item v-for="edition in sortedEditions" :key="edition.id">
+            {{ edition.authorsFormatted }} ({{ edition.year }})
+          </b-dropdown-item>
+        </b-dropdown>
+
+        <b-card-text class="mt-3">
+          <div>Table of Contents</div>
+          <div v-if="work.tocEntries.length < 100">
+            <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+              <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+            </div>
+          </div>
+          <div v-else class="mb-4">
+            <b-tabs pills>
+              <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
+                <div class="mt-2">
+                  <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+                </div>
+              </b-tab>
+            </b-tabs>
+          </div>
+        </b-card-text>
+      </b-collapse>
+    </div>
+
+
+    <table class="table" v-if="work && tocEntry">
       <tr>
         <td class="translation-section">
           <div class="translation-content">
@@ -14,6 +45,9 @@
               </a>
               <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
                 <font-awesome-icon icon="arrow-alt-circle-down"/>
+              </a>
+              <a v-b-toggle="'collapseWorkEditions' + work.id" class="btn btn-outline-secondary btn-sm hover-button">
+                <font-awesome-icon icon="list"/>
               </a>
             </div>
             <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
@@ -54,11 +88,11 @@
 import Swal from 'sweetalert2'
 import Work from "@/store/models/Work";
 import Content from "@/store/models/Content";
-// import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import WorkService from "@/services/WorkService";
 import {mapMutations} from "vuex";
+import Edition from "@/store/models/Edition";
 
 export default {
   props: {
@@ -91,7 +125,7 @@ export default {
 
   computed: {
     work () {
-      return Work.query().where('url_slug', this.workSlug).with(['editions', 'tocEntries.work.tocEntries', 'authors']).first();
+      return Work.query().where('url_slug', this.workSlug).with(['editions.authors', 'tocEntries.work.tocEntries', 'authors']).first();
     },
 
     edition () {
@@ -105,6 +139,11 @@ export default {
 
     selectionInfo () {
       return SelectionInfo.find(this.workId);
+    },
+
+    sortedEditions () {
+      let editionsIds = this.work.editions.map((edition) => edition.id)
+      return Edition.query().whereIdIn(editionsIds).orderBy('year').with('authors').all();
     }
   },
   methods: {
@@ -152,30 +191,30 @@ export default {
       }
     },
 
-    previousTocEntry () {
-      let previousEntry = this.tocEntry ? this.tocEntry.getPrevious() : null;
-      if (previousEntry) {
+    navigateToTocEntry (tocEntry) {
+      if (tocEntry) {
         this.$router.push({
           name: 'contentByToc', params: {
             author: this.work.authors[0].url_slug,
             workSlug: this.work.url_slug,
-            tocSlug: previousEntry.label
+            tocSlug: tocEntry.label
           }
         });
       }
     },
 
+    previousTocEntry () {
+      let previousEntry = this.tocEntry ? this.tocEntry.getPrevious() : null;
+      this.navigateToTocEntry(previousEntry);
+    },
+
     nextTocEntry () {
       let nextEntry = this.tocEntry ? this.tocEntry.getNext() : null;
-      if (nextEntry) {
-        this.$router.push({
-          name: 'contentByToc', params: {
-            author: this.work.authors[0].url_slug,
-            workSlug: this.work.url_slug,
-            tocSlug: nextEntry.label
-          }
-        });
-      }
+      this.navigateToTocEntry(nextEntry);
+    },
+
+    isTocEntrySelected (tocEntry) {
+      return this.selectionInfo && this.selectionInfo.tocEntries.includes(tocEntry.id);
     },
 
     linkTranslation (tocEntry, edition) {
@@ -203,6 +242,22 @@ export default {
 
       this.quoteText = markdown;
       this.$bvModal.show('quote-modal');
+    },
+
+    tocGroups (tocEntries) {
+      let groups = {};
+
+      tocEntries.forEach(function (tocEntry) {
+        let labelParts = tocEntry.label.split('.')
+
+        let chapter = labelParts.length > 1 ? labelParts[0] : '0';
+        if (!(chapter in groups)) {
+          groups[chapter] = [];
+        }
+        groups[chapter].push(tocEntry);
+      });
+
+      return groups;
     }
   }
 }
@@ -290,6 +345,49 @@ export default {
   a {
     margin-top: 0.2em;
   }
+}
+
+a.toc-link {
+  display: inline-block;
+  margin-left: 0.5em;
+  text-decoration: underline;
+  color: #222;
+
+  &.selected {
+    font-weight: bold;
+  }
+}
+
+.edition-collapser {
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+
+  svg {
+    position: relative;
+    top: 4px;
+    right: 2px;
+  }
+
+  &.collapsed {
+    border-color: lightgray;
+
+    .fa-angle-up {
+      display: none;
+    }
+  }
+
+  &.not-collapsed {
+    .fa-angle-down {
+      display: none;
+    }
+  }
+}
+
+.top-toc {
+  padding: 0.7em 0;
 }
 
 </style>
