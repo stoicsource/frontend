@@ -2,15 +2,7 @@
   <div>
     <div class="work" v-if="work && tocEntry && edition">
       <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc">
-        <span>Translation by: </span>
-
-        <b-dropdown :text="edition.authorsFormatted" class="m-md-2" size="sm" variant="outline-secondary">
-          <b-dropdown-item v-for="edition in sortedEditions" :key="edition.id">
-            {{ edition.authorsFormatted }} ({{ edition.year }})
-          </b-dropdown-item>
-        </b-dropdown>
-
-        <b-card-text class="mt-3">
+        <b-card-text >
           <div>Table of Contents</div>
           <div v-if="work.tocEntries.length < 100">
             <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
@@ -27,6 +19,13 @@
             </b-tabs>
           </div>
         </b-card-text>
+
+        <span>Translation by: </span>
+        <b-dropdown right :text="edition.authorsFormatted" size="sm" variant="outline-secondary">
+          <b-dropdown-item @click="selectEdition(edition)" v-for="edition in sortedEditions" :key="edition.id">
+            {{ edition.authorsFormatted }} ({{ edition.year }})
+          </b-dropdown-item>
+        </b-dropdown>
       </b-collapse>
     </div>
 
@@ -97,10 +96,7 @@ import Edition from "@/store/models/Edition";
 export default {
   props: {
     workSlug: String,
-    tocSlug: String,
-    workId: Number,
-    editionIds: Array,
-    tocEntryIds: Array,
+    tocSlug: String
   },
   components: {},
   data () {
@@ -129,7 +125,8 @@ export default {
     },
 
     edition () {
-      return this.work ? this.work.editions[0] : null;
+      let edition = this.selectionInfo.editions.length > 0 ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['authors']).first() : null;
+      return edition ? edition : (this.work ? this.work.editions[0] : null);
     },
 
     tocEntry () {
@@ -138,7 +135,7 @@ export default {
     },
 
     selectionInfo () {
-      return SelectionInfo.find(this.workId);
+      return SelectionInfo.find(this.work.id);
     },
 
     sortedEditions () {
@@ -258,7 +255,20 @@ export default {
       });
 
       return groups;
-    }
+    },
+
+    selectEdition (edition) {
+      setTimeout(function () {
+        this.selectionInfo.editions[0] = edition.id;
+
+        SelectionInfo.update({
+          where: this.work.id,
+          data: {
+            editions: this.selectionInfo.editions
+          }
+        })
+      }.bind(this), 1);
+    },
   }
 }
 </script>
