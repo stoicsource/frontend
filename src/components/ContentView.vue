@@ -3,6 +3,9 @@
     <div class="work" v-if="work && tocEntry && edition">
       <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc">
         <b-card-text >
+          <a v-b-toggle="'collapseWorkEditions' + work.id" style="position: absolute; right: 0.7em; top: 0.7em;">
+            <font-awesome-icon icon="times-circle"/>
+          </a>
           <div>Table of Contents</div>
           <div v-if="work.tocEntries.length < 100">
             <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
