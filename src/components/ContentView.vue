@@ -93,6 +93,7 @@ import Content from "@/store/models/Content";
 import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import WorkService from "@/services/WorkService";
+import SelectionInfoService from "@/services/SelectionInfoService";
 import {mapMutations} from "vuex";
 import Edition from "@/store/models/Edition";
 
@@ -128,7 +129,7 @@ export default {
     },
 
     edition () {
-      let edition = this.selectionInfo.editions.length > 0 ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['authors']).first() : null;
+      let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['authors']).first() : null;
       return edition ? edition : (this.work ? this.work.editions[0] : null);
     },
 
@@ -138,7 +139,8 @@ export default {
     },
 
     selectionInfo () {
-      return SelectionInfo.find(this.work.id);
+      //return SelectionInfo.find(this.work.id);
+      return SelectionInfoService.getSelectionInfo(this.work.id);
     },
 
     sortedEditions () {
@@ -214,7 +216,7 @@ export default {
     },
 
     isTocEntrySelected (tocEntry) {
-      return this.selectionInfo && this.selectionInfo.tocEntries.includes(tocEntry.id);
+      return this.tocEntry.id === tocEntry.id;
     },
 
     linkTranslation (tocEntry, edition) {
