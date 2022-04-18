@@ -2,8 +2,8 @@
   <div>
     <div class="work" v-if="work && tocEntry && edition">
       <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc">
-        <b-card-text >
-          <a v-b-toggle="'collapseWorkEditions' + work.id" style="position: absolute; right: 0.7em; top: 0.7em;">
+        <b-card-text>
+          <a v-b-toggle="'collapseWorkEditions' + work.id" style="position: absolute; right: 0.7em; top: 0.7em; size:1.2em; color: darkgrey">
             <font-awesome-icon icon="times-circle"/>
           </a>
           <div>Table of Contents</div>
@@ -96,6 +96,7 @@ import WorkService from "@/services/WorkService";
 import SelectionInfoService from "@/services/SelectionInfoService";
 import {mapMutations} from "vuex";
 import Edition from "@/store/models/Edition";
+import ContentService from "@/services/ContentService";
 
 export default {
   props: {
@@ -106,7 +107,6 @@ export default {
   data () {
     return {
       isLoading: false,
-      lastRequestParamString: '',
       quoteText: ''
     }
   },
@@ -161,17 +161,9 @@ export default {
       if (!this.isLoading &&
           this.edition && this.tocEntry
       ) {
-        let editionParams = 'editions[]=' + this.edition.id;
-        let tocParams = 'toc_entries[]=' + this.tocEntry.id;
-
-        let paramString = editionParams + '&' + tocParams;
-
-        if (paramString !== this.lastRequestParamString) {
-          this.isLoading = true;
-          await Content.api().get(process.env.VUE_APP_API_URL + '/contents?' + paramString);
-          this.isLoading = false;
-          this.lastRequestParamString = paramString;
-        }
+        this.isLoading = true;
+        await ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition]);
+        this.isLoading = false;
       }
     },
 
@@ -183,7 +175,7 @@ export default {
     },
 
     getContent (tocEntry, edition) {
-      let contentItem = this.getContentItem(tocEntry, edition)
+      let contentItem = this.getContentItem(tocEntry, edition);
 
       if (!contentItem) {
         this.loadContents();
