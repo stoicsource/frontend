@@ -134,8 +134,19 @@ export default {
     },
 
     tocEntry () {
-      let tocSlug = this.tocSlug ? this.tocSlug : (this.work && this.work.tocEntries.length > 0 ? this.work.tocEntries[0].label : null);
-      return TocEntry.query().where('work_id', this.work.id).where('label', tocSlug).with(['work.tocEntries']).first();
+      // order: 1. url, 2. selection, 3. first chapter
+      let tocSlugEntry = this.tocSlug ? TocEntry.query().where('work_id', this.work.id).where('label', this.tocSlug).first() : null;
+      let tocEntryId = tocSlugEntry ? tocSlugEntry.id : null;
+
+      if (!tocEntryId) {
+        tocEntryId = (this.selectionInfo && this.selectionInfo.tocEntries.length > 0) ? this.selectionInfo.tocEntries[0] : null;
+      }
+
+      if (!tocEntryId) {
+        tocEntryId = (this.work && this.work.tocEntries.length > 0) ? this.work.tocEntries[0].id : null;
+      }
+
+      return tocEntryId ? TocEntry.query().whereId(tocEntryId).with(['work.tocEntries']).first() : null;
     },
 
     selectionInfo () {
@@ -187,6 +198,7 @@ export default {
 
     navigateToTocEntry (tocEntry) {
       if (tocEntry) {
+        this.selectionInfo.replaceTocEntry(tocEntry.id);
         this.$router.push({
           name: 'contentByToc', params: {
             author: this.work.authors[0].url_slug,
