@@ -17,23 +17,20 @@ export default class TocEntry extends Model {
     }
   }
 
+
   getPrevious () {
-    let targetSortOrder = this.sort_order - 1;
-    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder);
+    return TocEntry.query().where('work_id', this.work.id).orderBy('sort_order', 'desc').where('sort_order', (value) => value < this.sort_order).first();
   }
 
   getNext () {
-    let targetSortOrder = this.sort_order + 1;
-    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder);
+    return TocEntry.query().where('work_id', this.work.id).orderBy('sort_order', 'asc').where('sort_order', (value) => value > this.sort_order).first();
   }
 
   hasPrevious () {
-    let targetSortOrder = this.sort_order - 1;
-    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder) !== undefined;
+    return this.getPrevious() !== undefined;
   }
 
   hasNext () {
-    let targetSortOrder = this.sort_order + 1;
-    return this.work.tocEntries.find(entry => entry.sort_order === targetSortOrder) !== undefined;
+    return this.getNext() !== undefined;
   }
 }
