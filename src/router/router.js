@@ -7,6 +7,14 @@ import ContentView from "@/components/ContentView";
 Vue.use(VueRouter)
 
 const routes = [
+  // Redirects from old URL format
+  { path: '/meditations', redirect: '/aurelius/meditations' },
+  { path: '/meditations/:tocSlug', redirect: '/aurelius/meditations/:tocSlug' },
+  { path: '/meditations/:tocSlug/:translator', redirect: '/aurelius/meditations/:tocSlug/:translator' },
+  { path: '/enchirideon', redirect: '/epictetus/enchirideon' },
+  { path: '/enchirideon/:tocSlug', redirect: '/epictetus/enchirideon/:tocSlug' },
+  { path: '/enchirideon/:tocSlug/:translator', redirect: '/epictetus/enchirideon/:tocSlug/:translator' },
+
   { path: '/', component: AuthorSelect, name: 'authorSelect' },
   { path: '/:author/works', component: WorkSelect, props: true },
   { path: '/:author/:workSlug', component: ContentView, props: true },
