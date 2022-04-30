@@ -96,14 +96,13 @@ export default {
     this.$watch(
         () => this.$route.params,
         () => {
-          this.fetchData()
+          this.fetchWorkDetails()
         },
         // fetch the data when the view is created and the data is
         // already being observed
         {immediate: true}
     )
   },
-
   computed: {
     work () {
       return Work.query().where('url_slug', this.workSlug).with(['editions.authors', 'tocEntries.work.tocEntries', 'authors']).first();
@@ -143,10 +142,19 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    fetchData () {
-      let work = Work.query().where('url_slug', this.$route.params.workSlug).first()
+    fetchWorkDetails () {
+      let work = Work.query().where('url_slug', this.$route.params.workSlug).with('authors').first()
+
+      if (!work) {
+        setTimeout(() => {
+          this.fetchWorkDetails();
+        }, 200);
+        return;
+      }
+
       WorkService.loadFullWork(work);
       this.setActiveWork(work);
+      document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
     },
 
     async loadContents () {
