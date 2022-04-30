@@ -1,88 +1,69 @@
 <template>
   <div>
     <div class="work" v-if="work && tocEntry && edition">
-      <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc">
-        <b-card-text>
-          <a v-b-toggle="'collapseWorkEditions' + work.id" style="position: absolute; right: 0.7em; top: 0.7em; size:1.2em; color: darkgrey">
-            <font-awesome-icon icon="times-circle"/>
-          </a>
-          <div>Table of Contents</div>
-          <div v-if="work.tocEntries.length < 100">
-            <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
-              <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
-            </div>
-          </div>
-          <div v-else class="mb-4">
-            <b-tabs pills>
-              <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
-                <div class="mt-2">
-                  <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-3">
+            <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc" :visible="!isMobile()">
+              <b-card-text>
+                <a v-b-toggle="'collapseWorkEditions' + work.id" class="toc-toggler d-lg-none">
+                  <font-awesome-icon icon="times-circle"/>
+                </a>
+                <div>Table of Contents</div>
+                <div v-if="work.tocEntries.length < 100">
+                  <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+                    <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+                  </div>
                 </div>
-              </b-tab>
-            </b-tabs>
-          </div>
-        </b-card-text>
+                <div v-else class="mb-4">
+                  <b-tabs pills>
+                    <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
+                      <div class="mt-2">
+                        <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
+                      </div>
+                    </b-tab>
+                  </b-tabs>
+                </div>
+              </b-card-text>
 
-        <span>Translation by: </span>
-        <b-dropdown right :text="edition.authorsFormatted" size="sm" variant="outline-secondary">
-          <b-dropdown-item @click="selectEdition(edition)" v-for="edition in sortedEditions" :key="edition.id">
-            {{ edition.authorsFormatted }} ({{ edition.year }})
-          </b-dropdown-item>
-        </b-dropdown>
-      </b-collapse>
+              <span>Translation by: </span>
+              <b-dropdown right :text="edition.authorsFormatted" size="sm" variant="outline-secondary">
+                <b-dropdown-item @click="selectEdition(edition)" v-for="edition in sortedEditions" :key="edition.id">
+                  {{ edition.authorsFormatted }} ({{ edition.year }})
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-collapse>
+          </div>
+          <div class="col-12 col-lg-9">
+            <div class="translation-content" v-if="work && tocEntry">
+              <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
+                <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
+              </p>
+              <div class="mobile-controls bg-light">
+                <span><strong>{{ tocEntry.label }}</strong></span>
+                <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
+                  <font-awesome-icon icon="arrow-alt-circle-up"/>
+                </a>
+                <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
+                  <font-awesome-icon icon="arrow-alt-circle-down"/>
+                </a>
+                <a v-b-toggle="'collapseWorkEditions' + work.id" class="d-lg-none btn btn-outline-secondary btn-sm hover-button">
+                  <font-awesome-icon icon="list"/>
+                </a>
+              </div>
+              <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
+              <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
+                {{ getContentItem(tocEntry, edition).notes }}
+              </p>
+              <p v-if="isLoading">
+                <b-spinner label="Loading..."></b-spinner>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-
-    <table class="table" v-if="work && tocEntry">
-      <tr>
-        <td class="translation-section">
-          <div class="translation-content">
-            <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
-              <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
-            </p>
-            <div class="mobile-controls d-lg-none bg-light">
-              <span><strong>{{ tocEntry.label }}</strong></span>
-              <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="arrow-alt-circle-up"/>
-              </a>
-              <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="arrow-alt-circle-down"/>
-              </a>
-              <a v-b-toggle="'collapseWorkEditions' + work.id" class="btn btn-outline-secondary btn-sm hover-button">
-                <font-awesome-icon icon="list"/>
-              </a>
-            </div>
-            <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
-            <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
-              {{ getContentItem(tocEntry, edition).notes }}
-            </p>
-            <p v-if="isLoading">
-              <b-spinner label="Loading..."></b-spinner>
-            </p>
-            <div>
-              <span class="content-action" @click="linkTranslation(tocEntry, edition)" title="link"><font-awesome-icon icon="link"/></span>
-              <span class="content-action" @click="quoteTranslation(tocEntry, edition)" title="quote"><font-awesome-icon icon="quote-right"/></span>
-              <!--<span class="content-action" @click="quoteTranslation(tocEntry, edition)" title="show translator notes"><font-awesome-icon icon="comment-alt"/></span>-->
-              <!-- getContent(tocEntry, edition) -->
-            </div>
-          </div>
-
-        </td>
-      </tr>
-    </table>
-
-    <b-modal id="quote-modal" title="Quote Translation">
-      <div>Markdown quote (can be pasted to reddit and other platforms)</div>
-      <textarea v-model="quoteText" rows="10" style="width: 100%;" id="text-to-copy"></textarea>
-      <template #modal-footer="{ ok, cancel }">
-        <b-button size="sm" variant="primary" @click="ok()" id="copy-button" data-clipboard-target="#text-to-copy">
-          Copy to Clipboard
-        </b-button>
-        <b-button size="sm" variant="secondary" @click="cancel()">
-          Close
-        </b-button>
-      </template>
-    </b-modal>
   </div>
 </template>
 
@@ -278,36 +259,18 @@ export default {
         })
       }.bind(this), 1);
     },
+
+    isMobile () {
+      return window.screen.width <= 768;
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.table th, .table td {
 
-  &:nth-child(2) {
-    padding-left: 0;
-  }
-
-  &:last-child {
-    padding-right: 0;
-  }
-}
-
-.table th {
-  font-weight: 500;
-}
-
-.toc-label-cell {
-  .hover-button {
-    visibility: hidden;
-  }
-
-  &:hover {
-    .hover-button {
-      visibility: visible;
-    }
-  }
+.work {
+  padding-top: 0.7em;
 }
 
 .btn {
@@ -407,6 +370,10 @@ a.toc-link {
 
 .top-toc {
   padding: 0.7em 0;
+}
+
+.toc-toggler {
+  position: absolute; right: 0.7em; top: 0.7em; size:1.2em; color: darkgrey
 }
 
 </style>

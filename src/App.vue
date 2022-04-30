@@ -12,55 +12,33 @@
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
         <b-nav-item @click="showWorkSelect" class="nav-work-selector">
-          <font-awesome-icon icon="bars" />
+          <font-awesome-icon icon="bars"/>
           <span class="d-none d-md-inline">Switch to different Work</span>
         </b-nav-item>
       </b-navbar-nav>
     </b-navbar>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="d-none col-12 col-md-3 sticky-sidebar pt-3">
-          <work-component v-if="selectedWork" :work-id="selectedWork.id"></work-component>
+    <router-view class="router-view"></router-view>
 
-          <div class="d-none d-lg-block mt-2 text-muted text-center">
-            Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
-          </div>
-        </div>
+    <footer class="d-lg-none text-center text-muted mb-3">
+      Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
+    </footer>
 
-        <div class="col-12 col-md-9">
-          <router-view class="router-view"></router-view>
-
-
-          <content-view class="d-none" v-if="selectedWork" :work-id="selectedWork.id" :edition-ids="selectedEditionIds" :toc-entry-ids="selectedTocEntryIds"></content-view>
-        </div>
-      </div>
-
-
-      <contact-form></contact-form>
-
-      <footer class="d-lg-none text-center text-muted mb-3">
-        Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
-      </footer>
-    </div>
   </b-overlay>
 </template>
 
 <script>
 import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
-import ContentView from "@/components/ContentView";
 import WorkService from "@/services/WorkService";
 import {mapMutations, mapState} from "vuex";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import TocEntry from "@/store/models/TocEntry";
 import Edition from "@/store/models/Edition";
-import WorkComponent from "@/components/Work";
-import ContactForm from "@/components/ContactForm";
 
 export default {
   name: 'App',
-  components: { ContentView, WorkComponent, ContactForm},
+
   data () {
     return {
       loading: false
@@ -168,7 +146,7 @@ export default {
       this.$bvModal.show('contact-modal');
     },
     showWorkSelect () {
-      this.$router.push({ name: 'authorSelect' })
+      this.$router.push({name: 'authorSelect'})
     },
     loadAndActivateWork (work) {
       this.loading = true;
