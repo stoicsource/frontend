@@ -7,7 +7,7 @@
             <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc" :visible="!isMobile()">
               <b-card-text>
                 <a v-b-toggle="'collapseWorkEditions' + work.id" class="toc-toggler d-lg-none">
-                  <font-awesome-icon icon="times-circle"/>
+                  <font-awesome-icon icon="times-circle" size="lg"/>
                 </a>
                 <div>Table of Contents</div>
                 <div v-if="work.tocEntries.length < 100">
@@ -378,10 +378,16 @@ a.toc-link {
 
 .top-toc {
   padding: 0.7em 0;
+  border-bottom: 1px solid darkgrey;
+  margin-bottom: 1.2em;
 }
 
 .toc-toggler {
-  position: absolute; right: 0.7em; top: 0.7em; size:1.2em; color: darkgrey
+  position: absolute;
+  right: 0.7em;
+  top: 0.1em;
+  size:1.2em;
+  color: darkgrey
 }
 
 </style>
