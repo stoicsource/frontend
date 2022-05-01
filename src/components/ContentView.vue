@@ -110,7 +110,8 @@ export default {
 
     edition () {
       let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['authors']).first() : null;
-      return edition ? edition : (this.work ? this.work.editions[0] : null);
+      let latestEdition = this.sortedEditions.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
+      return edition ? edition : latestEdition;
     },
 
     tocEntry () {
