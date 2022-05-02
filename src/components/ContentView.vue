@@ -189,7 +189,7 @@ export default {
     navigateToTocEntry (tocEntry) {
       if (tocEntry) {
         this.selectionInfo.replaceTocEntry(tocEntry.id);
-        this.writeSelectionInfoToLocalStorage();
+        SelectionInfoService.saveToLocalStorage();
         this.$router.push({
           name: 'contentByToc', params: {
             author: this.work.authors[0].url_slug,
@@ -268,19 +268,12 @@ export default {
           }
         })
 
-        this.writeSelectionInfoToLocalStorage();
+        SelectionInfoService.saveToLocalStorage();
       }.bind(this), 1);
     },
 
     isMobile () {
       return window.screen.width <= 768;
-    },
-
-    writeSelectionInfoToLocalStorage () {
-      if (!this.loading) {
-        let allInfo = SelectionInfo.all();
-        localStorage.selectionInfo = JSON.stringify(allInfo);
-      }
     }
   }
 }

@@ -20,5 +20,16 @@ export default {
     }
 
     return selectionInfo;
+  },
+
+  saveToLocalStorage () {
+    let allInfo = SelectionInfo.all();
+    localStorage.selectionInfo = JSON.stringify(allInfo);
+  },
+
+  loadFromLocalStorage () {
+    if (localStorage.selectionInfo) {
+      SelectionInfo.create({data: JSON.parse(localStorage.selectionInfo)})
+    }
   }
 }
