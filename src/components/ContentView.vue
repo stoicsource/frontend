@@ -10,13 +10,13 @@
                   <font-awesome-icon icon="times-circle" size="lg"/>
                 </a>
                 <div>Table of Contents</div>
-                <div v-if="work.tocEntries.length < 100">
+                <div v-if="work.tocEntries.length < 125">
                   <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
                     <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
                   </div>
                 </div>
                 <div v-else class="mb-4">
-                  <b-tabs pills>
+                  <b-tabs pills style="margin-left: -0.5em;">
                     <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
                       <div class="mt-2">
                         <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
@@ -51,7 +51,7 @@
                   <font-awesome-icon icon="list"/>
                 </a>
               </div>
-              <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph">{{ paragraph }}</p>
+              <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
               <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
                 {{ getContentItem(tocEntry, edition).notes }}
               </p>
@@ -343,6 +343,7 @@ a.toc-link {
   margin-left: 0.5em;
   text-decoration: underline;
   color: #222;
+  font-size: 1.1em;
 
   &.selected {
     font-weight: bold;
