@@ -1,6 +1,5 @@
 <template>
-  <div class="author-list">
-
+  <div class="container author-list">
     <b-card v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-2">
       <b-card-title>{{ workAuthor.shortestName }}</b-card-title>
       <b-card-text>

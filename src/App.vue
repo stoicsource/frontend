@@ -33,7 +33,7 @@ import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import {mapMutations, mapState} from "vuex";
 import ContactForm from "@/components/ContactForm";
-import SelectionInfo from "@/store/models/SelectionInfo";
+import SelectionInfoService from "@/services/SelectionInfoService";
 
 export default {
   name: 'App',
@@ -46,20 +46,9 @@ export default {
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
-    if (localStorage.selectionInfo) {
-      SelectionInfo.create({data: JSON.parse(localStorage.selectionInfo)})
-    }
+    SelectionInfoService.loadFromLocalStorage();
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
-        // .then(function () {
-        //   this.determineInitialWorkSelection().then(function () {
-        //     this.initSelection().then(function () {
-        //       if (!this.selectedWork) {
-        //         this.showWorkSelect();
-        //       }
-        //     }.bind(this))
-        //   }.bind(this));
-        // }.bind(this))
         .catch(function (error) {
           console.log(error);
           alert(error.message);

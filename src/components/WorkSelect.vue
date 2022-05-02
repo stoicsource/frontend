@@ -1,6 +1,5 @@
 <template>
-  <div class="work-list" v-if="workAuthor">
-
+  <div class="container work-list" v-if="workAuthor">
     <div class="author-name">{{ workAuthor.shortestName }}</div>
 
     <b-list-group>
@@ -40,7 +39,4 @@ export default {
 
 <style lang="scss" scoped>
 
-.author-name {
-  color: #666;
-}
 </style>
