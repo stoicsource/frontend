@@ -32,8 +32,8 @@
 import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import {mapMutations, mapState} from "vuex";
-import SelectionInfo from "@/store/models/SelectionInfo";
 import ContactForm from "@/components/ContactForm";
+import SelectionInfo from "@/store/models/SelectionInfo";
 
 export default {
   name: 'App',
@@ -46,6 +46,9 @@ export default {
   mounted () {
     this.loading = true;
     new Clipboard('#copy-button');
+    if (localStorage.selectionInfo) {
+      SelectionInfo.create({data: JSON.parse(localStorage.selectionInfo)})
+    }
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
         // .then(function () {
@@ -70,118 +73,12 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    writeSelectionInfoToLocalStorage () {
-      if (!this.loading) {
-        let allInfo = SelectionInfo.all();
-        localStorage.selectionInfo = JSON.stringify(allInfo);
-      }
-    },
-    // determineInitialWorkSelection () {
-    //   let promise = Promise.resolve();
-    //   if (this.$route.params.work) {
-    //     let matchingWork = Work.query().where('url_slug', this.$route.params.work).first();
-    //     if (matchingWork) {
-    //       promise = this.loadAndActivateWork(matchingWork);
-    //     }
-    //   } else {
-    //     let workToSelect = null;
-    //     if (localStorage.selectedWorkId) {
-    //       workToSelect = Work.query().where('id', Number(localStorage.selectedWorkId)).with(['tocEntries', 'authors']).first();
-    //     } else {
-    //       workToSelect = Work.query().where('name', 'The Meditations').with(['tocEntries', 'authors']).first();
-    //     }
-    //
-    //     promise = this.loadAndActivateWork(workToSelect);
-    //   }
-    //   return promise;
-    // },
-    // initSelection () {
-    //   let promise = Promise.resolve();
-    //   if (localStorage.selectionInfo) {
-    //     promise = SelectionInfo.create({data: JSON.parse(localStorage.selectionInfo)})
-    //   }
-    //
-    //   promise.then(function () {
-    //     if (this.$route.params.toc && this.selectedWork) {
-    //       let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-    //       if (!selectionInfo) {
-    //         selectionInfo = new SelectionInfo();
-    //         selectionInfo.workId = this.selectedWork.id;
-    //       }
-    //
-    //       selectionInfo.tocEntries = [];
-    //       selectionInfo.deselectAllTocEntries();
-    //       let tocLabels = this.$route.params.toc.split(',');
-    //       tocLabels.forEach((tocLabel) => {
-    //         let tocEntry = TocEntry.query().where('label', tocLabel).where('work_id', this.selectedWork.id).first();
-    //
-    //         if (tocEntry) {
-    //           selectionInfo.selectTocEntry(tocEntry.id);
-    //         }
-    //       });
-    //
-    //       if (this.$route.params.translator) {
-    //         let author_slugs = this.$route.params.translator.split(',');
-    //
-    //         selectionInfo.editions = [];
-    //         selectionInfo.deselectAllEditions();
-    //         let editions = Edition.query().where('work_id', this.selectedWork.id).with('authors').all();
-    //         author_slugs.forEach((slug) => {
-    //           editions.forEach((edition) => {
-    //             if (edition.authors.some(editionAuthor => editionAuthor.url_slug === slug)) {
-    //               selectionInfo.selectEdition(edition.id);
-    //             }
-    //           });
-    //         });
-    //       }
-    //
-    //       SelectionInfo.insert({data: selectionInfo});
-    //     }
-    //   }.bind(this));
-    //
-    //   return promise;
-    // },
     showContact () {
       this.$bvModal.show('contact-modal');
     },
     showWorkSelect () {
       this.$router.push({name: 'authorSelect'})
-    },
-    // loadAndActivateWork (work) {
-    //   this.loading = true;
-    //
-    //   let hasEditions = Edition.query().where('work_id', work.id).exists();
-    //   let hasToc = TocEntry.query().where('work_id', work.id).exists();
-    //   let promise = Promise.resolve(true);
-    //   if (!hasEditions || !hasToc) {
-    //     promise = Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
-    //   }
-    //
-    //   promise.then(function () {
-    //     this.setActiveWork(work);
-    //     let workWithRelations = Work.query().where('id', work.id).with(['tocEntries', 'editions']).first();
-    //     WorkService.workSelectDefaults(workWithRelations);
-    //     localStorage.selectedWorkId = JSON.stringify(this.selectedWork.id);
-    //   }.bind(this))
-    //       .catch(function (error) {
-    //         console.log(error);
-    //         alert(error.message);
-    //       })
-    //       .then(function () {
-    //         this.loading = false;
-    //       }.bind(this));
-    //
-    //   return promise;
-    // },
-    // onWorkSelected (work) {
-    //   if (!this.activeWork || work.id !== this.activeWork.id) {
-    //     this.loadAndActivateWork(work);
-    //   }
-    //   this.$bvModal.hide('workselect-modal');
-    // },
-    // sendContact () {
-    //   alert('ok')
-    // }
+    }
   },
   computed: {
     ...mapState('app', ['activeWork']),
@@ -189,29 +86,6 @@ export default {
     selectedWork () {
       return this.activeWork ? Work.query().whereId(this.activeWork.id).with(['authors']).first() : null;
     }
-
-    // selectedEditionIds () {
-    //   if (this.selectedWork) {
-    //     this.writeSelectionInfoToLocalStorage();
-    //     let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-    //     return selectionInfo ? selectionInfo.editions : [];
-    //   }
-    //   return [];
-    // },
-    //
-    // selectedTocEntryIds () {
-    //   if (this.selectedWork) {
-    //     this.writeSelectionInfoToLocalStorage();
-    //     let selectionInfo = SelectionInfo.find(this.selectedWork.id);
-    //     return selectionInfo ? selectionInfo.tocEntries : [];
-    //   }
-    //   return [];
-    // }
-  },
-  watch: {
-    // $route () {
-    //   this.applyUrlParams();
-    // }
   }
 }
 </script>
