@@ -1,5 +1,3 @@
-import WorkService from "@/services/WorkService";
-
 const mainModule = {
   namespaced: true,
   state: {
@@ -11,10 +9,6 @@ const mainModule = {
   mutations: {
     setActiveWork (state, work) {
       state.activeWork = work;
-
-      if (!state.activeWork || state.activeWork.id !== work.id) {
-        WorkService.workSelectDefaults(work);
-      }
     }
   }
 };
