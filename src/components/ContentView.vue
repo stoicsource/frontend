@@ -39,7 +39,7 @@
               <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
                 <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
               </p>
-              <div class="mobile-controls bg-light">
+              <div class="content-navigation bg-light">
                 <span><strong>{{ tocEntry.label }}</strong></span>
                 <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
                   <font-awesome-icon icon="arrow-alt-circle-up"/>
@@ -53,7 +53,7 @@
               </div>
               <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
               <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
-                {{ getContentItem(tocEntry, edition).notes }}
+                Translator notes: {{ getContentItem(tocEntry, edition).notes }}
               </p>
               <p v-if="isLoading">
                 <b-spinner label="Loading..."></b-spinner>
@@ -227,20 +227,6 @@ export default {
       });
     },
 
-    quoteTranslation (tocEntry, edition) {
-      let content = this.getContent(tocEntry, edition);
-      let editionAuthor = edition.authors[0];
-      let workAuthor = edition.work.authors[0];
-      let link = window.location.origin + '/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
-
-      let markdown = '> ' + content + "\n";
-      let authorInfo = '*' + workAuthor.shortName + ', ' + edition.work.name + ' ' + tocEntry.label + ' (Trans. by ' + editionAuthor.name + ')*';
-      markdown += '[' + authorInfo + '](' + link + ')';
-
-      this.quoteText = markdown;
-      this.$bvModal.show('quote-modal');
-    },
-
     tocGroups (tocEntries) {
       let groups = {};
 
@@ -289,41 +275,39 @@ export default {
   display: block;
 }
 
-.translation-section {
-  .translation-content {
-    max-width: 35em;
-    line-height: 1.6em;
+.translation-content {
+  max-width: 35em;
+  line-height: 1.6em;
 
-    .content-action {
-      visibility: hidden;
-      display: inline-block;
-      padding: 0 5px;
-      color: gray;
-      cursor: pointer;
-      border: 1px solid lightgray;
-      border-radius: 6px;
+  .content-action {
+    visibility: hidden;
+    display: inline-block;
+    padding: 0 5px;
+    color: gray;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 6px;
 
-      &:not(:first-child) {
-        margin-left: 0.5em;
-      }
-    }
-
-    &:hover {
-      .content-action {
-        visibility: visible;
-      }
+    &:not(:first-child) {
+      margin-left: 0.5em;
     }
   }
 
-  .translator-notes {
-    font-size: 0.8em;
-    line-height: 1.3em;
-    font-style: italic;
-    color: #444;
+  &:hover {
+    .content-action {
+      visibility: visible;
+    }
   }
 }
 
-.mobile-controls {
+.translator-notes {
+  font-size: 0.8em;
+  line-height: 1.3em;
+  font-style: italic;
+  color: #444;
+}
+
+.content-navigation {
   float: left;
   position: relative;
   top: 6px;
@@ -350,34 +334,6 @@ a.toc-link {
 
   &.selected {
     font-weight: bold;
-  }
-}
-
-.edition-collapser {
-  padding: 3px 6px;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  display: flex;
-  justify-content: space-between;
-
-  svg {
-    position: relative;
-    top: 4px;
-    right: 2px;
-  }
-
-  &.collapsed {
-    border-color: lightgray;
-
-    .fa-angle-up {
-      display: none;
-    }
-  }
-
-  &.not-collapsed {
-    .fa-angle-down {
-      display: none;
-    }
   }
 }
 

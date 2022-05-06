@@ -33,10 +33,6 @@ export default {
   methods: {
     sortedWorks (works) {
       return orderBy(works, 'name');
-    },
-
-    selectWork (work) {
-      this.$emit('work-selected', work);
     }
   }
 }
@@ -46,16 +42,4 @@ export default {
 
 <style lang="scss" scoped>
 
-.author-list {
-  // margin-top: -1em;
-  .card {
-    img {
-      max-width: 20vw;
-    }
-  }
-}
-
-.author-name {
-  color: #666;
-}
 </style>

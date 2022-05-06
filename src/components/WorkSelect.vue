@@ -26,10 +26,6 @@ export default {
   methods: {
     sortedWorks (works) {
       return orderBy(works, 'name');
-    },
-
-    selectWork (work) {
-      this.$emit('work-selected', work);
     }
   }
 }
