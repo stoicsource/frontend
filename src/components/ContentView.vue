@@ -51,10 +51,20 @@
                   <font-awesome-icon icon="list"/>
                 </a>
               </div>
-              <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
-              <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
-                Translator notes: {{ getContentItem(tocEntry, edition).notes }}
-              </p>
+              <div v-if="getContent(tocEntry, edition).contentType === 'text'">
+                <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
+              </div>
+              <div v-else v-html="getContent(tocEntry, edition)">
+              </div>
+
+              <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
+                Translator notes: <br>
+                <div v-if="getContent(tocEntry, edition).contentType === 'text'">
+                  {{ getContentItem(tocEntry, edition).notes }}
+                </div>
+                <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
+              </div>
+
               <p v-if="isLoading">
                 <b-spinner label="Loading..."></b-spinner>
               </p>
@@ -158,13 +168,15 @@ export default {
       document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
     },
 
-    async loadContents () {
+    loadContents () {
       if (!this.isLoading &&
           this.edition && this.tocEntry
       ) {
         this.isLoading = true;
-        await ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition]);
-        this.isLoading = false;
+        ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition])
+          .then(function () {
+            this.isLoading = false;
+          }.bind(this));
       }
     },
 
@@ -264,6 +276,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.translation-content >>> blockquote {
+  border-left: 3px solid #eaecf0;
+  padding: 8px 22px;
+}
+</style>
+
 
 <style lang="scss" scoped>
 
