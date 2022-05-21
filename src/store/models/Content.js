@@ -13,6 +13,7 @@ export default class Content extends Model {
       content: this.attr(''),
       notes: this.attr(''),
       title: this.attr(''),
+      contentType: this.attr('', value => value === 1 ? 'text' : 'html'),
 
       tocEntry: this.belongsTo(TocEntry, 'toc_entry_id'),
       edition: this.belongsTo(Edition, 'edition_id')
