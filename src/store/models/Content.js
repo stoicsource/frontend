@@ -13,10 +13,29 @@ export default class Content extends Model {
       content: this.attr(''),
       notes: this.attr(''),
       title: this.attr(''),
-      contentType: this.attr('', value => value === 1 ? 'text' : 'html'),
+      contentType: this.attr(''),
 
       tocEntry: this.belongsTo(TocEntry, 'toc_entry_id'),
       edition: this.belongsTo(Edition, 'edition_id')
+    }
+  }
+
+  static mutators () {
+    return {
+      contentType (value) {
+        // console.log(value);
+        // TODO: why is this being called so many times? Better todo: deliver the proper value from the backend.
+        if (value === '' || value === null) {
+          return 'text';
+        }
+        else if (value === 1) {
+          return 'text';
+        }
+        else if (value === 2) {
+          return 'html';
+        }
+        return value;
+      }
     }
   }
 }
