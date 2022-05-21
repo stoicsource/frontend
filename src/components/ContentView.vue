@@ -51,7 +51,7 @@
                   <font-awesome-icon icon="list"/>
                 </a>
               </div>
-              <div v-if="getContent(tocEntry, edition).contentType === 'text'">
+              <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).contentType === 'text'">
                 <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
               </div>
               <div v-else v-html="getContent(tocEntry, edition)">
@@ -59,7 +59,7 @@
 
               <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
                 Translator notes: <br>
-                <div v-if="getContent(tocEntry, edition).contentType === 'text'">
+                <div v-if="getContentItem(tocEntry, edition).contentType === 'text'">
                   {{ getContentItem(tocEntry, edition).notes }}
                 </div>
                 <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
