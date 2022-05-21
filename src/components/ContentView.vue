@@ -98,7 +98,7 @@ export default {
   data () {
     return {
       isLoading: false,
-      quoteText: ''
+      contentLoadingFailed: false
     }
   },
   created () {
@@ -176,6 +176,10 @@ export default {
         ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition])
           .then(function () {
             this.isLoading = false;
+          }.bind(this))
+          .catch(function () {
+            this.contentLoadingFailed = true;
+            this.isLoading = false;
           }.bind(this));
       }
     },
@@ -191,7 +195,9 @@ export default {
       let contentItem = this.getContentItem(tocEntry, edition);
 
       if (!contentItem) {
-        this.loadContents();
+        if (!this.contentLoadingFailed) {
+          this.loadContents();
+        }
         return '...';
       } else {
         return contentItem.content;
@@ -200,6 +206,7 @@ export default {
 
     navigateToTocEntry (tocEntry) {
       if (tocEntry) {
+        this.contentLoadingFailed = false;
         this.selectionInfo.replaceTocEntry(tocEntry.id);
         SelectionInfoService.saveToLocalStorage();
         this.$router.push({

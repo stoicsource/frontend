@@ -25,6 +25,8 @@ export default {
       if (paramString !== window.lastRequestParamString) {
         window.lastRequestParamString = paramString;
         return Content.api().get(process.env.VUE_APP_API_URL + '/contents?' + paramString);
+      } else {
+        return Promise.reject();
       }
     }
 
