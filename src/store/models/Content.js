@@ -19,23 +19,4 @@ export default class Content extends Model {
       edition: this.belongsTo(Edition, 'edition_id')
     }
   }
-
-  static mutators () {
-    return {
-      contentType (value) {
-        // console.log(value);
-        // TODO: why is this being called so many times? Better todo: deliver the proper value from the backend.
-        if (value === '' || value === null) {
-          return 'text';
-        }
-        else if (value === 1) {
-          return 'text';
-        }
-        else if (value === 2) {
-          return 'html';
-        }
-        return value;
-      }
-    }
-  }
 }
