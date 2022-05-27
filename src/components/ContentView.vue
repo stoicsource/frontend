@@ -36,9 +36,6 @@
           </div>
           <div class="col-12 col-lg-9">
             <div class="translation-content" v-if="work && tocEntry">
-              <p v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title > ''">
-                <strong>{{ getContentItem(tocEntry, edition).title }}</strong>
-              </p>
               <div class="content-navigation bg-light">
                 <span><strong>{{ tocEntry.label }}</strong></span>
                 <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
@@ -51,6 +48,9 @@
                   <font-awesome-icon icon="list"/>
                 </a>
               </div>
+
+              <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">{{ getContentItem(tocEntry, edition).title }}</h1>
+
               <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).contentType === 'text'">
                 <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
               </div>
@@ -293,6 +293,10 @@ export default {
 
 
 <style lang="scss" scoped>
+
+h1 {
+  font-size: 1.3em;
+}
 
 .work {
   padding-top: 0.7em;
