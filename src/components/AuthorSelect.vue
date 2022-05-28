@@ -1,18 +1,24 @@
 <template>
   <div class="container author-list">
-    <b-card v-for="workAuthor in workAuthors" :key="workAuthor.id" class="mt-2">
-      <b-card-title>{{ workAuthor.shortestName }}</b-card-title>
-      <b-card-text>
+    <div class="card mt-2" v-for="workAuthor in workAuthors" :key="workAuthor.id">
+      <div class="card-body">
+
+
+        <h4 class="card-title">{{ workAuthor.shortestName }}</h4>
+
+        <p class="card-text">
         <span v-if="workAuthor.works.length === 1">
           {{ workAuthor.works[0].name }}
         </span>
-        <span v-else>
+          <span v-else>
           {{ workAuthor.works.length }} works available
         </span>
-      </b-card-text>
-      <router-link v-if="workAuthor.works.length === 1" :to="'/' + workAuthor.url_slug + '/' + workAuthor.works[0].url_slug" class="stretched-link"></router-link>
-      <router-link v-else :to="'/' + workAuthor.url_slug + '/works'" class="stretched-link"></router-link>
-    </b-card>
+        </p>
+
+        <router-link v-if="workAuthor.works.length === 1" :to="'/' + workAuthor.url_slug + '/' + workAuthor.works[0].url_slug" class="stretched-link"></router-link>
+        <router-link v-else :to="'/' + workAuthor.url_slug + '/works'" class="stretched-link"></router-link>
+      </div>
+    </div>
   </div>
 </template>
 
