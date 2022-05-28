@@ -4,9 +4,9 @@
       <div class="container">
         <div class="row">
           <div class="col-12 col-lg-3">
-            <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc" :visible="!isMobile()">
+            <div class="collapse top-toc" id="collapseWorkEditions" :class="{ 'show': !isMobile() }" style="position: relative">
               <div class="card-text">
-                <a v-b-toggle="'collapseWorkEditions' + work.id" class="toc-toggler d-lg-none">
+                <a class="toc-toggler d-lg-none" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
                   <font-awesome-icon icon="times-circle" size="lg"/>
                 </a>
                 <div>Table of Contents</div>
@@ -16,23 +16,28 @@
                   </div>
                 </div>
                 <div v-else class="mb-4">
-                  <b-tabs pills style="margin-left: -0.5em;">
-                    <b-tab v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
+                  <div class="b-tabs pills" style="margin-left: -0.5em;">
+                    <div class="b-tab" v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
                       <div class="mt-2">
                         <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
                       </div>
-                    </b-tab>
-                  </b-tabs>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <span>Translation by: </span>
-              <b-dropdown right :text="edition.authorsFormatted" size="sm" variant="outline-secondary">
-                <b-dropdown-item @click="selectEdition(edition)" v-for="edition in sortedEditions" :key="edition.id">
-                  {{ edition.authorsFormatted }} ({{ edition.year }})
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-collapse>
+              <div class="dropdown" style="display: inline-block;">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ edition.authorsFormatted }}
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li v-for="edition in sortedEditions" :key="edition.id">
+                    <a @click="selectEdition(edition)" class="dropdown-item" href="#">{{ edition.authorsFormatted }} ({{ edition.year }})</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
           <div class="col-12 col-lg-9">
             <div class="translation-content" v-if="work && tocEntry">
@@ -44,7 +49,7 @@
                 <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
                   <font-awesome-icon icon="arrow-alt-circle-down"/>
                 </a>
-                <a v-b-toggle="'collapseWorkEditions' + work.id" class="d-lg-none btn btn-outline-secondary btn-sm hover-button">
+                <a class="d-lg-none btn btn-outline-secondary btn-sm hover-button" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
                   <font-awesome-icon icon="list"/>
                 </a>
               </div>
@@ -65,9 +70,9 @@
                 <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
               </div>
 
-              <p v-if="isLoading">
-                <b-spinner label="Loading..."></b-spinner>
-              </p>
+              <div v-if="isLoading" class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </div>
           </div>
         </div>
@@ -174,13 +179,13 @@ export default {
       ) {
         this.isLoading = true;
         ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition])
-          .then(function () {
-            this.isLoading = false;
-          }.bind(this))
-          .catch(function () {
-            this.contentLoadingFailed = true;
-            this.isLoading = false;
-          }.bind(this));
+            .then(function () {
+              this.isLoading = false;
+            }.bind(this))
+            .catch(function () {
+              this.contentLoadingFailed = true;
+              this.isLoading = false;
+            }.bind(this));
       }
     },
 
@@ -378,7 +383,7 @@ a.toc-link {
   position: absolute;
   right: 0.7em;
   top: 0.1em;
-  size:1.2em;
+  size: 1.2em;
   color: darkgrey
 }
 

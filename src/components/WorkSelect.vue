@@ -2,9 +2,13 @@
   <div class="container work-list" v-if="workAuthor">
     <div class="author-name">{{ workAuthor.shortestName }}</div>
 
-    <b-list-group>
-      <b-list-group-item v-for="work in sortedWorks(workAuthor.works)" :key="work.id" :to="'/' + workAuthor.url_slug + '/' + work.url_slug">{{ work.name }}</b-list-group-item>
-    </b-list-group>
+    <ul class="list-group">
+      <li class="list-group-item" v-for="work in sortedWorks(workAuthor.works)" :key="work.id">
+        <router-link :to="'/' + workAuthor.url_slug + '/' + work.url_slug" class="plain-link">
+          {{ work.name }}
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
