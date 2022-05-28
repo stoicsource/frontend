@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { CardPlugin, NavbarPlugin, OverlayPlugin, FormCheckboxPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin, TabsPlugin, FormPlugin, FormTextareaPlugin, FormInputPlugin, FormGroupPlugin, FormSelectPlugin, ListGroupPlugin } from 'bootstrap-vue'
+import { CardPlugin, NavbarPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin, TabsPlugin, ListGroupPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
@@ -28,17 +28,10 @@ library.add(faList)
 
 Vue.use(CardPlugin)
 Vue.use(NavbarPlugin)
-Vue.use(OverlayPlugin)
-Vue.use(FormCheckboxPlugin)
 Vue.use(SpinnerPlugin)
 Vue.use(ModalPlugin)
 Vue.use(ButtonPlugin)
 Vue.use(TabsPlugin)
-Vue.use(FormPlugin)
-Vue.use(FormTextareaPlugin)
-Vue.use(FormInputPlugin)
-Vue.use(FormGroupPlugin)
-Vue.use(FormSelectPlugin)
 Vue.use(ListGroupPlugin )
 
 Vue.component("v-select", vSelect);
