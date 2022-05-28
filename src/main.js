@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { CardPlugin, NavbarPlugin, SpinnerPlugin, ModalPlugin, ButtonPlugin, TabsPlugin, ListGroupPlugin } from 'bootstrap-vue'
 import vSelect from "vue-select";
 import store from '@/store/store'
 import router from "@/router/router";
+import 'bootstrap';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 // https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free
@@ -24,15 +24,6 @@ library.add(faQuoteRight)
 library.add(faCommentAlt)
 library.add(faLink)
 library.add(faList)
-
-
-Vue.use(CardPlugin)
-Vue.use(NavbarPlugin)
-Vue.use(SpinnerPlugin)
-Vue.use(ModalPlugin)
-Vue.use(ButtonPlugin)
-Vue.use(TabsPlugin)
-Vue.use(ListGroupPlugin )
 
 Vue.component("v-select", vSelect);
 Vue.component('font-awesome-icon', FontAwesomeIcon)

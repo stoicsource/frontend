@@ -5,7 +5,7 @@
         <div class="row">
           <div class="col-12 col-lg-3">
             <b-collapse :id="'collapseWorkEditions' + work.id" class="top-toc" :visible="!isMobile()">
-              <b-card-text>
+              <div class="card-text">
                 <a v-b-toggle="'collapseWorkEditions' + work.id" class="toc-toggler d-lg-none">
                   <font-awesome-icon icon="times-circle" size="lg"/>
                 </a>
@@ -24,7 +24,7 @@
                     </b-tab>
                   </b-tabs>
                 </div>
-              </b-card-text>
+              </div>
 
               <span>Translation by: </span>
               <b-dropdown right :text="edition.authorsFormatted" size="sm" variant="outline-secondary">

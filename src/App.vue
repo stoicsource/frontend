@@ -1,31 +1,34 @@
 <template>
-  <b-overlay :show="loading">
-    <b-navbar toggleable="lg" type="dark" variant="primary" sticky class="modified-nav">
-      <b-navbar-brand v-if="selectedWork">
+  <div>
+    <nav class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg">
+      <div v-if="selectedWork" class="navbar-brand">
         <span>{{ selectedWork.name }}</span><br>
         <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
-      </b-navbar-brand>
-      <b-navbar-brand v-else>
+      </div>
+      <div v-else class="navbar-brand">
         <span>StoicSource</span>
-      </b-navbar-brand>
-
-      <!-- Right aligned nav items -->
-      <b-navbar-nav class="ml-auto">
-        <b-nav-item @click="showWorkSelect" class="nav-work-selector">
-          <font-awesome-icon icon="bars"/>
-          <span class="d-none d-md-inline">Switch to different Work</span>
-        </b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
+      </div>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item nav-work-selector">
+          <a class="nav-link" @click="showWorkSelect">
+            <font-awesome-icon icon="bars"/>
+            <span class="d-none d-md-inline">Switch to different Work</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
     <router-view class="router-view"></router-view>
 
     <contact-form></contact-form>
 
     <footer class="text-center text-muted mb-3">
-      Feedback? Questions? <span @click="showContact" class="link-style">Contact us</span>
+      Feedback? Questions?
+      <button type="button" class="link-style" data-bs-toggle="modal" data-bs-target="#contact-modal" style="border: none; background: transparent;">
+        Contact us
+      </button>
     </footer>
-  </b-overlay>
+  </div>
 </template>
 
 <script>
@@ -37,7 +40,7 @@ import SelectionInfoService from "@/services/SelectionInfoService";
 
 export default {
   name: 'App',
-  components: { ContactForm },
+  components: {ContactForm},
   data () {
     return {
       loading: false
@@ -62,9 +65,6 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    showContact () {
-      this.$bvModal.show('contact-modal');
-    },
     showWorkSelect () {
       this.$router.push({name: 'authorSelect'})
     }
@@ -115,7 +115,7 @@ td, th {
 }
 
 .navbar.modified-nav.navbar-dark {
-  padding-bottom: 0;
+  padding: 0.5rem 1rem 0;
 
   .navbar-brand {
     padding-top: 0;
