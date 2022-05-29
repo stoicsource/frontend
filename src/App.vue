@@ -1,21 +1,24 @@
 <template>
   <div>
     <nav class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg">
-      <div v-if="selectedWork" class="navbar-brand">
-        <span>{{ selectedWork.name }}</span><br>
-        <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
+      <div class="container-fluid">
+        <div v-if="selectedWork" class="navbar-brand">
+          <span>{{ selectedWork.name }}</span><br>
+          <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
+        </div>
+        <div v-else class="navbar-brand">
+          <span>StoicSource</span>
+        </div>
+
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item nav-work-selector">
+            <a class="nav-link" @click="showWorkSelect">
+              <font-awesome-icon icon="bars"/>
+              <span class="d-none d-md-inline">Switch to different Work</span>
+            </a>
+          </li>
+        </ul>
       </div>
-      <div v-else class="navbar-brand">
-        <span>StoicSource</span>
-      </div>
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item nav-work-selector">
-          <a class="nav-link" @click="showWorkSelect">
-            <font-awesome-icon icon="bars"/>
-            <span class="d-none d-md-inline">Switch to different Work</span>
-          </a>
-        </li>
-      </ul>
     </nav>
 
     <router-view class="router-view"></router-view>
