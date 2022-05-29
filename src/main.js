@@ -7,7 +7,7 @@ import 'bootstrap';
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 // https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free
-import {faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBars, faQuoteRight, faCommentAlt, faLink, faList} from '@fortawesome/free-solid-svg-icons'
+import {faAngleUp, faAngleDown, faArrowAltCircleDown, faArrowAltCircleUp, faTimesCircle, faBars, faQuoteRight, faCommentAlt, faLink, faList, faRandom, faInfoCircle, faShareAlt} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import "vue-select/dist/vue-select.css";
@@ -24,6 +24,9 @@ library.add(faQuoteRight)
 library.add(faCommentAlt)
 library.add(faLink)
 library.add(faList)
+library.add(faRandom)
+library.add(faInfoCircle)
+library.add(faShareAlt)
 
 Vue.component("v-select", vSelect);
 Vue.component('font-awesome-icon', FontAwesomeIcon)

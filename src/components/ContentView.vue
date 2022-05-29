@@ -52,15 +52,12 @@
             <div class="translation-content" v-if="work && tocEntry">
               <div class="content-navigation bg-light">
                 <span><strong>{{ tocEntry.label }}</strong></span>
-                <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm hover-button">
-                  <font-awesome-icon icon="arrow-alt-circle-up"/>
-                </a>
-                <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm hover-button">
-                  <font-awesome-icon icon="arrow-alt-circle-down"/>
-                </a>
-                <a class="d-lg-none btn btn-outline-secondary btn-sm hover-button" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
-                  <font-awesome-icon icon="list"/>
-                </a>
+                <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-up"/></a>
+                <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-down"/></a>
+                <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><font-awesome-icon icon="list"/></a>
+                <a @click="randomTocEntry()" class="d-lg-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
+                <a class="d-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="info-circle"/></a>
+                <a class="d-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
               </div>
 
               <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">{{ getContentItem(tocEntry, edition).title }}</h1>
@@ -243,6 +240,15 @@ export default {
 
     nextTocEntry () {
       let nextEntry = this.tocEntry ? this.tocEntry.getNext() : null;
+      this.navigateToTocEntry(nextEntry);
+    },
+
+    randomTocEntry () {
+      let nextEntry = this.tocEntry;
+      while (this.work.tocEntries.length > 1 && nextEntry.id === this.tocEntry.id) {
+        let entryIndex = Math.floor(Math.random() * this.work.tocEntries.length);
+        nextEntry = this.work.tocEntries[entryIndex];
+      }
       this.navigateToTocEntry(nextEntry);
     },
 
