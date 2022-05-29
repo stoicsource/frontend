@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import Clipboard from 'clipboard'
 import Work from '@/store/models/Work'
 import {mapMutations, mapState} from "vuex";
 import ContactForm from "@/components/ContactForm";
@@ -48,7 +47,6 @@ export default {
   },
   mounted () {
     this.loading = true;
-    new Clipboard('#copy-button');
     SelectionInfoService.loadFromLocalStorage();
 
     Work.api().get(process.env.VUE_APP_API_URL + '/works')
