@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="work" v-if="work && tocEntry && edition">
+    <div class="work">
       <div class="container">
-        <div class="row">
+        <div class="row" v-if="work && tocEntry && edition">
           <div class="col-12 col-lg-3">
             <div class="collapse top-toc" id="collapseWorkEditions" :class="{ 'show': !isMobile() }" style="position: relative">
               <div class="card-text">
@@ -85,8 +85,12 @@
             </div>
           </div>
         </div>
+        <div v-else>
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
       </div>
-
     </div>
   </div>
 </template>
