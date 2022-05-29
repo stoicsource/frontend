@@ -96,7 +96,6 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2'
 import Work from "@/store/models/Work";
 import Content from "@/store/models/Content";
 import TocEntry from "@/store/models/TocEntry";
@@ -249,19 +248,6 @@ export default {
 
     isTocEntrySelected (tocEntry) {
       return this.tocEntry.id === tocEntry.id;
-    },
-
-    linkTranslation (tocEntry, edition) {
-      let editionAuthor = edition.authors[0];
-      let link = window.location.origin + '/' + edition.work.url_slug + '/' + tocEntry.label + '/' + editionAuthor.url_slug;
-
-      Swal.fire({
-        title: 'Link to this content:',
-        input: 'text',
-        inputValue: link,
-        showCancelButton: false,
-        confirmButtonText: 'Close'
-      });
     },
 
     tocGroups (tocEntries) {
