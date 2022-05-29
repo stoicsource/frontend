@@ -16,13 +16,22 @@
                   </div>
                 </div>
                 <div v-else class="mb-4">
-                  <div class="b-tabs pills" style="margin-left: -0.5em;">
-                    <div class="b-tab" v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" :title="index">
+
+                  <ul data-v-6c06a484="" id="myTab2" class="nav nav-tabs nav-fill">
+                    <li v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="nav-item">
+                      <a :href="'#pane' + index" data-bs-toggle="tab" class="nav-link" :class="{ 'active': index === '1' }">{{ index }}</a>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content" style="margin-left: -0.5em;">
+                    <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="tab-pane fade show" :id="'pane' + index" :class="{ 'active': index === '1' }">
                       <div class="mt-2">
                         <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
                       </div>
                     </div>
                   </div>
+
+
                 </div>
               </div>
 
