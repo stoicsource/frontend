@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import orderBy from 'lodash.orderby';
 import Author from "@/store/models/Author";
 
 export default {
@@ -35,9 +34,7 @@ export default {
     }
   },
   methods: {
-    sortedWorks (works) {
-      return orderBy(works, 'name');
-    }
+
   }
 }
 </script>
