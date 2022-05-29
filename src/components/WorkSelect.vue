@@ -14,6 +14,7 @@
 
 <script>
 import Author from "@/store/models/Author";
+import Work from "@/store/models/Work";
 
 export default {
   props: ['author'],
@@ -27,7 +28,9 @@ export default {
     }
   },
   methods: {
-
+    sortedWorks (works) {
+      return Work.query().whereIdIn(works.map((work) => work.id)).orderBy('name').withAllRecursive().all();
+    }
   }
 }
 </script>
