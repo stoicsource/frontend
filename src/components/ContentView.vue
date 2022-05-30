@@ -16,7 +16,6 @@
                   </div>
                 </div>
                 <div v-else class="mb-4">
-
                   <ul data-v-6c06a484="" id="myTab2" class="nav nav-tabs nav-fill">
                     <li v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="nav-item">
                       <a :href="'#pane' + index" data-bs-toggle="tab" class="nav-link" :class="{ 'active': index === '1' }">{{ index }}</a>
@@ -30,8 +29,6 @@
                       </div>
                     </div>
                   </div>
-
-
                 </div>
               </div>
 
@@ -155,7 +152,6 @@ export default {
     },
 
     selectionInfo () {
-      //return SelectionInfo.find(this.work.id);
       return SelectionInfoService.getSelectionInfo(this.work.id);
     },
 
@@ -298,7 +294,7 @@ export default {
     shareEntry () {
       if (navigator.share) {
         navigator.share({
-          title: this.work.authorsFormatted + ' - ' + this.work.name,
+          title: this.work.authorsFormatted + ' - ' + this.work.name + ' ' + this.tocEntry.label,
           url: window.location
         }).then(() => {
           console.log('Thanks for sharing!');
@@ -316,7 +312,6 @@ export default {
   padding: 8px 22px;
 }
 </style>
-
 
 <style lang="scss" scoped>
 
