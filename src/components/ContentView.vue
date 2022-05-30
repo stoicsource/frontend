@@ -57,7 +57,7 @@
                 <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><font-awesome-icon icon="list"/></a>
                 <a @click="randomTocEntry()" class="d-lg-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
                 <a class="d-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="info-circle"/></a>
-                <a class="d-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
+                <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
               </div>
 
               <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">{{ getContentItem(tocEntry, edition).title }}</h1>
@@ -289,6 +289,22 @@ export default {
 
     isMobile () {
       return window.screen.width <= 768;
+    },
+
+    canShare () {
+      return navigator.share;
+    },
+
+    shareEntry () {
+      if (navigator.share) {
+        navigator.share({
+          title: this.work.authorsFormatted + ' - ' + this.work.name,
+          url: window.location
+        }).then(() => {
+          console.log('Thanks for sharing!');
+        })
+            .catch(console.error);
+      }
     }
   }
 }
