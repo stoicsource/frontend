@@ -18,12 +18,12 @@
                 <div v-else class="mb-4">
                   <ul data-v-6c06a484="" id="myTab2" class="nav nav-tabs nav-fill">
                     <li v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="nav-item">
-                      <a :href="'#pane' + index" data-bs-toggle="tab" class="nav-link" :class="{ 'active': index === '1' }">{{ index }}</a>
+                      <a :href="'#pane' + index" data-bs-toggle="tab" class="nav-link" :class="{ 'active': isSelectedTocEntryInGroup(index) }">{{ index }}</a>
                     </li>
                   </ul>
 
                   <div class="tab-content" style="margin-left: -0.5em;">
-                    <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="tab-pane fade show" :id="'pane' + index" :class="{ 'active': index === '1' }">
+                    <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="tab-pane fade show" :id="'pane' + index" :class="{ 'active': isSelectedTocEntryInGroup(index) }">
                       <div class="mt-2">
                         <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
                       </div>
@@ -250,6 +250,12 @@ export default {
 
     isTocEntrySelected (tocEntry) {
       return this.tocEntry.id === tocEntry.id;
+    },
+
+    isSelectedTocEntryInGroup (groupIndex) {
+      let label = this.tocEntry ? this.tocEntry.label : '';
+      let preDot = label.split('.')[0];
+      return preDot === groupIndex;
     },
 
     tocGroups (tocEntries) {
