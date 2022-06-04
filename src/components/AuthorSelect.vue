@@ -1,20 +1,20 @@
 <template>
   <div class="container author-list">
-    <div class="card mt-2" v-for="workAuthor in workAuthors" :key="workAuthor.id">
+    <div class="card mt-2" v-for="author in authors" :key="author.id">
       <div class="card-body">
-        <h4 class="card-title">{{ workAuthor.shortestName }}</h4>
+        <h4 class="card-title">{{ author.shortestName }}</h4>
 
         <p class="card-text">
-          <span v-if="workAuthor.works.length === 1">
-            {{ workAuthor.works[0].name }}
+          <span v-if="author.works.length === 1">
+            {{ author.works[0].name }}
           </span>
           <span v-else>
-            {{ workAuthor.works.length }} works available
+            {{ author.works.length }} works available
           </span>
         </p>
 
-        <router-link v-if="workAuthor.works.length === 1" :to="'/' + workAuthor.url_slug + '/' + workAuthor.works[0].url_slug" class="stretched-link"></router-link>
-        <router-link v-else :to="'/' + workAuthor.url_slug + '/works'" class="stretched-link"></router-link>
+        <router-link v-if="author.works.length === 1" :to="'/' + author.url_slug + '/' + author.works[0].url_slug" class="stretched-link"></router-link>
+        <router-link v-else :to="'/' + author.url_slug + '/works'" class="stretched-link"></router-link>
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@ export default {
     return {}
   },
   computed: {
-    workAuthors () {
+    authors () {
       return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
     }
   },

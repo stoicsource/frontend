@@ -126,11 +126,11 @@ export default {
   },
   computed: {
     work () {
-      return Work.query().where('url_slug', this.workSlug).with(['editions.authors', 'tocEntries.work.tocEntries', 'authors']).first();
+      return Work.query().where('url_slug', this.workSlug).with(['editions.author', 'tocEntries.work.tocEntries', 'author']).first();
     },
 
     edition () {
-      let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['authors']).first() : null;
+      let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['author']).first() : null;
       let latestEdition = this.sortedEditions.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
       return edition ? edition : latestEdition;
     },
@@ -157,14 +157,14 @@ export default {
 
     sortedEditions () {
       let editionsIds = this.work.editions.map((edition) => edition.id)
-      return Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('authors').all();
+      return Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('author').all();
     }
   },
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
     fetchWorkDetails () {
-      let work = Work.query().where('url_slug', this.$route.params.workSlug).with('authors').first()
+      let work = Work.query().where('url_slug', this.$route.params.workSlug).with('author').first()
 
       if (!work) {
         setTimeout(() => {
@@ -221,7 +221,7 @@ export default {
         SelectionInfoService.saveToLocalStorage();
         this.$router.push({
           name: 'contentByToc', params: {
-            author: this.work.authors[0].url_slug,
+            author: this.work.author.url_slug,
             workSlug: this.work.url_slug,
             tocSlug: tocEntry.label
           }
