@@ -11,8 +11,6 @@ export default class TocEntry extends Model {
       label: this.attr(''),
       sort_order: this.number(0),
 
-      selected: this.boolean(false),
-
       work: this.belongsTo(Work, 'work_id')
     }
   }

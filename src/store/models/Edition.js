@@ -14,8 +14,6 @@ export default class Edition extends Model {
       work_id: this.attr(null),
       quality: this.attr(null),
 
-      selected: this.boolean(false),
-
       work: this.belongsTo(Work, 'work_id'),
       authors: this.belongsToMany(Author, AuthorEdition, 'edition_id', 'author_id')
     }
