@@ -157,7 +157,7 @@ export default {
 
     sortedEditions () {
       let editionsIds = this.work.editions.map((edition) => edition.id)
-      return Edition.query().whereIdIn(editionsIds).orderBy('year').with('authors').all();
+      return Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('authors').all();
     }
   },
   methods: {
