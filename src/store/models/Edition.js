@@ -1,7 +1,6 @@
 import { Model } from '@vuex-orm/core'
 import Work from './Work'
 import Author from "@/store/models/Author";
-import AuthorEdition from "@/store/models/AuthorEdition";
 
 export default class Edition extends Model {
   static entity = 'editions'
@@ -12,18 +11,19 @@ export default class Edition extends Model {
       name: this.attr(''),
       year: this.attr(''),
       work_id: this.attr(null),
+      author_id: this.attr(null),
       quality: this.attr(null),
 
       work: this.belongsTo(Work, 'work_id'),
-      authors: this.belongsToMany(Author, AuthorEdition, 'edition_id', 'author_id')
+      author: this.belongsTo(Author, 'author_id')
     }
   }
 
   get authorsFormatted () {
-    return this.authors.map((author) => author.name ).join(',');
+    return this.author?.name;
   }
 
   get authorsShortnames () {
-    return this.authors.map((author) => author.shortestName ).join(',');
+    return this.author?.shortestName;
   }
 }

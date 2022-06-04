@@ -74,7 +74,7 @@ export default {
     ...mapState('app', ['activeWork']),
 
     selectedWork () {
-      return this.activeWork ? Work.query().whereId(this.activeWork.id).with(['authors']).first() : null;
+      return this.activeWork ? Work.query().whereId(this.activeWork.id).with(['author']).first() : null;
     }
   }
 }

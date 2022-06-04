@@ -1,7 +1,5 @@
 import { Model } from '@vuex-orm/core'
 import Work from './Work'
-import WorkAuthor from "@/store/models/WorkAuthor";
-import AuthorEdition from "@/store/models/AuthorEdition";
 import Edition from "@/store/models/Edition";
 
 export default class Author extends Model {
@@ -15,8 +13,8 @@ export default class Author extends Model {
       year: this.attr(''),
       url_slug: this.attr(''),
 
-      works: this.belongsToMany(Work, WorkAuthor, 'author_id', 'work_id'),
-      editions: this.belongsToMany(Edition, AuthorEdition, 'author_id', 'edition_id')
+      works: this.hasMany(Work, 'author_id'),
+      editions: this.hasMany(Edition, 'author_id')
     }
   }
 

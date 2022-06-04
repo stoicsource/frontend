@@ -8,8 +8,6 @@ import Work from '@/store/models/Work'
 import Edition from '@/store/models/Edition'
 import TocEntry from "@/store/models/TocEntry";
 import Author from "@/store/models/Author";
-import WorkAuthor from "@/store/models/WorkAuthor";
-import AuthorEdition from "@/store/models/AuthorEdition";
 import Content from "@/store/models/Content";
 import SelectionInfo from "@/store/models/SelectionInfo";
 
@@ -23,8 +21,6 @@ database.register(Work)
 database.register(Edition)
 database.register(TocEntry)
 database.register(Author)
-database.register(WorkAuthor)
-database.register(AuthorEdition)
 database.register(Content)
 database.register(SelectionInfo)
 
