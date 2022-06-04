@@ -24,19 +24,10 @@
 </template>
 
 <script>
-import Author from "@/store/models/Author";
 
 export default {
   data () {
     return {
-      contactName: '',
-      contactEmail: '',
-      contactMessage: ''
-    }
-  },
-  computed: {
-    workAuthors () {
-      return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
     }
   },
   methods: {}
