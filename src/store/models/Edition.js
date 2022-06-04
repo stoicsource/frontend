@@ -12,6 +12,7 @@ export default class Edition extends Model {
       name: this.attr(''),
       year: this.attr(''),
       work_id: this.attr(null),
+      quality: this.attr(null),
 
       selected: this.boolean(false),
 
