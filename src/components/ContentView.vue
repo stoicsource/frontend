@@ -11,7 +11,7 @@
                 </a>
                 <div>Table of Contents</div>
                 <div v-if="work.tocEntries.length < 125">
-                  <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index">
+                  <div v-for="(tocGroup, index) in tocGroups(sortedTocEntries)" :key="index">
                     <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
                   </div>
                 </div>
@@ -158,6 +158,10 @@ export default {
     sortedEditions () {
       let editionsIds = this.work.editions.map((edition) => edition.id)
       return Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('author').all();
+    },
+
+    sortedTocEntries () {
+      return TocEntry.query().whereIdIn(this.work.tocEntries.map((tocEntry) => tocEntry.id)).orderBy('sort_order').withAllRecursive().all();
     }
   },
   methods: {
