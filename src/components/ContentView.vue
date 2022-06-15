@@ -57,24 +57,25 @@
                 <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
               </div>
 
-              <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">{{ getContentItem(tocEntry, edition).title }}</h1>
-
-              <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).contentType === 'text'">
-                <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
-              </div>
-              <div v-else v-html="getContent(tocEntry, edition)">
-              </div>
-
-              <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
-                Translator notes: <br>
-                <div v-if="getContentItem(tocEntry, edition).contentType === 'text'">
-                  {{ getContentItem(tocEntry, edition).notes }}
-                </div>
-                <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
-              </div>
-
               <div v-if="isLoading" class="spinner-border" role="status">
                 <span class="visually-hidden">Loading...</span>
+              </div>
+              <div v-else>
+                <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">{{ getContentItem(tocEntry, edition).title }}</h1>
+
+                <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).contentType === 'text'">
+                  <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{ paragraph }}</p>
+                </div>
+                <div v-else v-html="getContent(tocEntry, edition)">
+                </div>
+
+                <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''" class="translator-notes">
+                  Translator notes: <br>
+                  <div v-if="getContentItem(tocEntry, edition).contentType === 'text'">
+                    {{ getContentItem(tocEntry, edition).notes }}
+                  </div>
+                  <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -91,7 +92,6 @@
 
 <script>
 import Work from "@/store/models/Work";
-import Content from "@/store/models/Content";
 import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import WorkService from "@/services/WorkService";
@@ -105,22 +105,17 @@ export default {
     workSlug: String,
     tocSlug: String
   },
-  components: {},
   data () {
     return {
-      isLoading: false,
-      contentLoadingFailed: false
+      isLoading: false
     }
   },
   created () {
-    // watch the params of the route to fetch the data again
     this.$watch(
         () => this.$route.params,
         () => {
-          this.fetchWorkDetails()
+          this.onRouteChange()
         },
-        // fetch the data when the view is created and the data is
-        // already being observed
         {immediate: true}
     )
   },
@@ -167,51 +162,44 @@ export default {
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    fetchWorkDetails () {
+    onRouteChange () {
       let work = Work.query().where('url_slug', this.$route.params.workSlug).with('author').first()
 
       if (!work) {
         setTimeout(() => {
-          this.fetchWorkDetails();
+          this.onRouteChange();
         }, 200);
         return;
       }
 
-      WorkService.loadFullWork(work);
+      WorkService.loadFullWork(work).then(function () {
+        this.requireContent();
+      }.bind(this));
       this.setActiveWork(work);
       document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
     },
 
-    loadContents () {
-      if (!this.isLoading &&
-          this.edition && this.tocEntry
-      ) {
-        this.isLoading = true;
-        ContentService.loadContent([this.tocEntry, this.tocEntry.getNext(), this.tocEntry.getPrevious()], [this.edition])
+    requireContent () {
+      if (!this.isLoading) {
+        this.isLoading = !ContentService.isContentItemLoaded(this.tocEntry, this.edition);
+        ContentService.requireContent(this.tocEntry, this.edition)
             .then(function () {
               this.isLoading = false;
             }.bind(this))
             .catch(function () {
-              this.contentLoadingFailed = true;
               this.isLoading = false;
             }.bind(this));
       }
     },
 
     getContentItem (tocEntry, edition) {
-      return Content.query()
-          .where('toc_entry_id', tocEntry.id)
-          .where('edition_id', edition.id)
-          .first();
+      return ContentService.getContentItem(tocEntry, edition);
     },
 
     getContent (tocEntry, edition) {
       let contentItem = this.getContentItem(tocEntry, edition);
 
       if (!contentItem) {
-        if (!this.contentLoadingFailed) {
-          this.loadContents();
-        }
         return '...';
       } else {
         return contentItem.content;
@@ -220,7 +208,6 @@ export default {
 
     navigateToTocEntry (tocEntry) {
       if (tocEntry) {
-        this.contentLoadingFailed = false;
         this.selectionInfo.replaceTocEntry(tocEntry.id);
         SelectionInfoService.saveToLocalStorage();
         this.$router.push({
@@ -289,6 +276,7 @@ export default {
           }
         })
 
+        this.requireContent();
         SelectionInfoService.saveToLocalStorage();
       }.bind(this), 1);
     },
