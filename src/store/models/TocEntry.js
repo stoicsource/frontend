@@ -25,10 +25,10 @@ export default class TocEntry extends Model {
   }
 
   hasPrevious () {
-    return this.getPrevious() !== undefined;
+    return this.getPrevious() !== null;
   }
 
   hasNext () {
-    return this.getNext() !== undefined;
+    return this.getNext() !== null;
   }
 }

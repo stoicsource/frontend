@@ -12,8 +12,12 @@ export default {
     let requiredEntries = [tocEntry];
 
     if (this.entryPadding === 1) {
-      requiredEntries.push(tocEntry.getPrevious());
-      requiredEntries.push(tocEntry.getNext());
+      if (tocEntry.hasPrevious()) {
+        requiredEntries.push(tocEntry.getPrevious());
+      }
+      if (tocEntry.hasNext()) {
+        requiredEntries.push(tocEntry.getNext());
+      }
     }
 
     let tocIdsToLoad = [];
