@@ -12,7 +12,8 @@ export default {
     let hasToc = TocEntry.query().where('work_id', work.id).exists();
 
     if (!hasEditions || !hasToc) {
-      Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
+      return Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
     }
+    return Promise.resolve();
   }
 }
