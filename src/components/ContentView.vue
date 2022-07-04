@@ -32,16 +32,21 @@
                 </div>
               </div>
 
-              <span>Translation by: </span>
-              <div class="dropdown" style="display: inline-block;">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                  {{ edition.authorsFormatted }}
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li v-for="edition in sortedEditions" :key="edition.id">
-                    <a @click="selectEdition(edition)" class="dropdown-item" href="#">{{ edition.authorsFormatted }} ({{ edition.year }})</a>
-                  </li>
-                </ul>
+              <div class="d-flex flex-row flex-wrap mt-3">
+                <div class="me-2" >Translation&nbsp;by: </div>
+                <div class="dropdown">
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                          id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    {{ edition.authorsFormatted }}
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li v-for="edition in sortedEditions" :key="edition.id">
+                      <a @click="selectEdition(edition)" class="dropdown-item" href="#">{{ edition.authorsFormatted }}
+                        ({{ edition.year }})</a>
+                    </li>
+                  </ul>
+                </div>
+                <a @click="editionInfo()" class="btn btn-outline-secondary btn-sm ms-2"><font-awesome-icon icon="info-circle"/></a>
               </div>
             </div>
           </div>
@@ -53,7 +58,6 @@
                 <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-down"/></a>
                 <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><font-awesome-icon icon="list"/></a>
                 <a @click="randomTocEntry()" class="d-lg-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
-                <a class="d-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="info-circle"/></a>
                 <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
               </div>
 
@@ -299,6 +303,14 @@ export default {
         })
             .catch(console.error);
       }
+    },
+
+    editionInfo () {
+      this.$router.push({
+        name: 'editionInfo', params: {
+          editionId: this.edition.id
+        }
+      });
     }
   }
 }
@@ -312,10 +324,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-
-h1 {
-  font-size: 1.3em;
-}
 
 .work {
   padding-top: 0.7em;

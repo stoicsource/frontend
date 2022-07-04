@@ -12,6 +12,9 @@ export default class Author extends Model {
       shortName: this.attr(''),
       year: this.attr(''),
       url_slug: this.attr(''),
+      yearsAlive: this.attr(''),
+      summary: this.attr(''),
+      moreInfoUrl: this.attr(''),
 
       works: this.hasMany(Work, 'author_id'),
       editions: this.hasMany(Edition, 'author_id')

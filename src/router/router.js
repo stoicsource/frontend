@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import AuthorSelect from "@/components/AuthorSelect";
 import WorkSelect from "@/components/WorkSelect";
 import ContentView from "@/components/ContentView";
+import EditionInfo from "../components/EditionInfo";
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,8 @@ const routes = [
   { path: '/enchirideon', redirect: '/epictetus/enchirideon' },
   { path: '/enchirideon/:tocSlug', redirect: '/epictetus/enchirideon/:tocSlug' },
   { path: '/enchirideon/:tocSlug/:translator', redirect: '/epictetus/enchirideon/:tocSlug/:translator' },
+
+  { path: '/edition/:editionId/info', component: EditionInfo, props: true, name: 'editionInfo' },
 
   { path: '/', component: AuthorSelect, name: 'authorSelect' },
   { path: '/:author/works', component: WorkSelect, props: true },
