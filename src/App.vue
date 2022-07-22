@@ -12,16 +12,21 @@
 
         <ul class="navbar-nav ml-auto">
           <li class="nav-item nav-work-selector">
-            <a class="nav-link" @click="showWorkSelect">
+            <router-link :to="{name: 'authorSelect'}" class="nav-link">
               <font-awesome-icon icon="bars"/>
               <span class="d-none d-md-inline">Switch to different Work</span>
-            </a>
+            </router-link>
           </li>
         </ul>
       </div>
     </nav>
 
-    <router-view class="router-view"></router-view>
+    <div v-if="loading" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <router-view v-else class="router-view"></router-view>
 
     <contact-form></contact-form>
 
@@ -35,11 +40,13 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Work from '@/store/models/Work'
-import {mapMutations, mapState} from "vuex";
+import { mapState} from "vuex";
 import ContactForm from "@/components/ContactForm";
 import SelectionInfoService from "@/services/SelectionInfoService";
 import Author from "./store/models/Author";
+import Edition from "./store/models/Edition";
 
 export default {
   name: 'App',
@@ -51,29 +58,26 @@ export default {
   },
   mounted () {
     this.loading = true;
+
+    axios.interceptors.response.use(function (response) {
+      return response;
+    }, function (error) {
+      console.log(error);
+      alert(error.message);
+      return Promise.reject(error);
+    });
+
     SelectionInfoService.loadFromLocalStorage();
 
     Promise.all([
         Work.api().get('works'),
         Author.api().get('authors')
         ])
-
-        .catch(function (error) {
-          console.log(error);
-          alert(error.message);
-        })
         .then(function () {
           this.loading = false;
         }.bind(this));
 
-
-  },
-  methods: {
-    ...mapMutations('app', ['setActiveWork']),
-
-    showWorkSelect () {
-      this.$router.push({name: 'authorSelect'})
-    }
+    Edition.api().get('editions');
   },
   computed: {
     ...mapState('app', ['activeWork']),
@@ -104,15 +108,6 @@ td, th {
   a, .link-style {
     color: #6c757d;
     text-decoration: underline;
-  }
-}
-
-.col-12.sticky-sidebar {
-  @media (min-width: 768px) {
-    position: sticky;
-    height: calc(100vh - 90px);
-    top: 80px;
-    overflow-y: scroll;
   }
 }
 
