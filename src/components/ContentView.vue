@@ -125,7 +125,7 @@ export default {
   },
   computed: {
     work () {
-      return Work.query().where('url_slug', this.workSlug).with(['editions.author', 'tocEntries.work.tocEntries', 'author']).first();
+      return Work.query().where('urlSlug', this.workSlug).with(['editions.author', 'tocEntries.work.tocEntries', 'author']).first();
     },
 
     edition () {
@@ -167,7 +167,7 @@ export default {
     ...mapMutations('app', ['setActiveWork']),
 
     onRouteChange () {
-      let work = Work.query().where('url_slug', this.$route.params.workSlug).with('author').first()
+      let work = Work.query().where('urlSlug', this.$route.params.workSlug).with('author').first()
 
       if (!work) {
         setTimeout(() => {
@@ -216,8 +216,8 @@ export default {
         SelectionInfoService.saveToLocalStorage();
         this.$router.push({
           name: 'contentByToc', params: {
-            author: this.work.author.url_slug,
-            workSlug: this.work.url_slug,
+            author: this.work.author.urlSlug,
+            workSlug: this.work.urlSlug,
             tocSlug: tocEntry.label
           }
         });

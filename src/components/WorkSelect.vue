@@ -4,7 +4,7 @@
 
     <ul class="list-group">
       <li class="list-group-item" v-for="work in sortedWorks(workAuthor.works)" :key="work.id">
-        <router-link :to="'/' + workAuthor.url_slug + '/' + work.url_slug" class="plain-link">
+        <router-link :to="'/' + workAuthor.urlSlug + '/' + work.urlSlug" class="plain-link">
           {{ work.name }}
         </router-link>
       </li>
@@ -24,7 +24,7 @@ export default {
   },
   computed: {
     workAuthor () {
-      return Author.query().where('url_slug', this.author).withAllRecursive().first();
+      return Author.query().where('urlSlug', this.author).withAllRecursive().first();
     }
   },
   methods: {

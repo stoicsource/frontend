@@ -1,6 +1,5 @@
 import Edition from "@/store/models/Edition";
 import TocEntry from "@/store/models/TocEntry";
-import Work from "@/store/models/Work";
 
 export default {
   loadFullWork (work) {
@@ -10,10 +9,14 @@ export default {
 
     let hasEditions = Edition.query().where('work_id', work.id).exists();
     let hasToc = TocEntry.query().where('work_id', work.id).exists();
+    let promises = [];
 
-    if (!hasEditions || !hasToc) {
-      return Work.api().get(process.env.VUE_APP_API_URL + '/work/' + work.id)
+    if (!hasEditions) {
+      promises.push(Edition.api().get('editions?work=' + work.id));
     }
-    return Promise.resolve();
+    if (!hasToc) {
+      promises.push(TocEntry.api().get('toc_entries?work=' + work.id));
+    }
+    return Promise.all(promises);
   }
 }
