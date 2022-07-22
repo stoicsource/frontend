@@ -39,6 +39,7 @@ import Work from '@/store/models/Work'
 import {mapMutations, mapState} from "vuex";
 import ContactForm from "@/components/ContactForm";
 import SelectionInfoService from "@/services/SelectionInfoService";
+import Author from "./store/models/Author";
 
 export default {
   name: 'App',
@@ -52,7 +53,11 @@ export default {
     this.loading = true;
     SelectionInfoService.loadFromLocalStorage();
 
-    Work.api().get(process.env.VUE_APP_API_URL + '/works')
+    Promise.all([
+        Work.api().get('works'),
+        Author.api().get('authors')
+        ])
+
         .catch(function (error) {
           console.log(error);
           alert(error.message);

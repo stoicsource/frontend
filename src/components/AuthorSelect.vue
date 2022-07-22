@@ -13,8 +13,8 @@
           </span>
         </p>
 
-        <router-link v-if="author.works.length === 1" :to="'/' + author.url_slug + '/' + author.works[0].url_slug" class="stretched-link"></router-link>
-        <router-link v-else :to="'/' + author.url_slug + '/works'" class="stretched-link"></router-link>
+        <router-link v-if="author.works.length === 1" :to="'/' + author.urlSlug + '/' + author.works[0].urlSlug" class="stretched-link"></router-link>
+        <router-link v-else :to="'/' + author.urlSlug + '/works'" class="stretched-link"></router-link>
       </div>
     </div>
   </div>

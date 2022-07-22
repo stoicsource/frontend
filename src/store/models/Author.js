@@ -11,7 +11,7 @@ export default class Author extends Model {
       name: this.attr(''),
       shortName: this.attr(''),
       year: this.attr(''),
-      url_slug: this.attr(''),
+      urlSlug: this.attr(''),
       yearsAlive: this.attr(''),
       summary: this.attr(''),
       moreInfoUrl: this.attr(''),

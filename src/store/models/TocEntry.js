@@ -1,5 +1,6 @@
 import { Model } from '@vuex-orm/core'
 import Work from './Work'
+import ModelUtils from "./ModelUtils";
 
 export default class TocEntry extends Model {
   static entity = 'toc_entries'
@@ -9,19 +10,29 @@ export default class TocEntry extends Model {
       id: this.attr(null),
       work_id: this.attr(null),
       label: this.attr(''),
-      sort_order: this.number(0),
+      sortOrder: this.number(0),
 
       work: this.belongsTo(Work, 'work_id')
     }
   }
 
+  static apiConfig = {
+    dataTransformer: ({ data }) => {
+      data = Array.isArray(data) ? data : [data];
+      data.forEach((tocEntry) => {
+        tocEntry.work = ModelUtils.jsonUrlToIdObject(tocEntry.work);
+      })
+
+      return data;
+    }
+  }
 
   getPrevious () {
-    return TocEntry.query().where('work_id', this.work.id).orderBy('sort_order', 'desc').where('sort_order', (value) => value < this.sort_order).first();
+    return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'desc').where('sortOrder', (value) => value < this.sortOrder).first();
   }
 
   getNext () {
-    return TocEntry.query().where('work_id', this.work.id).orderBy('sort_order', 'asc').where('sort_order', (value) => value > this.sort_order).first();
+    return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'asc').where('sortOrder', (value) => value > this.sortOrder).first();
   }
 
   hasPrevious () {

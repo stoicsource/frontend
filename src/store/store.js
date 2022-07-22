@@ -11,7 +11,11 @@ import Author from "@/store/models/Author";
 import Content from "@/store/models/Content";
 import SelectionInfo from "@/store/models/SelectionInfo";
 
-VuexORM.use(VuexORMAxios, { axios })
+VuexORM.use(VuexORMAxios, {
+  axios,
+  headers: { 'accept': 'application/json' },
+  baseURL: process.env.VUE_APP_API_URL
+})
 
 Vue.use(Vuex)
 

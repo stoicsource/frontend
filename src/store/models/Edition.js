@@ -1,6 +1,7 @@
 import { Model } from '@vuex-orm/core'
 import Work from './Work'
 import Author from "@/store/models/Author";
+import ModelUtils from "./ModelUtils";
 
 export default class Edition extends Model {
   static entity = 'editions'
@@ -17,6 +18,18 @@ export default class Edition extends Model {
 
       work: this.belongsTo(Work, 'work_id'),
       author: this.belongsTo(Author, 'author_id')
+    }
+  }
+
+  static apiConfig = {
+    dataTransformer: ({ data }) => {
+      data = Array.isArray(data) ? data : [data];
+      data.forEach((edition) => {
+        edition.author = ModelUtils.jsonUrlToIdObject(edition.author);
+        edition.work = ModelUtils.jsonUrlToIdObject(edition.work);
+      })
+
+      return data;
     }
   }
 

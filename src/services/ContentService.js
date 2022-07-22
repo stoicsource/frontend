@@ -33,14 +33,14 @@ export default {
     });
 
     if (tocIdsToLoad.length > 0) {
-      let tocParams = tocIdsToLoad.map((tocEntryId) => 'toc_entries[]=' + tocEntryId);
-      let editionParams = ['editions[]=' + edition.id];
+      let tocParams = tocIdsToLoad.map((tocEntryId) => 'tocEntry[]=' + tocEntryId);
+      let editionParams = ['edition[]=' + edition.id];
 
       let paramString = editionParams.join('&') + '&' + tocParams.join('&');
 
       if (paramString !== this.lastRequestParamString) {
         this.lastRequestParamString = paramString;
-        return Content.api().get(process.env.VUE_APP_API_URL + '/contents?' + paramString);
+        return Content.api().get('contents?' + paramString);
       } else {
         return Promise.reject();
       }
