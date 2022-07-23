@@ -13,7 +13,11 @@ export default {
 
       selectionInfo.tocEntries = work.tocEntries.length > 0 ? [work.tocEntries[0].id] : [];
 
-      let latest = Edition.query().where('work_id', work.id).orderBy('year', 'desc').limit(1).get();
+      let latest = Edition.query()
+          .where('work_id', work.id)
+          .where('language', 'eng')
+          .orderBy('year', 'desc')
+          .limit(1).get();
       selectionInfo.editions = latest.map(edition => edition.id);
 
       SelectionInfo.insert({ data: selectionInfo });
