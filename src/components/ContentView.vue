@@ -57,7 +57,7 @@
                 <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-up"/></a>
                 <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-down"/></a>
                 <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><font-awesome-icon icon="list"/></a>
-                <a @click="randomTocEntry()" class="d-lg-none btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
+                <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
                 <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
               </div>
 
