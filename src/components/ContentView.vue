@@ -42,7 +42,7 @@
                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li v-for="edition in sortedEditions" :key="edition.id">
                       <a @click="selectEdition(edition)" class="dropdown-item" href="#">{{ edition.authorsFormatted }}
-                        ({{ edition.year }})</a>
+                        ({{ edition.year }}<span v-if="edition.language !== 'eng'">, {{ edition.language }}</span>)</a>
                     </li>
                   </ul>
                 </div>
