@@ -9,7 +9,10 @@
     <h1>{{ edition.name }}</h1>
     <p>
       published in: {{ edition.year }}<br>
-      translated by: {{ edition.author.name }}
+      translated by:
+      <span v-if="edition.author.moreInfoUrl"><a :href="edition.author.moreInfoUrl" target="_blank">{{ edition.author.name }}</a></span>
+      <span v-else>{{ edition.author.name }}</span>
+
       <span v-if="edition.author.yearsAlive || edition.author.summary">
         (<span v-if="edition.author.yearsAlive">{{ edition.author.yearsAlive }}</span>
         <span v-if="edition.author.summary">, {{ edition.author.summary }}</span>)
