@@ -24,7 +24,6 @@
 import Author from "@/store/models/Author";
 
 export default {
-  components: {},
   data () {
     return {}
   },

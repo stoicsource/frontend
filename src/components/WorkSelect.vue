@@ -18,7 +18,6 @@ import Work from "@/store/models/Work";
 
 export default {
   props: ['author'],
-  components: {},
   data () {
     return {}
   },
