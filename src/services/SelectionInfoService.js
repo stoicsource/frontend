@@ -4,6 +4,10 @@ import Work from "@/store/models/Work";
 
 export default {
   getSelectionInfo(workId) {
+    if (!workId) {
+      return null;
+    }
+
     let selectionInfo = SelectionInfo.find(workId);
 
     if (!selectionInfo) {

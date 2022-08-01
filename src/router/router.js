@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import AuthorSelect from "@/components/AuthorSelect";
-import WorkSelect from "@/components/WorkSelect";
-import ContentView from "@/components/ContentView";
+import AuthorSelect from "../components/AuthorSelect";
+import WorkSelect from "../components/WorkSelect";
+import ContentView from "../components/ContentView/ContentView";
 import EditionInfo from "../components/EditionInfo";
 
 Vue.use(VueRouter)

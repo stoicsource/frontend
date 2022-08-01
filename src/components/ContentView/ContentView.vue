@@ -5,49 +5,17 @@
         <div class="row" v-if="work && tocEntry && edition">
           <div class="col-12 col-lg-3">
             <div class="collapse top-toc" id="collapseWorkEditions" :class="{ 'show': !isMobile() }" style="position: relative">
-              <div class="card-text">
-                <a class="toc-toggler d-lg-none" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
-                  <font-awesome-icon icon="times-circle" size="lg"/>
-                </a>
-                <div>Table of Contents</div>
-                <div v-if="work.tocEntries.length < 125">
-                  <div v-for="(tocGroup, index) in tocGroups(sortedTocEntries)" :key="index">
-                    <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
-                  </div>
-                </div>
-                <div v-else class="mb-4">
-                  <ul data-v-6c06a484="" id="myTab2" class="nav nav-tabs nav-fill">
-                    <li v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="nav-item">
-                      <a :href="'#pane' + index" data-bs-toggle="tab" class="nav-link" :class="{ 'active': isSelectedTocEntryInGroup(index) }">{{ index }}</a>
-                    </li>
-                  </ul>
-
-                  <div class="tab-content" style="margin-left: -0.5em;">
-                    <div v-for="(tocGroup, index) in tocGroups(work.tocEntries)" :key="index" class="tab-pane fade show" :id="'pane' + index" :class="{ 'active': isSelectedTocEntryInGroup(index) }">
-                      <div class="mt-2">
-                        <a v-for="tocEntry in tocGroup" :key="tocEntry.id" @click="navigateToTocEntry(tocEntry)" class="toc-link" :class="{ 'selected': isTocEntrySelected(tocEntry) }">{{ tocEntry.label }}</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex flex-row flex-wrap mt-3">
-                <div class="me-2" >Translation&nbsp;by: </div>
-                <div class="dropdown">
-                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
-                          id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ edition.authorsFormatted }}
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                    <li v-for="edition in sortedEditions" :key="edition.id">
-                      <a @click="selectEdition(edition)" class="dropdown-item" href="#">{{ edition.authorsFormatted }}
-                        ({{ edition.year }}<span v-if="edition.language !== 'eng'">, {{ edition.language }}</span>)</a>
-                    </li>
-                  </ul>
-                </div>
-                <a @click="editionInfo()" class="btn btn-outline-secondary btn-sm ms-2"><font-awesome-icon icon="info-circle"/></a>
-              </div>
+              <a class="toc-toggler d-lg-none" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
+                <font-awesome-icon icon="times-circle" size="lg"/>
+              </a>
+              <table-of-contents
+                  :editions="sortedEditions"
+                  :toc-entries="sortedTocEntries"
+                  :selected-edition="edition"
+                  :selected-toc-entry="tocEntry"
+                  @toc-entry-selected="navigateToTocEntry"
+                  @edition-selected="selectEdition"
+              ></table-of-contents>
             </div>
           </div>
           <div class="col-12 col-lg-9">
@@ -103,11 +71,15 @@ import SelectionInfoService from "@/services/SelectionInfoService";
 import {mapMutations} from "vuex";
 import Edition from "@/store/models/Edition";
 import ContentService from "@/services/ContentService";
+import TableOfContents from "./TableOfContents";
 
 export default {
   props: {
     workSlug: String,
     tocSlug: String
+  },
+  components: {
+    TableOfContents
   },
   data () {
     return {
@@ -130,13 +102,13 @@ export default {
 
     edition () {
       let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['author']).first() : null;
-      let latestEdition = this.sortedEditions.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
+      let latestEdition = this.sortedEditions?.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
       return edition ? edition : latestEdition;
     },
 
     tocEntry () {
       // order: 1. url, 2. selection, 3. first chapter
-      let tocSlugEntry = this.tocSlug ? TocEntry.query().where('work_id', this.work.id).where('label', this.tocSlug).first() : null;
+      let tocSlugEntry = this.tocSlug ? TocEntry.query().where('work_id', this.work?.id).where('label', this.tocSlug).first() : null;
       let tocEntryId = tocSlugEntry ? tocSlugEntry.id : null;
 
       if (!tocEntryId) {
@@ -151,12 +123,12 @@ export default {
     },
 
     selectionInfo () {
-      return SelectionInfoService.getSelectionInfo(this.work.id);
+      return SelectionInfoService.getSelectionInfo(this.work?.id);
     },
 
     sortedEditions () {
-      let editionsIds = this.work.editions.map((edition) => edition.id)
-      return Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('author').all();
+      let editionsIds = this.work ? this.work.editions.map((edition) => edition.id) : null;
+      return editionsIds ? Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6). orderBy('year').with('author').all() : null;
     },
 
     sortedTocEntries () {
@@ -245,28 +217,6 @@ export default {
 
     isTocEntrySelected (tocEntry) {
       return this.tocEntry.id === tocEntry.id;
-    },
-
-    isSelectedTocEntryInGroup (groupIndex) {
-      let label = this.tocEntry ? this.tocEntry.label : '';
-      let preDot = label.split('.')[0];
-      return preDot === groupIndex;
-    },
-
-    tocGroups (tocEntries) {
-      let groups = {};
-
-      tocEntries.forEach(function (tocEntry) {
-        let labelParts = tocEntry.label.split('.')
-
-        let chapter = labelParts.length > 1 ? labelParts[0] : '0';
-        if (!(chapter in groups)) {
-          groups[chapter] = [];
-        }
-        groups[chapter].push(tocEntry);
-      });
-
-      return groups;
     },
 
     selectEdition (edition) {
@@ -380,18 +330,6 @@ export default {
 
   a {
     margin-top: 0.2em;
-  }
-}
-
-a.toc-link {
-  display: inline-block;
-  margin-left: 0.5em;
-  text-decoration: underline;
-  color: #222;
-  font-size: 1.1em;
-
-  &.selected {
-    font-weight: bold;
   }
 }
 
