@@ -35,4 +35,8 @@ export default class Work extends Model {
   get authorsFormatted () {
     return this.author?.shortName;
   }
+
+  get firstTocEntry () {
+    return this.tocEntries.length > 0 ? this.tocEntries[0] : null;
+  }
 }

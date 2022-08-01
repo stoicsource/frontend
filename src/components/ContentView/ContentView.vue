@@ -15,6 +15,7 @@
                   :selected-toc-entry="tocEntry"
                   @toc-entry-selected="navigateToTocEntry"
                   @edition-selected="selectEdition"
+                  @edition-info-clicked="editionInfo"
               ></table-of-contents>
             </div>
           </div>
@@ -116,7 +117,7 @@ export default {
       }
 
       if (!tocEntryId) {
-        tocEntryId = (this.work && this.work.tocEntries.length > 0) ? this.work.tocEntries[0].id : null;
+        tocEntryId = this.work?.firstTocEntry?.id;
       }
 
       return tocEntryId ? TocEntry.query().whereId(tocEntryId).with(['work.tocEntries']).first() : null;
@@ -156,13 +157,10 @@ export default {
     },
 
     requireContent () {
-      if (!this.isLoading) {
+      if (this.tocEntry && this.edition && !this.isLoading) {
         this.isLoading = !ContentService.isContentItemLoaded(this.tocEntry, this.edition);
         ContentService.requireContent(this.tocEntry, this.edition)
-            .then(function () {
-              this.isLoading = false;
-            }.bind(this))
-            .catch(function () {
+            .finally(function () {
               this.isLoading = false;
             }.bind(this));
       }
@@ -197,13 +195,11 @@ export default {
     },
 
     previousTocEntry () {
-      let previousEntry = this.tocEntry ? this.tocEntry.getPrevious() : null;
-      this.navigateToTocEntry(previousEntry);
+      this.navigateToTocEntry(this.tocEntry?.getPrevious());
     },
 
     nextTocEntry () {
-      let nextEntry = this.tocEntry ? this.tocEntry.getNext() : null;
-      this.navigateToTocEntry(nextEntry);
+      this.navigateToTocEntry(this.tocEntry?.getNext());
     },
 
     randomTocEntry () {

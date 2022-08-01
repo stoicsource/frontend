@@ -74,6 +74,10 @@ export default {
       this.$emit('edition-selected', edition)
     },
 
+    editionInfo (edition) {
+      this.$emit('edition-info-clicked', edition)
+    },
+
     isTocEntrySelected (tocEntry) {
       return this.selectedTocEntry.id === tocEntry.id;
     },
