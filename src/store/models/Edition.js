@@ -16,6 +16,7 @@ export default class Edition extends Model {
       quality: this.attr(null),
       contributor: this.attr(''),
       language: this.attr(''),
+      source: this.attr(''),
 
       work: this.belongsTo(Work, 'work_id'),
       author: this.belongsTo(Author, 'author_id')
