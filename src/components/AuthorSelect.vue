@@ -25,15 +25,15 @@ import ContentService from "../services/ContentService";
 import Content from "../store/models/Content";
 
 export default {
-  data () {
+  data() {
     return {}
   },
   computed: {
-    authors () {
+    authors() {
       return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
     },
 
-    augmentedAuthors () {
+    augmentedAuthors() {
       let authors = this.authors;
 
       authors.push({
@@ -50,7 +50,7 @@ export default {
     }
   },
   methods: {
-    navigateToAuthor (author) {
+    navigateToAuthor(author) {
       if (author.id === 'random') {
         ContentService.getRandomItem().then(function (randomContent) {
           let randomContentWithRelations = Content.query().whereId(randomContent.id).with(['edition.work.author', 'tocEntry']).first()
@@ -60,12 +60,12 @@ export default {
               '/' + randomContentWithRelations.tocEntry.label
           );
         }.bind(this));
-      }
-
-      if (author.works.length === 1) {
-        this.$router.push('/' + author.urlSlug + '/' + author.works[0].urlSlug);
       } else {
-        this.$router.push('/' + author.urlSlug + '/works');
+        if (author.works.length === 1) {
+          this.$router.push('/' + author.urlSlug + '/' + author.works[0].urlSlug);
+        } else {
+          this.$router.push('/' + author.urlSlug + '/works');
+        }
       }
     }
   }
