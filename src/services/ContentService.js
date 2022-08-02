@@ -61,5 +61,12 @@ export default {
       .where('toc_entry_id', tocEntry.id)
       .where('edition_id', edition.id)
       .first() : null;
+  },
+
+  getRandomItem () {
+    return Content.api().get('contents?order[random]&itemsPerPage=1&cachebuster=' + Date.now())
+        .then(function (response) {
+          return response.entities.contents[0];
+        });
   }
 }

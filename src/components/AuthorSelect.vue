@@ -1,6 +1,6 @@
 <template>
   <div class="container author-list">
-    <div class="card mt-2" v-for="author in authors" :key="author.id">
+    <div class="card mt-2" v-for="author in augmentedAuthors" :key="author.id">
       <div class="card-body">
         <h4 class="card-title">{{ author.shortestName }}</h4>
 
@@ -13,8 +13,7 @@
           </span>
         </p>
 
-        <router-link v-if="author.works.length === 1" :to="'/' + author.urlSlug + '/' + author.works[0].urlSlug" class="stretched-link"></router-link>
-        <router-link v-else :to="'/' + author.urlSlug + '/works'" class="stretched-link"></router-link>
+        <a @click="navigateToAuthor(author)" class="stretched-link"></a>
       </div>
     </div>
   </div>
@@ -22,6 +21,8 @@
 
 <script>
 import Author from "@/store/models/Author";
+import ContentService from "../services/ContentService";
+import Content from "../store/models/Content";
 
 export default {
   data () {
@@ -30,10 +31,43 @@ export default {
   computed: {
     authors () {
       return Author.query().has('works').withAllRecursive().orderBy('shortestName').all();
+    },
+
+    augmentedAuthors () {
+      let authors = this.authors;
+
+      authors.push({
+        id: 'random',
+        shortestName: 'Random',
+        works: [
+          {
+            name: 'Let fate decide where to take you'
+          }
+        ]
+      });
+
+      return authors;
     }
   },
   methods: {
+    navigateToAuthor (author) {
+      if (author.id === 'random') {
+        ContentService.getRandomItem().then(function (randomContent) {
+          let randomContentWithRelations = Content.query().whereId(randomContent.id).with(['edition.work.author', 'tocEntry']).first()
+          this.$router.push(
+              '/' + randomContentWithRelations.edition.work.author.urlSlug +
+              '/' + randomContentWithRelations.edition.work.urlSlug +
+              '/' + randomContentWithRelations.tocEntry.label
+          );
+        }.bind(this));
+      }
 
+      if (author.works.length === 1) {
+        this.$router.push('/' + author.urlSlug + '/' + author.works[0].urlSlug);
+      } else {
+        this.$router.push('/' + author.urlSlug + '/works');
+      }
+    }
   }
 }
 </script>
