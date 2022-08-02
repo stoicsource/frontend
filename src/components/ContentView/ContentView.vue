@@ -6,7 +6,7 @@
           <div class="col-12 col-lg-3">
             <div class="collapse top-toc" id="collapseWorkEditions" :class="{ 'show': !isMobile() }" style="position: relative">
               <a class="toc-toggler d-lg-none" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
-                <font-awesome-icon icon="times-circle" size="lg"/>
+                <font-awesome-icon icon="fa-solid fa-xmark" size="2xl"/>
               </a>
               <table-of-contents
                   :editions="sortedEditions"

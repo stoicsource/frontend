@@ -2,7 +2,7 @@
   <div v-if="edition" class="container-fluid mt-2 position-relative">
     <div class="position-absolute top-0 end-0 me-2">
       <a @click="$router.go(-1)">
-        <font-awesome-icon icon="times-circle" size="xl" class="text-secondary"/>
+        <font-awesome-icon icon="fa-solid fa-xmark" size="2xl" class="text-secondary"/>
       </a>
     </div>
 
@@ -18,9 +18,7 @@
       </span>
     </p>
     <p v-if="edition.source">
-      <a :href="edition.source" target="_blank">
-        full text <font-awesome-icon icon="fa-solid fa-up-right-from-square" />
-      </a>
+      <a :href="edition.source" target="_blank">full text</a> <font-awesome-icon icon="fa-solid fa-up-right-from-square" />
     </p>
     <p v-if="edition.contributor">
       contributed to StoicSource by <br>
