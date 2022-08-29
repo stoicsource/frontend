@@ -38,7 +38,7 @@
           </li>
         </ul>
       </div>
-      <a @click="editionInfo()" class="btn btn-outline-secondary btn-sm ms-2"><font-awesome-icon icon="info-circle"/></a>
+      <a @click="editionInfo()" class="btn btn-outline-secondary btn-sm ms-2"><i class="fa-solid fa-circle-info"></i></a>
     </div>
   </div>
 </template>

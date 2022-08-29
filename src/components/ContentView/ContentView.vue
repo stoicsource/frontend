@@ -6,7 +6,7 @@
           <div class="col-12 col-lg-3">
             <div class="collapse top-toc" id="collapseWorkEditions" :class="{ 'show': !isMobile() }" style="position: relative">
               <a class="toc-toggler d-lg-none" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button">
-                <font-awesome-icon icon="fa-solid fa-xmark" size="2xl"/>
+                <i class="fa-solid fa-xmark fa-2xl"></i>
               </a>
               <table-of-contents
                   :editions="sortedEditions"
@@ -23,11 +23,11 @@
             <div class="translation-content" v-if="work && tocEntry">
               <div class="content-navigation bg-light">
                 <span><strong>{{ tocEntry.label }}</strong></span>
-                <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-up"/></a>
-                <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="arrow-alt-circle-down"/></a>
-                <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><font-awesome-icon icon="list"/></a>
-                <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="random"/></a>
-                <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><font-awesome-icon icon="share-alt"/></a>
+                <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-up"></i></a>
+                <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-down"></i></a>
+                <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><i class="fa-solid fa-list"></i></a>
+                <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-shuffle"></i></a>
+                <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-share-nodes"></i></a>
               </div>
 
               <div v-if="isLoading" class="spinner-border" role="status">
@@ -141,13 +141,6 @@ export default {
 
     onRouteChange () {
       let work = Work.query().where('urlSlug', this.$route.params.workSlug).with('author').first()
-
-      if (!work) {
-        setTimeout(() => {
-          this.onRouteChange();
-        }, 200);
-        return;
-      }
 
       WorkService.loadFullWork(work).then(function () {
         this.requireContent();

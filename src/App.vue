@@ -13,7 +13,7 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item nav-work-selector">
             <router-link :to="{name: 'authorSelect'}" class="nav-link">
-              <font-awesome-icon icon="bars"/>
+              <i class="fa-solid fa-bars"></i>
               <span class="d-none d-md-inline">Switch to different Work</span>
             </router-link>
           </li>
