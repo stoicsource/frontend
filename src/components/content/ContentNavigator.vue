@@ -2,48 +2,37 @@
   <div class="translation-content" v-if="work && tocEntry">
     <div class="content-navigation bg-light">
       <span><strong>{{ tocEntry.label }}</strong></span>
-      <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><i
-          class="fa-solid fa-circle-up"></i></a>
-      <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><i
-          class="fa-solid fa-circle-down"></i></a>
-      <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions"
-         role="button"><i class="fa-solid fa-list"></i></a>
+      <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-up"></i></a>
+      <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-down"></i></a>
+      <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><i class="fa-solid fa-list"></i></a>
       <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-shuffle"></i></a>
-      <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><i
-          class="fa-solid fa-share-nodes"></i></a>
+      <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-share-nodes"></i></a>
     </div>
 
-    <div v-if="isLoading" class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+    <h1 v-if="contentItem && contentItem.title">
+      {{ contentItem.title }}</h1>
+
+    <div v-if="contentItem &&contentItem.contentType === 'text'">
+      <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{
+          paragraph
+        }}</p>
     </div>
-    <div v-else>
-      <h1 v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).title">
-        {{ getContentItem(tocEntry, edition).title }}</h1>
+    <div v-else v-html="getContent(tocEntry, edition)">
+    </div>
 
-      <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).contentType === 'text'">
-        <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{
-            paragraph
-          }}</p>
+    <div v-if="contentItem && contentItem.notes > ''"
+         class="translator-notes">
+      Translator notes: <br>
+      <div v-if="contentItem.contentType === 'text'">
+        {{ contentItem.notes }}
       </div>
-      <div v-else v-html="getContent(tocEntry, edition)">
-      </div>
-
-      <div v-if="getContentItem(tocEntry, edition) && getContentItem(tocEntry, edition).notes > ''"
-           class="translator-notes">
-        Translator notes: <br>
-        <div v-if="getContentItem(tocEntry, edition).contentType === 'text'">
-          {{ getContentItem(tocEntry, edition).notes }}
-        </div>
-        <div v-else v-html="getContentItem(tocEntry, edition).notes"></div>
-      </div>
+      <div v-else v-html="contentItem.notes"></div>
     </div>
   </div>
 </template>
 
 <script>
-import Work from "@/store/models/Work";
 import TocEntry from "@/store/models/TocEntry";
-import WorkService from "@/services/WorkService";
 import SelectionInfoService from "@/services/SelectionInfoService";
 import {mapMutations} from "vuex";
 import Edition from "@/store/models/Edition";
@@ -55,25 +44,7 @@ export default {
     tocEntry: Object,
     edition: Object
   },
-  components: {
-
-  },
-  data() {
-    return {
-      isLoading: false
-    }
-  },
-  created() {
-    this.$watch(
-        () => this.$route.params,
-        () => {
-          this.onRouteChange()
-        },
-        {immediate: true}
-    )
-  },
   computed: {
-
     selectionInfo() {
       return SelectionInfoService.getSelectionInfo(this.work?.id);
     },
@@ -85,42 +56,20 @@ export default {
 
     sortedTocEntries() {
       return TocEntry.query().whereIdIn(this.work.tocEntries.map((tocEntry) => tocEntry.id)).orderBy('sort_order').withAllRecursive().all();
+    },
+
+    contentItem() {
+      return ContentService.getContentItem(this.tocEntry, this.edition);
     }
   },
   methods: {
     ...mapMutations('app', ['setActiveWork']),
 
-    onRouteChange() {
-      let work = Work.query().where('urlSlug', this.$route.params.workSlug).with('author').first()
-
-      WorkService.loadFullWork(work).then(function () {
-        this.requireContent();
-      }.bind(this));
-      this.setActiveWork(work);
-      document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
-    },
-
-    requireContent() {
-      if (this.tocEntry && this.edition && !this.isLoading) {
-        this.isLoading = !ContentService.isContentItemLoaded(this.tocEntry, this.edition);
-        ContentService.requireContent(this.tocEntry, this.edition)
-            .finally(function () {
-              this.isLoading = false;
-            }.bind(this));
-      }
-    },
-
-    getContentItem(tocEntry, edition) {
-      return ContentService.getContentItem(tocEntry, edition);
-    },
-
-    getContent(tocEntry, edition) {
-      let contentItem = this.getContentItem(tocEntry, edition);
-
-      if (!contentItem) {
+    getContent() {
+      if (!this.contentItem) {
         return '...';
       } else {
-        return contentItem.content;
+        return this.contentItem.content;
       }
     },
 
@@ -165,16 +114,12 @@ export default {
         }).then(() => {
           console.log('Thanks for sharing!');
         })
-            .catch(console.error);
+        .catch(console.error);
       }
     },
 
     editionInfo() {
-      this.$router.push({
-        name: 'editionInfo', params: {
-          editionId: this.edition.id
-        }
-      });
+      this.$emit('edition-info-clicked');
     }
   }
 }
@@ -188,10 +133,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-
-.work {
-  padding-top: 0.7em;
-}
 
 .btn {
   display: block;

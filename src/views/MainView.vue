@@ -21,13 +21,18 @@
             </div>
           </div>
           <div class="col-12 col-lg-9">
-            <content-navigator
-                :work="work"
-                :edition="edition"
-                :toc-entry="tocEntry"
-                @on-navigate="navigateToTocEntry"
-                @edition-selected="selectEdition"
-            ></content-navigator>
+            <div v-if="isLoading" class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <div v-else>
+              <content-navigator
+                  :work="work"
+                  :edition="edition"
+                  :toc-entry="tocEntry"
+                  @on-navigate="navigateToTocEntry"
+                  @edition-selected="selectEdition"
+              ></content-navigator>
+            </div>
           </div>
         </div>
         <div v-else>
@@ -184,6 +189,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.work {
+  padding-top: 0.7em;
+}
 
 .top-toc {
   padding: 0.7em 0;
