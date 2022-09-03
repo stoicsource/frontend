@@ -4,13 +4,19 @@ import TocEntry from "@/store/models/TocEntry";
 export default {
   loadingWorkId: null,
 
+  workFullyLoaded (work) {
+    let hasEditions = Edition.query().where('work_id', work.id).exists();
+    let hasToc = TocEntry.query().where('work_id', work.id).exists();
+    return hasEditions && hasToc;
+  },
+
   loadFullWork (work) {
     if (!work) {
-      return Promise.resolve();
+      return Promise.reject();
     }
 
     if (work.id === this.loadingWorkId) {
-      return Promise.resolve();
+      return Promise.reject();
     }
 
     let hasEditions = Edition.query().where('work_id', work.id).exists();
