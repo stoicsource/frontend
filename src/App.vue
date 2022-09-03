@@ -42,7 +42,7 @@
 <script>
 import axios from 'axios'
 import Work from '@/store/models/Work'
-import { mapState} from "vuex";
+import {mapMutations, mapState} from "vuex";
 import ContactForm from "@/components/ContactForm";
 import SelectionInfoService from "@/services/SelectionInfoService";
 import Author from "./store/models/Author";
@@ -51,13 +51,8 @@ import Edition from "./store/models/Edition";
 export default {
   name: 'App',
   components: {ContactForm},
-  data () {
-    return {
-      loading: false
-    }
-  },
   mounted () {
-    this.loading = true;
+    this.setLoading(true);
 
     axios.interceptors.response.use(function (response) {
       return response;
@@ -74,13 +69,16 @@ export default {
         Author.api().get('authors')
         ])
         .then(function () {
-          this.loading = false;
+          this.setLoading(false);
         }.bind(this));
 
     Edition.api().get('editions');
   },
+  methods: {
+    ...mapMutations('app', ['setLoading']),
+  },
   computed: {
-    ...mapState('app', ['activeWork']),
+    ...mapState('app', ['activeWork', 'loading']),
 
     selectedWork () {
       return this.activeWork ? Work.query().whereId(this.activeWork.id).with(['author']).first() : null;

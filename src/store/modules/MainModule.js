@@ -1,7 +1,8 @@
 const mainModule = {
   namespaced: true,
   state: {
-    activeWork: null
+    activeWork: null,
+    loading: false
   },
   getters: {
   },
@@ -9,6 +10,10 @@ const mainModule = {
   mutations: {
     setActiveWork (state, work) {
       state.activeWork = work;
+    },
+
+    setLoading (state, loading) {
+      state.loading = loading;
     }
   }
 };

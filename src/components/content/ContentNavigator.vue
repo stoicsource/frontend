@@ -67,6 +67,7 @@ export default {
 
     getContent() {
       if (!this.contentItem) {
+        this.$emit('content-missing', null);
         return '...';
       } else {
         return this.contentItem.content;

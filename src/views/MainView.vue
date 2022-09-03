@@ -21,24 +21,18 @@
             </div>
           </div>
           <div class="col-12 col-lg-9">
-            <div v-if="isLoading" class="spinner-border" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <div v-else>
-              <content-navigator
-                  :work="work"
-                  :edition="edition"
-                  :toc-entry="tocEntry"
-                  @on-navigate="navigateToTocEntry"
-                  @edition-selected="selectEdition"
-              ></content-navigator>
-            </div>
+            <content-navigator
+                :work="work"
+                :edition="edition"
+                :toc-entry="tocEntry"
+                @on-navigate="navigateToTocEntry"
+                @edition-selected="selectEdition"
+                @content-missing="requireContent"
+            ></content-navigator>
           </div>
         </div>
         <div v-else>
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+
         </div>
       </div>
     </div>
@@ -51,7 +45,7 @@ import TocEntry from "@/store/models/TocEntry";
 import SelectionInfo from "@/store/models/SelectionInfo";
 import WorkService from "@/services/WorkService";
 import SelectionInfoService from "@/services/SelectionInfoService";
-import {mapMutations} from "vuex";
+import {mapMutations, mapState} from "vuex";
 import Edition from "@/store/models/Edition";
 import ContentNavigator from "../components/content/ContentNavigator";
 import ContentService from "../services/ContentService";
@@ -66,11 +60,6 @@ export default {
     TableOfContents,
     ContentNavigator
   },
-  data() {
-    return {
-      isLoading: false
-    }
-  },
   created() {
     this.$watch(
         () => this.$route.params,
@@ -81,6 +70,8 @@ export default {
     )
   },
   computed: {
+    ...mapState('app', ['loading']),
+
     work() {
       return Work.query().where('urlSlug', this.workSlug).with(['editions.author', 'tocEntries.work.tocEntries', 'author']).first();
     },
@@ -121,24 +112,30 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('app', ['setActiveWork']),
+    ...mapMutations('app', ['setActiveWork', 'setLoading']),
 
     onRouteChange() {
       let work = Work.query().where('urlSlug', this.$route.params.workSlug).with('author').first()
 
-      WorkService.loadFullWork(work).then(function () {
+      if (work && !WorkService.workFullyLoaded(work)) {
+        this.setLoading(true);
+        WorkService.loadFullWork(work).then(function () {
+          this.setLoading(false);
+          this.requireContent();
+        }.bind(this));
+        this.setActiveWork(work);
+        document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
+      } else {
         this.requireContent();
-      }.bind(this));
-      this.setActiveWork(work);
-      document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
+      }
     },
 
     requireContent() {
-      if (this.tocEntry && this.edition && !this.isLoading) {
-        this.isLoading = !ContentService.isContentItemLoaded(this.tocEntry, this.edition);
+      if (this.tocEntry && this.edition && !this.loading) {
+        this.setLoading(!ContentService.isContentItemLoaded(this.tocEntry, this.edition));
         ContentService.requireContent(this.tocEntry, this.edition)
             .finally(function () {
-              this.isLoading = false;
+              this.setLoading(false);
             }.bind(this));
       }
     },
