@@ -1,4 +1,6 @@
 import Content from "@/store/models/Content";
+import WorkService from "./WorkService";
+import Edition from "../store/models/Edition";
 
 export default {
   entryPadding: 1,
@@ -68,5 +70,11 @@ export default {
         .then(function (response) {
           return response.entities.contents[0];
         });
+  },
+
+  ensureDependencies (contentItem) {
+    let edition = Edition.query().whereId(contentItem.edition_id).with('work').first();
+    let workLoaded = WorkService.workFullyLoaded(edition?.work);
+    return workLoaded ? Promise.resolve() : WorkService.loadFullWork(edition.work);
   }
 }

@@ -23,6 +23,7 @@
 import Author from "@/store/models/Author";
 import ContentService from "../services/ContentService";
 import Content from "../store/models/Content";
+import {mapMutations} from "vuex";
 
 export default {
   data() {
@@ -50,16 +51,30 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('app', ['setLoading']),
+
     navigateToAuthor(author) {
       if (author.id === 'random') {
-        ContentService.getRandomItem().then(function (randomContent) {
-          let randomContentWithRelations = Content.query().whereId(randomContent.id).with(['edition.work.author', 'tocEntry']).first()
-          this.$router.push(
-              '/' + randomContentWithRelations.edition.work.author.urlSlug +
-              '/' + randomContentWithRelations.edition.work.urlSlug +
-              '/' + randomContentWithRelations.tocEntry.label
-          );
-        }.bind(this));
+        this.setLoading(true);
+        ContentService.getRandomItem()
+            .then(function (randomContent) {
+              ContentService.ensureDependencies(randomContent)
+                  .then(function () {
+                    let randomContentWithRelations = Content.query().whereId(randomContent.id).with(['edition.work.author', 'tocEntry']).first();
+                    this.setLoading(false);
+                    this.$router.push(
+                        '/' + randomContentWithRelations.edition.work.author.urlSlug +
+                        '/' + randomContentWithRelations.edition.work.urlSlug +
+                        '/' + randomContentWithRelations.tocEntry.label
+                    );
+                  }.bind(this))
+                  .catch(function () {
+                    this.setLoading(false);
+                  }.bind(this))
+            }.bind(this))
+            .catch(function () {
+              this.setLoading(false);
+            }.bind(this));
       } else {
         if (author.works.length === 1) {
           this.$router.push('/' + author.urlSlug + '/' + author.works[0].urlSlug);
