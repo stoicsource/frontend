@@ -32,7 +32,9 @@
           </div>
         </div>
         <div v-else>
-
+          <div v-if="work && !edition">
+            Edition "{{ translatorSlug }}" not found.
+          </div>
         </div>
       </div>
     </div>
@@ -50,11 +52,13 @@ import Edition from "@/store/models/Edition";
 import ContentNavigator from "../components/content/ContentNavigator";
 import ContentService from "../services/ContentService";
 import TableOfContents from "../components/content/TableOfContents";
+import Author from "../store/models/Author";
 
 export default {
   props: {
     workSlug: String,
-    tocSlug: String
+    tocSlug: String,
+    translatorSlug: String
   },
   components: {
     TableOfContents,
@@ -77,9 +81,16 @@ export default {
     },
 
     edition() {
-      let edition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['author']).first() : null;
-      let latestEdition = this.sortedEditions?.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
-      return edition ? edition : latestEdition;
+      if (this.translatorSlug) {
+        let author = Author.query().where('urlSlug', this.translatorSlug).first();
+        return Edition.query().where('work_id', this.work?.id).where('author_id', author?.id).with('author').first();
+      }
+      let selectedEdition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['author']).first() : null;
+      if (selectedEdition) {
+        return selectedEdition;
+      } else {
+        return this.sortedEditions?.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
+      }
     },
 
     tocEntry() {
@@ -148,7 +159,8 @@ export default {
           name: 'contentByToc', params: {
             author: this.work.author.urlSlug,
             workSlug: this.work.urlSlug,
-            tocSlug: tocEntry.label
+            tocSlug: tocEntry.label,
+            translatorSlug: this.edition.author.urlSlug
           }
         });
       }
@@ -165,8 +177,15 @@ export default {
           }
         })
 
-        this.requireContent();
         SelectionInfoService.saveToLocalStorage();
+        this.$router.push({
+          name: 'contentByToc', params: {
+            author: this.work.author.urlSlug,
+            workSlug: this.work.urlSlug,
+            tocSlug: this.tocEntry.label,
+            translatorSlug: edition.author.urlSlug
+          }
+        });
       }.bind(this), 1);
     },
 

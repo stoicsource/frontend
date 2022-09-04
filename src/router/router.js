@@ -16,22 +16,17 @@ const routes = [
   { path: '/enchirideon/:tocSlug', redirect: '/epictetus/enchirideon/:tocSlug' },
   { path: '/enchirideon/:tocSlug/:translator', redirect: '/epictetus/enchirideon/:tocSlug/:translator' },
 
+  // Information about a specific edition
   { path: '/edition/:editionId/info', component: EditionInfo, props: true, name: 'editionInfo' },
 
+  // Starting screen
   { path: '/', component: AuthorSelect, name: 'authorSelect' },
+
+  // Main content view
   { path: '/:author/works', component: WorkSelect, props: true },
   { path: '/:author/:workSlug', component: ContentView, props: true },
-  { path: '/:author/:workSlug/:tocSlug', component: ContentView, props: true, name: 'contentByToc' },
-  { path: '/:author/:workSlug/:tocSlug/:translator', component: ContentView, props: true },
-  // { path: '/workselect', component: WorkSelect }
-
-  /*
-  {
-      path: '/:catchAll(.*)',
-      component: NotFoundComponent,
-      name: 'NotFound'
-    }
-   */
+  { path: '/:author/:workSlug/:tocSlug', component: ContentView, props: true },
+  { path: '/:author/:workSlug/:tocSlug/:translatorSlug', component: ContentView, props: true, name: 'contentByToc' },
 ]
 
 const router = new VueRouter({
