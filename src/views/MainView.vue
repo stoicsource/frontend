@@ -128,17 +128,18 @@ export default {
     onRouteChange() {
       let work = Work.query().where('urlSlug', this.$route.params.workSlug).with('author').first()
 
+      let promise = Promise.resolve();
       if (work && !WorkService.workFullyLoaded(work)) {
         this.setLoading(true);
-        WorkService.loadFullWork(work).then(function () {
+        promise = WorkService.loadFullWork(work).then(function () {
           this.setLoading(false);
-          this.requireContent();
         }.bind(this));
-        this.setActiveWork(work);
-        document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
-      } else {
-        this.requireContent();
       }
+
+      promise.then(function () {
+        this.requireContent();
+        this.setActiveWork(work);
+      }.bind(this));
     },
 
     requireContent() {

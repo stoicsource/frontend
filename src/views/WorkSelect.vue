@@ -15,11 +15,12 @@
 <script>
 import Author from "@/store/models/Author";
 import Work from "@/store/models/Work";
+import {mapMutations} from "vuex";
 
 export default {
   props: ['author'],
-  data () {
-    return {}
+  mounted () {
+    this.setActiveWork(null);
   },
   computed: {
     workAuthor () {
@@ -27,6 +28,8 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('app', ['setActiveWork']),
+
     sortedWorks (works) {
       return Work.query().whereIdIn(works.map((work) => work.id)).orderBy('name').withAllRecursive().all();
     }

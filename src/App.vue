@@ -74,6 +74,11 @@ export default {
 
     Edition.api().get('editions');
   },
+  watch: {
+    activeWork: function (work) {
+      document.title = work ? (work.name + ' - ' + work.authorsFormatted) : 'Stoic Source';
+    }
+  },
   methods: {
     ...mapMutations('app', ['setLoading']),
   },

@@ -26,8 +26,8 @@ import Content from "../store/models/Content";
 import {mapMutations} from "vuex";
 
 export default {
-  data() {
-    return {}
+  mounted () {
+    this.setActiveWork(null);
   },
   computed: {
     authors() {
@@ -51,7 +51,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('app', ['setLoading']),
+    ...mapMutations('app', ['setLoading', 'setActiveWork']),
 
     navigateToAuthor(author) {
       if (author.id === 'random') {
