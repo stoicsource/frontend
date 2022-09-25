@@ -13,6 +13,7 @@ export default class Content extends Model {
       edition_id: this.attr(null),
       content: this.attr(''),
       notes: this.attr(''),
+      notesFormat: this.attr(''),
       title: this.attr(''),
       contentType: this.attr(''),
 
@@ -31,5 +32,9 @@ export default class Content extends Model {
 
       return data;
     }
+  }
+
+  get jsonNotes () {
+    return this.notesFormat === 'json' ? JSON.parse(this.notes) : [];
   }
 }

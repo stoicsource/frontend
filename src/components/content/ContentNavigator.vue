@@ -9,10 +9,11 @@
       <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-share-nodes"></i></a>
     </div>
 
-    <h1 v-if="contentItem && contentItem.title">
+    <h1 v-if="contentItem && contentItem.title && contentItem.contentType === 'text'">
       {{ contentItem.title }}</h1>
+    <h1 v-else v-html="contentItem.title"></h1>
 
-    <div v-if="contentItem &&contentItem.contentType === 'text'">
+    <div v-if="contentItem && contentItem.contentType === 'text'">
       <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{
           paragraph
         }}</p>
@@ -20,11 +21,15 @@
     <div v-else v-html="getContent(tocEntry, edition)">
     </div>
 
-    <div v-if="contentItem && contentItem.notes > ''"
-         class="translator-notes">
+    <div v-if="contentItem && contentItem.notes > ''" class="translator-notes">
       Translator notes: <br>
       <div v-if="contentItem.contentType === 'text'">
         {{ contentItem.notes }}
+      </div>
+      <div v-else-if="contentItem.notesFormat === 'json'">
+        <ol>
+          <li v-for="jsonNote in contentItem.jsonNotes" :key="jsonNote.id" v-html="jsonNote.content"></li>
+        </ol>
       </div>
       <div v-else v-html="contentItem.notes"></div>
     </div>
@@ -125,6 +130,22 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+
+sup {
+  margin-left: 0.2em;
+  margin-right: 0.3em;
+
+  &:before {
+    content: "[";
+  }
+
+  &:after {
+    content: "]";
+  }
+}
+</style>
 
 <style scoped>
 .translation-content >>> blockquote {
