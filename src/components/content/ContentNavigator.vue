@@ -11,7 +11,7 @@
 
     <h1 v-if="contentItem && contentItem.title && contentItem.contentType === 'text'">
       {{ contentItem.title }}</h1>
-    <h1 v-else v-html="contentItem.title"></h1>
+    <h1 v-else-if="contentItem && contentItem.title" v-html="contentItem.title"></h1>
 
     <div v-if="contentItem && contentItem.contentType === 'text'">
       <p v-for="paragraph in getContent(tocEntry, edition).split('\n')" :key="paragraph.substring(0, 12)">{{
