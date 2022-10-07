@@ -1,85 +1,51 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div>
+    <nav class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg">
+      <div class="container-fluid">
+        <div v-if="selectedWork" class="navbar-brand">
+          <span>{{ selectedWork.name }}</span><br>
+          <span class="nav-author-name">{{ selectedWork.authorsFormatted }}</span>
+        </div>
+        <div v-else class="navbar-brand">
+          <span>StoicSource</span>
+        </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item nav-work-selector">
+            <router-link :to="{name: 'authorSelect'}" class="nav-link">
+              <i class="fa-solid fa-bars"></i>
+              <span class="d-none d-md-inline">Switch to different Work</span>
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div v-if="loading" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
-  </header>
+    <router-view v-else class="router-view"></router-view>
 
-  <RouterView />
+    <contact-form></contact-form>
+
+    <footer class="text-center text-muted mb-3">
+      Feedback? Questions?
+      <button type="button" class="link-style" data-bs-toggle="modal" data-bs-target="#contact-modal" style="border: none; background: transparent;">
+        Contact us
+      </button>
+    </footer>
+  </div>
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>
