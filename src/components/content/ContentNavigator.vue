@@ -19,7 +19,7 @@
         }}</p>
     </div>
     <div v-else>
-      <component :is="compiledData" @note-clicked="scrollToNote"></component>
+      <component :is="compiledContent" @note-clicked="scrollToNote"></component>
     </div>
 
     <div v-if="contentItem && contentItem.notes > ''" class="translator-notes">
@@ -46,12 +46,16 @@ import SelectionInfoService from "@/services/SelectionInfoService";
 import {mapMutations} from "vuex";
 import Edition from "@/store/models/Edition";
 import ContentService from "@/services/ContentService";
+import { elementScrollIntoViewPolyfill } from "seamless-scroll-polyfill";
 
 export default {
   props: {
     work: Object,
     tocEntry: Object,
     edition: Object
+  },
+  mounted() {
+    elementScrollIntoViewPolyfill();
   },
   computed: {
     selectionInfo() {
