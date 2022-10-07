@@ -18,7 +18,8 @@
           paragraph
         }}</p>
     </div>
-    <div v-else v-html="getContent(tocEntry, edition)">
+    <div v-else>
+      <component :is="compiledData" @note-clicked="scrollToNote"></component>
     </div>
 
     <div v-if="contentItem && contentItem.notes > ''" class="translator-notes">
@@ -28,7 +29,10 @@
       </div>
       <div v-else-if="contentItem.notesFormat === 'json'">
         <ol>
-          <li v-for="jsonNote in contentItem.jsonNotes" :key="jsonNote.id" v-html="jsonNote.content"></li>
+          <li v-for="jsonNote in contentItem.jsonNotes" :key="jsonNote.id" :ref="'note' + jsonNote.id" :id="'note' + jsonNote.id">
+            <div v-html="jsonNote.content"></div>
+            <div @click.prevent="scrollToReference(jsonNote.id)" class="footnote-backlink"><i class="fa-solid fa-up-long"></i></div>
+          </li>
         </ol>
       </div>
       <div v-else v-html="contentItem.notes"></div>
@@ -65,6 +69,17 @@ export default {
 
     contentItem() {
       return ContentService.getContentItem(this.tocEntry, this.edition);
+    },
+
+    compiledContent () {
+      return {
+        template: `<div>${this.getHtmlContent()}</div>`,
+        methods:{
+          scrollToNote(noteNr) {
+            this.$emit('note-clicked', noteNr)
+          }
+        }
+      }
     }
   },
   methods: {
@@ -76,6 +91,33 @@ export default {
         return '...';
       } else {
         return this.contentItem.content;
+      }
+    },
+
+    getHtmlContent() {
+      if (!this.contentItem) {
+        this.$emit('content-missing', null);
+        return '...';
+      } else {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(this.contentItem.content, "text/html");
+
+        let supElements = doc.getElementsByTagName('sup');
+        for (let i = supElements.length - 1; i >= 0; i--) {
+          let supElement = supElements[i];
+          let anchorElement = doc.createElement('a');
+          let footnoteNr = supElement.getAttribute('data-footnote-reference');
+          supElement.innerHTML = '[' + supElement.innerHTML +']';
+          anchorElement.innerHTML = supElement.outerHTML;
+          anchorElement.setAttribute('id', 'reference' + footnoteNr);
+          anchorElement.setAttribute('href', '#note' + footnoteNr);
+          anchorElement.setAttribute('click.prevent', 'scrollToNote(' + footnoteNr + ')');
+          supElement.parentNode.replaceChild(anchorElement, supElement);
+        }
+
+        let html = doc.getElementsByTagName('body')[0].innerHTML;
+        html = html.replaceAll('click.prevent', '@click.prevent');
+        return html;
       }
     },
 
@@ -126,32 +168,40 @@ export default {
 
     editionInfo() {
       this.$emit('edition-info-clicked');
+    },
+
+    scrollToNote(noteNr) {
+      document.getElementById('note' + noteNr).scrollIntoView({ behavior: 'smooth' });
+    },
+
+    scrollToReference(noteNr) {
+      document.getElementById('reference' + noteNr).scrollIntoView({ behavior: 'smooth' });
     }
   }
 }
 </script>
-
-<style lang="scss">
-
-sup {
-  margin-left: 0.2em;
-  margin-right: 0.3em;
-
-  &:before {
-    content: "[";
-  }
-
-  &:after {
-    content: "]";
-  }
-}
-</style>
 
 <style scoped>
 .translation-content >>> blockquote {
   border-left: 3px solid #eaecf0;
   padding: 8px 22px;
 }
+
+li, .translation-content >>> a {
+  scroll-margin-top: 80px;
+}
+
+.translation-content >>> a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.translation-content >>> sup {
+  margin-left: 0.2em;
+  margin-right: 0.3em;
+}
+
+
 </style>
 
 <style lang="scss" scoped>
@@ -208,6 +258,11 @@ sup {
   a {
     margin-top: 0.2em;
   }
+}
+
+.footnote-backlink {
+  margin-top: -1em;
+  margin-bottom: 1em;
 }
 
 </style>
