@@ -109,14 +109,17 @@ export default {
         let supElements = doc.getElementsByTagName('sup');
         for (let i = supElements.length - 1; i >= 0; i--) {
           let supElement = supElements[i];
-          let anchorElement = doc.createElement('a');
           let footnoteNr = supElement.getAttribute('data-footnote-reference');
-          supElement.innerHTML = '[' + supElement.innerHTML +']';
-          anchorElement.innerHTML = supElement.outerHTML;
-          anchorElement.setAttribute('id', 'reference' + footnoteNr);
-          anchorElement.setAttribute('href', '#note' + footnoteNr);
-          anchorElement.setAttribute('click.prevent', 'scrollToNote(' + footnoteNr + ')');
-          supElement.parentNode.replaceChild(anchorElement, supElement);
+
+          if (footnoteNr !== null) {
+            let anchorElement = doc.createElement('a');
+            supElement.innerHTML = '[' + supElement.innerHTML + ']';
+            anchorElement.innerHTML = supElement.outerHTML;
+            anchorElement.setAttribute('id', 'reference' + footnoteNr);
+            anchorElement.setAttribute('href', '#note' + footnoteNr);
+            anchorElement.setAttribute('click.prevent', 'scrollToNote(' + footnoteNr + ')');
+            supElement.parentNode.replaceChild(anchorElement, supElement);
+          }
         }
 
         let html = doc.getElementsByTagName('body')[0].innerHTML;
