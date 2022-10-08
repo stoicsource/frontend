@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useWorksStore } from "@/stores/works";
-import { Work } from "@/models/Work";
+import type { Work } from "@/models/Work";
 
 const props = defineProps<{
   authorSlug: string;
@@ -13,7 +13,7 @@ store.activeWork = null;
 const sortedWorks = computed(() => {
   return store.works
     .filter((work: Work) => {
-      return work.author.urlSlug === props.authorSlug;
+      return work.author?.urlSlug === props.authorSlug;
     })
     .sort((a: Work, b: Work) => {
       return a.name > b.name ? 1 : -1;

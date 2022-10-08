@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useWorksStore } from "@/stores/works";
 import { computed } from "vue";
-import { Work } from "@/models/Work";
+import type { Work } from "@/models/Work";
 import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
 import TableOfContents from "../components/chapter/TableOfContents.vue";
-import { Edition } from "@/models/Edition";
-import { TocEntry } from "@/models/TocEntry";
+import type { Edition } from "@/models/Edition";
+import type { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
 import { useGeneralStore } from "@/stores/general";
 import { useChaptersStore } from "@/stores/chapters";
@@ -84,6 +84,10 @@ function isMobile() {
 }
 
 const sortedEditions = computed(() => {
+  if (!work.value || !work.value.editions) {
+    return [];
+  }
+
   return work.value?.editions
     ?.filter((edition) => {
       return edition.quality >= 6;
@@ -94,6 +98,10 @@ const sortedEditions = computed(() => {
 });
 
 const sortedTocEntries = computed(() => {
+  if (!work.value || !work.value.tocEntries) {
+    return [];
+  }
+
   return work.value?.tocEntries
     ?.filter(() => {
       return true;

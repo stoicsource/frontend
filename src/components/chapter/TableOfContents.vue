@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { TocEntry } from "@/models/TocEntry";
-import { Edition } from "@/models/Edition";
+import type { TocEntry } from "@/models/TocEntry";
+import type { Edition } from "@/models/Edition";
 import { computed } from "vue";
 
 const props = defineProps<{
@@ -96,7 +96,7 @@ function tocGroups(tocEntries: TocEntry[]) {
       <div v-else class="mb-4">
         <ul data-v-6c06a484="" id="myTab2" class="nav nav-tabs nav-fill">
           <li
-            v-for="[index, value] in tocGroups(tocEntries).entries()"
+            v-for="[index] in tocGroups(tocEntries).entries()"
             :key="index"
             class="nav-item"
           >
@@ -156,7 +156,9 @@ function tocGroups(tocEntries: TocEntry[]) {
           </li>
         </ul>
       </div>
-      <a @click="editionInfo()" class="btn btn-outline-secondary btn-sm ms-2"
+      <a
+        @click="editionInfo(selectedEdition)"
+        class="btn btn-outline-secondary btn-sm ms-2"
         ><i class="fa-solid fa-circle-info"></i
       ></a>
     </div>

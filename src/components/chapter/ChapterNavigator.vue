@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Work } from "@/models/Work";
-import { TocEntry } from "@/models/TocEntry";
-import { Edition } from "@/models/Edition";
+import type { Work } from "@/models/Work";
+import type { TocEntry } from "@/models/TocEntry";
+import type { Edition } from "@/models/Edition";
 import { computed } from "vue";
 import { useChaptersStore } from "@/stores/chapters";
 
@@ -77,6 +77,11 @@ function shareEntry() {
       .catch(console.error);
   }
 }
+
+function scrollToReference(noteNr: number) {
+  // document.getElementById('reference' + noteNr).scrollIntoView({ behavior: 'smooth' });
+  console.log(noteNr);
+}
 </script>
 
 <template>
@@ -129,7 +134,7 @@ function shareEntry() {
 
     <div v-if="contentItem && contentItem.contentType === 'text'">
       <p
-        v-for="paragraph in getContent(tocEntry, edition).split('\n')"
+        v-for="paragraph in getContent().split('\n')"
         :key="paragraph.substring(0, 12)"
       >
         {{ paragraph }}
@@ -137,7 +142,7 @@ function shareEntry() {
     </div>
     <div v-else>
       <!--<component :is="compiledContent" @note-clicked="scrollToNote"></component>-->
-      <div v-html="getContent(tocEntry, edition)"></div>
+      <div v-html="getContent()"></div>
     </div>
 
     <div v-if="contentItem && contentItem.notes > ''" class="translator-notes">

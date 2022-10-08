@@ -41,7 +41,7 @@ function authorWorks(author: Author): Work[] {
     return [fakeWork];
   }
   return worksStore.works.filter((work: Work) => {
-    return work.author.id === author.id;
+    return work.author?.id === author.id;
   });
 }
 

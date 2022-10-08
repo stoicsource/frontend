@@ -31,10 +31,10 @@ axios.interceptors.response.use(
     >
       <div class="container-fluid">
         <div v-if="worksStore.activeWork" class="navbar-brand">
-          <span>{{ worksStore.activeWork.name }}</span
+          <span>{{ worksStore.activeWork?.name }}</span
           ><br />
           <span class="nav-author-name">{{
-            worksStore.activeWork.author.shortestName()
+            worksStore.activeWork?.author?.shortestName()
           }}</span>
         </div>
         <div v-else class="navbar-brand">
