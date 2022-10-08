@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import { useWorksStore } from "@/stores/works";
+import ContactForm from "./components/ContactForm.vue";
 
 const store = useWorksStore();
 </script>
