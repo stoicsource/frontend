@@ -43,9 +43,59 @@ import { RouterView } from "vue-router";
   </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+<style lang="scss">
+
+td, th {
+  text-align: left;
+  vertical-align: top;
+  padding-bottom: 1em;
+}
+
+.text-muted {
+  a, .link-style {
+    color: #6c757d;
+    text-decoration: underline;
+  }
+}
+
+.router-view {
+  min-height: 84vh;
+}
+
+.navbar.modified-nav.navbar-dark {
+  padding: 0.5rem 1rem 0;
+
+  .navbar-brand {
+    padding-top: 0;
+
+    .nav-author-name {
+      position: relative;
+      top: -7px;
+      font-size: 0.7em;
+    }
+  }
+
+  .nav-link {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .nav-work-selector {
+    font-size: 2em;
+    color: white;
+    position: relative;
+    top: -3px;
+    left: -8px;
+    border-left: 1px solid lightgray;
+    padding-left: 0.8em;
+
+    @media (min-width: 768px) {
+      font-size: 1.2em;
+      border: none;
+
+      svg {
+        margin-right: 0.5em;
+      }
+    }
+  }
 }
 </style>
