@@ -8,7 +8,7 @@ export const useSelectionStore = defineStore("selection", () => {
 
   const selectionInfos = ref<SelectionInfo[]>([]);
 
-  function getSelectionInfo(workId: number) {
+  function getSelectionInfo(workId: number): SelectionInfo | null {
     const work = worksStore.works.find((work) => {
       return work.id === workId;
     });
@@ -23,10 +23,15 @@ export const useSelectionStore = defineStore("selection", () => {
     if (!selectionInfo) {
       selectionInfo = new SelectionInfo();
       selectionInfo.workId = workId;
+      selectionInfos.value.push(selectionInfo);
+    }
 
-      selectionInfo.tocEntries =
+    if (!selectionInfo.tocEntryIds) {
+      selectionInfo.tocEntryIds =
         work.tocEntries.length > 0 ? [work.tocEntries[0].id] : [];
+    }
 
+    if (!selectionInfo.editionIds) {
       const editions = work.editions
         .filter((edition) => {
           return edition.language === "eng";
@@ -34,10 +39,7 @@ export const useSelectionStore = defineStore("selection", () => {
         .sort((a, b) => {
           return a.year > b.year ? 1 : -1;
         });
-
-      selectionInfo.editions = editions ? [editions[0].id] : [];
-
-      selectionInfos.value.push(selectionInfo);
+      selectionInfo.editionIds = editions ? [editions[0].id] : [];
     }
 
     return selectionInfo;

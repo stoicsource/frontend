@@ -8,6 +8,7 @@ import { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
 import { useGeneralStore } from "@/stores/general";
 import { useChaptersStore } from "@/stores/chapters";
+import { useSelectionStore } from "@/stores/selection";
 
 const props = defineProps<{
   workSlug: string;
@@ -19,6 +20,7 @@ const router = useRouter();
 const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
 const chaptersStore = useChaptersStore();
+const selectionStore = useSelectionStore();
 
 const work = computed(() => {
   const workShallow = worksStore.works.find((work: Work) => {
@@ -29,45 +31,50 @@ const work = computed(() => {
 });
 
 const edition = computed(() => {
-  if (!work.value) {
-    return undefined;
+  if (!work.value || !work.value.editions) {
+    return null;
   }
+
   if (props.translatorSlug) {
     return work.value.editions?.find((edition) => {
       return edition.author.urlSlug === props.translatorSlug;
     });
   }
-  // let selectedEdition = (this.selectionInfo && this.selectionInfo.editions.length > 0) ? Edition.query().whereId(this.selectionInfo.editions[0]).with(['author']).first() : null;
-  // if (selectedEdition) {
-  //   return selectedEdition;
-  // } else {
-  //   return this.sortedEditions?.length > 0 ? this.sortedEditions[this.sortedEditions.length - 1] : null;
-  // }
 
-  // TODO:
-  return work.value.editions ? work.value.editions[0] : undefined;
+  const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
+  return selectionInfo && selectionInfo.editionIds.length > 0
+    ? work.value.editions.find((edition) => {
+        return edition.id === selectionInfo.editionIds[0];
+      })
+    : work.value.editions[0];
 });
 
 const tocEntry = computed(() => {
-  // order: 1. url, 2. selection, 3. first chapter
-  // let tocSlugEntry = this.tocSlug ? TocEntry.query().where('work_id', this.work?.id).where('label', this.tocSlug).first() : null;
-  // let tocEntryId = tocSlugEntry ? tocSlugEntry.id : null;
-  //
-  // if (!tocEntryId) {
-  //   tocEntryId = (this.selectionInfo && this.selectionInfo.tocEntries.length > 0) ? this.selectionInfo.tocEntries[0] : null;
-  // }
-  //
-  // if (!tocEntryId) {
-  //   tocEntryId = this.work?.firstTocEntry?.id;
-  // }
-  //
-  // return tocEntryId ? TocEntry.query().whereId(tocEntryId).with(['work.tocEntries']).first() : null;
-
-  if (!work.value) {
+  if (!work.value || !work.value.tocEntries) {
     return null;
   }
 
-  return work.value.tocEntries ? work.value.tocEntries[0] : null;
+  // order: 1. url, 2. selection, 3. first chapter
+  let tocEntry = props.tocSlug
+    ? work.value.tocEntries.find((tocEntry) => {
+        return tocEntry.label === props.tocSlug;
+      })
+    : null;
+
+  if (!tocEntry) {
+    const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
+    if (selectionInfo && selectionInfo.tocEntryIds.length > 0) {
+      tocEntry = work.value.tocEntries.find((tocEntry) => {
+        return tocEntry.id === selectionInfo.tocEntryIds[0];
+      });
+    }
+  }
+
+  if (!tocEntry) {
+    tocEntry = work.value.tocEntries[0];
+  }
+
+  return tocEntry;
 });
 
 function isMobile() {
@@ -141,11 +148,11 @@ function requireContent() {
       tocEntry.value,
       edition.value
     );
-    chaptersStore.requireContent(tocEntry.value, edition.value).finally(
-      function () {
+    chaptersStore
+      .requireContent(tocEntry.value, edition.value)
+      .finally(function () {
         generalStore.loading = false;
-      }
-    );
+      });
   }
 }
 </script>

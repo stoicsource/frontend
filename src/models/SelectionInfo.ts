@@ -1,39 +1,39 @@
 export class SelectionInfo {
   workId = -1;
-  editions: number[] = [];
-  tocEntries: number[] = [];
+  editionIds: number[] = [];
+  tocEntryIds: number[] = [];
 
   selectTocEntry(tocEntryId: number) {
-    this.tocEntries.push(tocEntryId);
+    this.tocEntryIds.push(tocEntryId);
   }
 
   deselectTocEntry(tocEntryId: number) {
-    const entryIndex = this.tocEntries.indexOf(tocEntryId);
+    const entryIndex = this.tocEntryIds.indexOf(tocEntryId);
     if (entryIndex >= 0) {
-      this.tocEntries.splice(entryIndex, 1);
+      this.tocEntryIds.splice(entryIndex, 1);
     }
   }
 
   replaceTocEntry(tocEntryId: number) {
-    this.tocEntries = [tocEntryId];
+    this.tocEntryIds = [tocEntryId];
   }
 
   deselectAllTocEntries() {
-    this.tocEntries = [];
+    this.tocEntryIds = [];
   }
 
   selectEdition(editionId: number) {
-    this.editions.push(editionId);
+    this.editionIds.push(editionId);
   }
 
   deselectEdition(editionId: number) {
-    const entryIndex = this.editions.indexOf(editionId);
+    const entryIndex = this.editionIds.indexOf(editionId);
     if (entryIndex >= 0) {
-      this.editions.splice(entryIndex, 1);
+      this.editionIds.splice(entryIndex, 1);
     }
   }
 
   deselectAllEditions() {
-    this.editions = [];
+    this.editionIds = [];
   }
 }
