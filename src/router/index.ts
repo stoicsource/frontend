@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import AuthorSelect from "../views/AuthorSelect.vue";
+import WorkSelect from "../views/WorkSelect.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,11 +8,9 @@ const router = createRouter({
     // Starting screen
     { path: "/", component: AuthorSelect, name: "authorSelect" },
 
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView
-    // },
+    // Work Select
+    { path: "/:authorSlug/works", component: WorkSelect, props: true },
+
     {
       path: "/about",
       name: "about",

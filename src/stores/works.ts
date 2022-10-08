@@ -44,5 +44,7 @@ export const useWorksStore = defineStore("works", () => {
     }
   );
 
-  return { works };
+  const activeWork: Work | null = null;
+
+  return { works, activeWork };
 });
