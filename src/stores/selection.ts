@@ -2,18 +2,19 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { SelectionInfo } from "@/models/SelectionInfo";
 import { useWorksStore } from "@/stores/works";
+import { TocEntry } from "@/models/TocEntry";
 
 export const useSelectionStore = defineStore("selection", () => {
   const worksStore = useWorksStore();
 
   const selectionInfos = ref<SelectionInfo[]>([]);
 
-  function getSelectionInfo(workId: number): SelectionInfo | null {
+  function getSelectionInfo(workId: number): SelectionInfo {
     const work = worksStore.works.find((work) => {
       return work.id === workId;
     });
     if (!work || !work.editions || !work.tocEntries) {
-      return null;
+      return new SelectionInfo();
     }
 
     let selectionInfo = selectionInfos.value.find((selectionInfo) => {
@@ -51,7 +52,12 @@ export const useSelectionStore = defineStore("selection", () => {
 
   function loadFromLocalStorage() {
     if (localStorage.selectionInfo) {
-      selectionInfos.value = JSON.parse(localStorage.selectionInfo);
+      const rawData = JSON.parse(localStorage.selectionInfo);
+      if (Array.isArray(rawData)) {
+        selectionInfos.value = rawData.map((rawInfo) => {
+          return Object.assign(new SelectionInfo(), rawInfo);
+        });
+      }
     }
   }
 

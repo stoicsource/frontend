@@ -3,9 +3,14 @@ import { RouterView } from "vue-router";
 import { useWorksStore } from "@/stores/works";
 import { useGeneralStore } from "@/stores/general";
 import ContactForm from "./components/ContactForm.vue";
+import {useSelectionStore} from "@/stores/selection";
 
 const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
+const selectionStore = useSelectionStore();
+
+selectionStore.loadFromLocalStorage();
+
 </script>
 
 <template>

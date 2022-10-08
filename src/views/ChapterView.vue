@@ -44,7 +44,7 @@ const edition = computed(() => {
   }
 
   const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
-  return selectionInfo && selectionInfo.editionIds.length > 0
+  return selectionInfo.editionIds.length > 0
     ? work.value.editions.find((edition) => {
         return edition.id === selectionInfo.editionIds[0];
       })
@@ -65,7 +65,7 @@ const tocEntry = computed(() => {
 
   if (!tocEntry) {
     const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
-    if (selectionInfo && selectionInfo.tocEntryIds.length > 0) {
+    if (selectionInfo.tocEntryIds.length > 0) {
       tocEntry = work.value.tocEntries.find((tocEntry) => {
         return tocEntry.id === selectionInfo.tocEntryIds[0];
       });
@@ -105,8 +105,9 @@ const sortedTocEntries = computed(() => {
 
 function navigateToTocEntry(tocEntry: TocEntry | null) {
   if (tocEntry) {
-    // TODO: this.selectionInfo.replaceTocEntry(tocEntry.id);
-    // TODO: SelectionInfoService.saveToLocalStorage();
+    const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
+    selectionInfo.replaceTocEntry(tocEntry.id);
+    selectionStore.saveToLocalStorage();
     router.push({
       name: "contentByToc",
       params: {
@@ -121,17 +122,9 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
 
 function selectEdition(edition: Edition) {
   setTimeout(function () {
-    // TODO:
-    // this.selectionInfo.editions[0] = edition.id;
-    //
-    // SelectionInfo.update({
-    //   where: this.work.id,
-    //   data: {
-    //     editions: this.selectionInfo.editions,
-    //   },
-    // });
-    //
-    // SelectionInfoService.saveToLocalStorage();
+    const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
+    selectionInfo.selectEdition(edition.id);
+    selectionStore.saveToLocalStorage();
     router.push({
       name: "contentByToc",
       params: {
