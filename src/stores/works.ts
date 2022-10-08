@@ -15,9 +15,11 @@ export const worksStore = defineStore("works", () => {
   });
 
   const authorsRequest = axiosInstance.get(
-    "https://127.0.0.1:8000/api/v2/authors"
+    import.meta.env.VITE_APP_API_URL + "/authors"
   );
-  const worksRequest = axiosInstance.get("https://127.0.0.1:8000/api/v2/works");
+  const worksRequest = axiosInstance.get(
+    import.meta.env.VITE_APP_API_URL + "/works"
+  );
 
   Promise.all([authorsRequest, worksRequest]).then(
     ([authorsResponse, worksResponse]) => {
