@@ -11,7 +11,7 @@ const props = defineProps<{
   edition: Edition;
 }>();
 
-const emit = defineEmits(["content-missing"]);
+const emit = defineEmits(["content-missing", "on-navigate"]);
 
 const chaptersStore = useChaptersStore();
 
@@ -32,6 +32,18 @@ function getContent() {
   } else {
     return contentItem.value.content;
   }
+}
+
+function previousTocEntry() {
+  navigateToTocEntry(props.tocEntry?.previous);
+}
+
+function nextTocEntry() {
+  navigateToTocEntry(props.tocEntry?.next);
+}
+
+function navigateToTocEntry(tocEntry: TocEntry | null) {
+  emit("on-navigate", tocEntry);
 }
 </script>
 
