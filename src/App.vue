@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import { useWorksStore } from "@/stores/works";
+import { useGeneralStore } from "@/stores/general";
 import ContactForm from "./components/ContactForm.vue";
 
-const store = useWorksStore();
+const generalStore = useGeneralStore();
+const worksStore = useWorksStore();
 </script>
 
 <template>
   <div>
     <nav class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg">
       <div class="container-fluid">
-        <div v-if="store.activeWork" class="navbar-brand">
-          <span>{{ store.activeWork.name }}</span><br>
-          <span class="nav-author-name">{{ store.activeWork.author.shortestName() }}</span>
+        <div v-if="worksStore.activeWork" class="navbar-brand">
+          <span>{{ worksStore.activeWork.name }}</span><br>
+          <span class="nav-author-name">{{ worksStore.activeWork.author.shortestName() }}</span>
         </div>
         <div v-else class="navbar-brand">
           <span>StoicSource</span>
@@ -29,7 +31,7 @@ const store = useWorksStore();
       </div>
     </nav>
 
-    <div v-if="loading" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div v-if="generalStore.loading" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
