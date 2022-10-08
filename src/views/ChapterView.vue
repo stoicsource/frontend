@@ -136,7 +136,7 @@ function selectEdition(edition: Edition) {
 }
 
 function requireContent() {
-  if (tocEntry.value && edition.value && generalStore.loading) {
+  if (tocEntry.value && edition.value && !generalStore.loading) {
     generalStore.loading = !chaptersStore.isContentItemLoaded(
       tocEntry.value,
       edition.value

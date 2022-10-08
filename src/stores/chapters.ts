@@ -2,10 +2,15 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { TocEntry } from "@/models/TocEntry";
 import type { Edition } from "@/models/Edition";
-import type { Chapter } from "@/models/Chapter";
+import { Chapter } from "@/models/Chapter";
 import axios from "axios";
+import { useWorksStore } from "@/stores/works";
+import type { Work } from "@/models/Work";
+import StoreUtils from "@/utils/store/StoreUtils";
 
 export const useChaptersStore = defineStore("chapters", () => {
+  const worksStore = useWorksStore();
+
   const entryPadding = 1;
   let lastRequestParamString: String | null = null;
 
@@ -54,9 +59,41 @@ export const useChaptersStore = defineStore("chapters", () => {
       if (paramString !== lastRequestParamString) {
         lastRequestParamString = paramString;
 
-        return axiosInstance.get(
-          import.meta.env.VITE_APP_API_URL + "/contents?" + paramString
-        );
+        return axiosInstance
+          .get(import.meta.env.VITE_APP_API_URL + "/contents?" + paramString)
+          .then((chapterResponse) => {
+            const chapterArray: Chapter[] = [];
+            let work: Work | undefined = undefined;
+            chapterResponse.data.forEach((chapterData: any) => {
+              const tocEntryId = StoreUtils.extractIdFromJsonUrl(
+                chapterData.tocEntry
+              );
+              const editionId = StoreUtils.extractIdFromJsonUrl(
+                chapterData.edition
+              );
+
+              const newChapter = Object.assign(new Chapter(), chapterData);
+              if (!work) {
+                work = worksStore.works.find((work) => {
+                  return work.editions?.some((edition) => {
+                    return edition.id === editionId;
+                  });
+                });
+              }
+
+              newChapter.edition = work?.editions?.find((edition) => {
+                return edition.id === editionId;
+              });
+              newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
+                return tocEntry.id === tocEntryId;
+              });
+
+              chapterArray.push(newChapter);
+            });
+
+            chapters.value = chapters.value.concat(chapterArray);
+          });
+        // TODO: remove the response processing to investigate infinite loop
       } else {
         return Promise.reject();
       }
@@ -96,7 +133,7 @@ export const useChaptersStore = defineStore("chapters", () => {
   }
 
   function ensureDependencies(chapter: Chapter) {
-    throw 'ensureDependencies not yet implemeted';
+    throw "ensureDependencies not yet implemented";
     // const edition = Edition.query()
     //   .whereId(chapter.edition_id)
     //   .with("work")
