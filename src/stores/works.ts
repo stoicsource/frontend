@@ -5,7 +5,7 @@ import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 import StoreUtils from "@/utils/store/StoreUtils";
 
-export const worksStore = defineStore("works", () => {
+export const useWorksStore = defineStore("works", () => {
   const works = ref<Work[]>([]);
 
   const axiosInstance = axios.create({

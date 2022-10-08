@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { worksStore } from "@/stores/works";
+import { useRouter } from "vue-router";
+import { useWorksStore } from "@/stores/works";
 import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 
-const store = worksStore();
+const store = useWorksStore();
+const router = useRouter();
 
 const authorList = computed(() => {
   let uniqueAuthors: Author[] = [];
@@ -29,13 +31,11 @@ const authorList = computed(() => {
   return uniqueAuthors;
 });
 
-function authorWorks(author: Author) {
+function authorWorks(author: Author): Work[] {
   if (author.id === -1) {
-    return [
-      {
-        name: "Let fate decide where to take you",
-      },
-    ];
+    let fakeWork = new Work();
+    fakeWork.name = "Let fate decide where to take you";
+    return [fakeWork];
   }
   return store.works.filter((work: Work) => {
     return work.author.id === author.id;
@@ -43,7 +43,16 @@ function authorWorks(author: Author) {
 }
 
 function navigateToAuthor(author: Author) {
-  console.log(author);
+  if (author.id === -1) {
+    console.log(author);
+  } else {
+    const works = authorWorks(author);
+    if (works.length === 1) {
+      router.push("/" + author.urlSlug + "/" + works[0].urlSlug);
+    } else {
+      router.push("/" + author.urlSlug + "/works");
+    }
+  }
 }
 </script>
 
