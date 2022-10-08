@@ -5,15 +5,18 @@ import { useWorksStore } from "@/stores/works";
 import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 
-const store = useWorksStore();
+const worksStore = useWorksStore();
+worksStore.activeWork = null;
+
 const router = useRouter();
 
 const authorList = computed(() => {
   let uniqueAuthors: Author[] = [];
-  store.works.forEach((work: Work) => {
+  worksStore.works.forEach((work: Work) => {
     if (
+      work.author &&
       !uniqueAuthors.find((author: Author) => {
-        return author.id === work.author.id;
+        return author.id === work.author?.id;
       })
     ) {
       uniqueAuthors.push(work.author);
@@ -37,7 +40,7 @@ function authorWorks(author: Author): Work[] {
     fakeWork.name = "Let fate decide where to take you";
     return [fakeWork];
   }
-  return store.works.filter((work: Work) => {
+  return worksStore.works.filter((work: Work) => {
     return work.author.id === author.id;
   });
 }

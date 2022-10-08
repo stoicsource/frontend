@@ -30,6 +30,7 @@ const work = computed(() => {
 
   return workShallow ? worksStore.getWorkDetails(workShallow.id) : null;
 });
+worksStore.activeWork = work.value !== undefined ? work.value : null;
 
 const edition = computed(() => {
   if (!work.value || !work.value.editions) {

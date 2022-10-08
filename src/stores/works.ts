@@ -8,7 +8,7 @@ import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
 
 export const useWorksStore = defineStore("works", () => {
-  const activeWork: Work | null = null;
+  const activeWork = ref<Work | null>(null);
 
   const works = ref<Work[]>([]);
 
