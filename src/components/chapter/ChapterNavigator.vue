@@ -24,8 +24,8 @@ function canShare() {
   <div class="translation-content" v-if="work && tocEntry">
     <div class="content-navigation bg-light">
       <span><strong>{{ tocEntry.label }}</strong></span>
-      <a @click="previousTocEntry()" v-if="tocEntry.hasPrevious()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-up"></i></a>
-      <a @click="nextTocEntry()" v-if="tocEntry.hasNext()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-down"></i></a>
+      <a @click="previousTocEntry()" v-if="tocEntry.previous" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-up"></i></a>
+      <a @click="nextTocEntry()" v-if="tocEntry.next" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-circle-down"></i></a>
       <a class="d-lg-none btn btn-outline-secondary btn-sm" data-bs-toggle="collapse" href="#collapseWorkEditions" role="button"><i class="fa-solid fa-list"></i></a>
       <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-shuffle"></i></a>
       <a v-if="canShare()" @click="shareEntry" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-share-nodes"></i></a>

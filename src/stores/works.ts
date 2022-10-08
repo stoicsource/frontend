@@ -85,10 +85,22 @@ export const useWorksStore = defineStore("works", () => {
       axiosInstance
         .get(import.meta.env.VITE_APP_API_URL + "/toc_entries?work=" + work.id)
         .then((tocResponse) => {
-          const tocEntryArray: TocEntry[] = [];
+          let tocEntryArray: TocEntry[] = [];
           tocResponse.data.forEach((tocEntryData: any) => {
             tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
           });
+          tocEntryArray = tocEntryArray.sort((a, b) => { return a.sortOrder > b.sortOrder ? 1: -1; });
+
+          for (let i = 0; i < tocEntryArray.length; i++) {
+            const entryAtIndex = tocEntryArray[i];
+            if (i > 0) {
+              entryAtIndex.previous = tocEntryArray[i - 1];
+            }
+            if (i < tocEntryArray.length - 1) {
+              entryAtIndex.next = tocEntryArray[i + 1];
+            }
+          }
+
           work.tocEntries = tocEntryArray;
         });
     }

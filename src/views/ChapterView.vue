@@ -6,6 +6,8 @@ import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
 import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
+import { useGeneralStore } from "@/stores/general";
+import { useChaptersStore } from "@/stores/chapters";
 
 const props = defineProps<{
   workSlug: string;
@@ -14,14 +16,16 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const store = useWorksStore();
+const generalStore = useGeneralStore();
+const worksStore = useWorksStore();
+const chaptersStore = useChaptersStore();
 
 const work = computed(() => {
-  const workShallow = store.works.find((work: Work) => {
+  const workShallow = worksStore.works.find((work: Work) => {
     return work.urlSlug === props.workSlug;
   });
 
-  return workShallow ? store.getWorkDetails(workShallow.id) : null;
+  return workShallow ? worksStore.getWorkDetails(workShallow.id) : null;
 });
 
 const edition = computed(() => {
@@ -129,6 +133,20 @@ function selectEdition(edition: Edition) {
       },
     });
   }, 1);
+}
+
+function requireContent() {
+  if (tocEntry.value && edition.value && generalStore.loading) {
+    generalStore.loading = !chaptersStore.isContentItemLoaded(
+      tocEntry.value,
+      edition.value
+    );
+    chaptersStore.requireContent(tocEntry.value, edition.value).finally(
+      function () {
+        generalStore.loading = false;
+      }
+    );
+  }
 }
 </script>
 
