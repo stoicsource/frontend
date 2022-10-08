@@ -38,6 +38,33 @@ const edition = computed(() => {
   // TODO:
   return work.value.editions[0];
 });
+
+const tocEntry = computed(() => {
+  // order: 1. url, 2. selection, 3. first chapter
+  // let tocSlugEntry = this.tocSlug ? TocEntry.query().where('work_id', this.work?.id).where('label', this.tocSlug).first() : null;
+  // let tocEntryId = tocSlugEntry ? tocSlugEntry.id : null;
+  //
+  // if (!tocEntryId) {
+  //   tocEntryId = (this.selectionInfo && this.selectionInfo.tocEntries.length > 0) ? this.selectionInfo.tocEntries[0] : null;
+  // }
+  //
+  // if (!tocEntryId) {
+  //   tocEntryId = this.work?.firstTocEntry?.id;
+  // }
+  //
+  // return tocEntryId ? TocEntry.query().whereId(tocEntryId).with(['work.tocEntries']).first() : null;
+
+  if (!work.value) {
+    return null;
+  }
+
+  return work.value.tocEntries[0];
+});
+
+function isMobile() {
+  return window.screen.width <= 768;
+};
+
 </script>
 
 <template>

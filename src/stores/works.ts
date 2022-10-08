@@ -5,6 +5,7 @@ import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 import StoreUtils from "@/utils/store/StoreUtils";
 import { Edition } from "@/models/Edition";
+import { TocEntry } from "@/models/TocEntry";
 
 export const useWorksStore = defineStore("works", () => {
   const activeWork: Work | null = null;
@@ -74,10 +75,24 @@ export const useWorksStore = defineStore("works", () => {
     }
   );
 
-  function getWorkDetails(workId: number) {
-    return works.value.find((work: Work) => {
+  function getWorkDetails(workId: number): Work | undefined {
+    const work = works.value.find((work: Work) => {
       return work.id === workId;
     });
+
+    if (work && !work.tocLoaded()) {
+      axiosInstance
+        .get(import.meta.env.VITE_APP_API_URL + "/toc_entries?work=" + work.id)
+        .then((tocResponse) => {
+          const tocEntryArray: TocEntry[] = [];
+          tocResponse.data.forEach((tocEntryData: any) => {
+            tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
+          });
+          work.tocEntries = tocEntryArray;
+        });
+    }
+
+    return work;
   }
 
   return { works, activeWork, getWorkDetails };
