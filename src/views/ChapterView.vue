@@ -3,6 +3,7 @@ import { useWorksStore } from "@/stores/works";
 import { computed } from "vue";
 import { Work } from "@/models/Work";
 import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
+import TableOfContents from "../components/chapter/TableOfContents.vue";
 import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
@@ -155,6 +156,15 @@ function requireContent() {
       });
   }
 }
+
+function editionInfo() {
+  router.push({
+    name: "editionInfo",
+    params: {
+      editionId: edition.value?.id,
+    },
+  });
+}
 </script>
 
 <template>
@@ -177,7 +187,6 @@ function requireContent() {
               >
                 <i class="fa-solid fa-xmark fa-2xl"></i>
               </a>
-              <!--
               <table-of-contents
                 :editions="sortedEditions"
                 :toc-entries="sortedTocEntries"
@@ -187,7 +196,6 @@ function requireContent() {
                 @edition-selected="selectEdition"
                 @edition-info-clicked="editionInfo"
               ></table-of-contents>
-              -->
             </div>
           </div>
           <div class="col-12 col-lg-9">
