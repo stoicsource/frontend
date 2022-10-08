@@ -3,10 +3,10 @@ import { defineStore } from "pinia";
 import type { TocEntry } from "@/models/TocEntry";
 import type { Edition } from "@/models/Edition";
 import { Chapter } from "@/models/Chapter";
-import axios from "axios";
 import { useWorksStore } from "@/stores/works";
 import type { Work } from "@/models/Work";
 import StoreUtils from "@/utils/store/StoreUtils";
+import api from "@/utils/api";
 
 export const useChaptersStore = defineStore("chapters", () => {
   const worksStore = useWorksStore();
@@ -15,12 +15,6 @@ export const useChaptersStore = defineStore("chapters", () => {
   let lastRequestParamString: String | null = null;
 
   const chapters = ref<Chapter[]>([]);
-
-  const axiosInstance = axios.create({
-    headers: {
-      Accept: "application/json",
-    },
-  });
 
   function requireContent(tocEntry: TocEntry, edition: Edition) {
     const requiredEntries = [tocEntry];
@@ -59,40 +53,38 @@ export const useChaptersStore = defineStore("chapters", () => {
       if (paramString !== lastRequestParamString) {
         lastRequestParamString = paramString;
 
-        return axiosInstance
-          .get(import.meta.env.VITE_APP_API_URL + "/contents?" + paramString)
-          .then((chapterResponse) => {
-            const chapterArray: Chapter[] = [];
-            let work: Work | undefined = undefined;
-            chapterResponse.data.forEach((chapterData: any) => {
-              const tocEntryId = StoreUtils.extractIdFromJsonUrl(
-                chapterData.tocEntry
-              );
-              const editionId = StoreUtils.extractIdFromJsonUrl(
-                chapterData.edition
-              );
+        return api.get("/contents?" + paramString).then((chapterResponse) => {
+          const chapterArray: Chapter[] = [];
+          let work: Work | undefined = undefined;
+          chapterResponse.data.forEach((chapterData: any) => {
+            const tocEntryId = StoreUtils.extractIdFromJsonUrl(
+              chapterData.tocEntry
+            );
+            const editionId = StoreUtils.extractIdFromJsonUrl(
+              chapterData.edition
+            );
 
-              const newChapter = Object.assign(new Chapter(), chapterData);
-              if (!work) {
-                work = worksStore.works.find((work) => {
-                  return work.editions?.some((edition) => {
-                    return edition.id === editionId;
-                  });
+            const newChapter = Object.assign(new Chapter(), chapterData);
+            if (!work) {
+              work = worksStore.works.find((work) => {
+                return work.editions?.some((edition) => {
+                  return edition.id === editionId;
                 });
-              }
-
-              newChapter.edition = work?.editions?.find((edition) => {
-                return edition.id === editionId;
               });
-              newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
-                return tocEntry.id === tocEntryId;
-              });
+            }
 
-              chapterArray.push(newChapter);
+            newChapter.edition = work?.editions?.find((edition) => {
+              return edition.id === editionId;
+            });
+            newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
+              return tocEntry.id === tocEntryId;
             });
 
-            chapters.value = chapters.value.concat(chapterArray);
+            chapterArray.push(newChapter);
           });
+
+          chapters.value = chapters.value.concat(chapterArray);
+        });
         // TODO: remove the response processing to investigate infinite loop
       } else {
         return Promise.reject();
@@ -121,12 +113,8 @@ export const useChaptersStore = defineStore("chapters", () => {
   }
 
   function getRandomItem() {
-    return axiosInstance
-      .get(
-        import.meta.env.VITE_APP_API_URL +
-          "/contents?order[random]&itemsPerPage=1&cachebuster=" +
-          Date.now()
-      )
+    return api
+      .get("/contents?order[random]&itemsPerPage=1&cachebuster=" + Date.now())
       .then(function (response) {
         return response.data.entities.contents[0];
       });

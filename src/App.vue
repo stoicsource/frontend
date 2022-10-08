@@ -3,7 +3,8 @@ import { RouterView } from "vue-router";
 import { useWorksStore } from "@/stores/works";
 import { useGeneralStore } from "@/stores/general";
 import ContactForm from "./components/ContactForm.vue";
-import {useSelectionStore} from "@/stores/selection";
+import { useSelectionStore } from "@/stores/selection";
+import axios from "axios";
 
 const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
@@ -11,15 +12,30 @@ const selectionStore = useSelectionStore();
 
 selectionStore.loadFromLocalStorage();
 
+axios.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  function (error) {
+    console.log(error);
+    alert(error.message);
+    return Promise.reject(error);
+  }
+);
 </script>
 
 <template>
   <div>
-    <nav class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg">
+    <nav
+      class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg"
+    >
       <div class="container-fluid">
         <div v-if="worksStore.activeWork" class="navbar-brand">
-          <span>{{ worksStore.activeWork.name }}</span><br>
-          <span class="nav-author-name">{{ worksStore.activeWork.author.shortestName() }}</span>
+          <span>{{ worksStore.activeWork.name }}</span
+          ><br />
+          <span class="nav-author-name">{{
+            worksStore.activeWork.author.shortestName()
+          }}</span>
         </div>
         <div v-else class="navbar-brand">
           <span>StoicSource</span>
@@ -27,7 +43,7 @@ selectionStore.loadFromLocalStorage();
 
         <ul class="navbar-nav ml-auto">
           <li class="nav-item nav-work-selector">
-            <router-link :to="{name: 'authorSelect'}" class="nav-link">
+            <router-link :to="{ name: 'authorSelect' }" class="nav-link">
               <i class="fa-solid fa-bars"></i>
               <span class="d-none d-md-inline">Switch to different Work</span>
             </router-link>
@@ -36,7 +52,11 @@ selectionStore.loadFromLocalStorage();
       </div>
     </nav>
 
-    <div v-if="generalStore.loading" class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div
+      v-if="generalStore.loading"
+      class="d-flex justify-content-center align-items-center"
+      style="min-height: 80vh"
+    >
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
@@ -47,7 +67,13 @@ selectionStore.loadFromLocalStorage();
 
     <footer class="text-center text-muted mb-3">
       Feedback? Questions?
-      <button type="button" class="link-style" data-bs-toggle="modal" data-bs-target="#contact-modal" style="border: none; background: transparent;">
+      <button
+        type="button"
+        class="link-style"
+        data-bs-toggle="modal"
+        data-bs-target="#contact-modal"
+        style="border: none; background: transparent"
+      >
         Contact us
       </button>
     </footer>
@@ -55,15 +81,16 @@ selectionStore.loadFromLocalStorage();
 </template>
 
 <style lang="scss">
-
-td, th {
+td,
+th {
   text-align: left;
   vertical-align: top;
   padding-bottom: 1em;
 }
 
 .text-muted {
-  a, .link-style {
+  a,
+  .link-style {
     color: #6c757d;
     text-decoration: underline;
   }

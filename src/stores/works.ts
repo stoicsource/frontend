@@ -1,32 +1,20 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import axios from "axios";
 import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 import StoreUtils from "@/utils/store/StoreUtils";
 import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
+import api from "@/utils/api";
 
 export const useWorksStore = defineStore("works", () => {
   const activeWork = ref<Work | null>(null);
 
   const works = ref<Work[]>([]);
 
-  const axiosInstance = axios.create({
-    headers: {
-      Accept: "application/json",
-    },
-  });
-
-  const authorsRequest = axiosInstance.get(
-    import.meta.env.VITE_APP_API_URL + "/authors"
-  );
-  const worksRequest = axiosInstance.get(
-    import.meta.env.VITE_APP_API_URL + "/works"
-  );
-  const editionsRequest = axiosInstance.get(
-    import.meta.env.VITE_APP_API_URL + "/editions"
-  );
+  const authorsRequest = api.get("/authors");
+  const worksRequest = api.get("/works");
+  const editionsRequest = api.get("/editions");
 
   Promise.all([authorsRequest, worksRequest, editionsRequest]).then(
     ([authorsResponse, worksResponse, editionsResponse]) => {
@@ -82,27 +70,27 @@ export const useWorksStore = defineStore("works", () => {
     });
 
     if (work && !work.tocLoaded()) {
-      axiosInstance
-        .get(import.meta.env.VITE_APP_API_URL + "/toc_entries?work=" + work.id)
-        .then((tocResponse) => {
-          let tocEntryArray: TocEntry[] = [];
-          tocResponse.data.forEach((tocEntryData: any) => {
-            tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
-          });
-          tocEntryArray = tocEntryArray.sort((a, b) => { return a.sortOrder > b.sortOrder ? 1: -1; });
-
-          for (let i = 0; i < tocEntryArray.length; i++) {
-            const entryAtIndex = tocEntryArray[i];
-            if (i > 0) {
-              entryAtIndex.previous = tocEntryArray[i - 1];
-            }
-            if (i < tocEntryArray.length - 1) {
-              entryAtIndex.next = tocEntryArray[i + 1];
-            }
-          }
-
-          work.tocEntries = tocEntryArray;
+      api.get("/toc_entries?work=" + work.id).then((tocResponse) => {
+        let tocEntryArray: TocEntry[] = [];
+        tocResponse.data.forEach((tocEntryData: any) => {
+          tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
         });
+        tocEntryArray = tocEntryArray.sort((a, b) => {
+          return a.sortOrder > b.sortOrder ? 1 : -1;
+        });
+
+        for (let i = 0; i < tocEntryArray.length; i++) {
+          const entryAtIndex = tocEntryArray[i];
+          if (i > 0) {
+            entryAtIndex.previous = tocEntryArray[i - 1];
+          }
+          if (i < tocEntryArray.length - 1) {
+            entryAtIndex.next = tocEntryArray[i + 1];
+          }
+        }
+
+        work.tocEntries = tocEntryArray;
+      });
     }
 
     return work;
