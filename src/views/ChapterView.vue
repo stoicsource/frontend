@@ -24,11 +24,11 @@ const chaptersStore = useChaptersStore();
 const selectionStore = useSelectionStore();
 
 const work = computed(() => {
-  const workShallow = worksStore.works.find((work: Work) => {
+  const workFromStore = worksStore.works.find((work: Work) => {
     return work.urlSlug === props.workSlug;
   });
-
-  return workShallow ? worksStore.getWorkDetails(workShallow.id) : null;
+  worksStore.loadFullWork(workFromStore?.id ?? -1);
+  return workFromStore;
 });
 worksStore.activeWork = work.value !== undefined ? work.value : null;
 
@@ -117,7 +117,7 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
     selectionInfo.replaceTocEntry(tocEntry.id);
     selectionStore.saveToLocalStorage();
     router.push({
-      name: "contentByToc",
+      name: "contentByTocAndTranslator",
       params: {
         author: work.value?.author?.urlSlug,
         workSlug: work.value?.urlSlug,
@@ -134,7 +134,7 @@ function selectEdition(edition: Edition) {
     selectionInfo.selectEdition(edition.id);
     selectionStore.saveToLocalStorage();
     router.push({
-      name: "contentByToc",
+      name: "contentByTocAndTranslator",
       params: {
         author: work.value?.author?.urlSlug,
         workSlug: work.value?.urlSlug,

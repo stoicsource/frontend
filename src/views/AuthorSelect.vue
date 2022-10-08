@@ -4,10 +4,15 @@ import { useRouter } from "vue-router";
 import { useWorksStore } from "@/stores/works";
 import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
+import { useGeneralStore } from "@/stores/general";
+import { useChaptersStore } from "@/stores/chapters";
+import type { Chapter } from "@/models/Chapter";
 
 const worksStore = useWorksStore();
 worksStore.activeWork = null;
 
+const generalStore = useGeneralStore();
+const chaptersStore = useChaptersStore();
 const router = useRouter();
 
 const authorList = computed(() => {
@@ -47,7 +52,29 @@ function authorWorks(author: Author): Work[] {
 
 function navigateToAuthor(author: Author) {
   if (author.id === -1) {
-    console.log(author);
+    generalStore.loading = true;
+    chaptersStore
+      .getRandomItem()
+      .then(function (randomContent: Chapter) {
+        generalStore.loading = false;
+
+        const work = worksStore.getWorkByEdition(
+          randomContent.edition?.id ?? -1
+        );
+        if (work) {
+          router.push({
+            name: "contentByToc",
+            params: {
+              author: work.author?.urlSlug,
+              workSlug: work.urlSlug,
+              tocSlug: randomContent.tocEntry?.label,
+            },
+          });
+        }
+      })
+      .catch(function () {
+        generalStore.loading = false;
+      });
   } else {
     const works = authorWorks(author);
     if (works.length === 1) {

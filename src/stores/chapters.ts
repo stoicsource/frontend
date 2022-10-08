@@ -4,7 +4,6 @@ import type { TocEntry } from "@/models/TocEntry";
 import type { Edition } from "@/models/Edition";
 import { Chapter } from "@/models/Chapter";
 import { useWorksStore } from "@/stores/works";
-import type { Work } from "@/models/Work";
 import StoreUtils from "@/utils/store/StoreUtils";
 import api from "@/utils/api";
 
@@ -15,6 +14,33 @@ export const useChaptersStore = defineStore("chapters", () => {
   let lastRequestParamString: String | null = null;
 
   const chapters = ref<Chapter[]>([]);
+
+  function chapterFromResponse(chapterData: any): Chapter {
+    const tocEntryId = StoreUtils.extractIdFromJsonUrl(chapterData.tocEntry);
+    const editionId = StoreUtils.extractIdFromJsonUrl(chapterData.edition);
+
+    const newChapter = Object.assign(new Chapter(), chapterData);
+
+    const work = worksStore.getWorkByEdition(editionId);
+    if (
+      !work ||
+      !work.tocEntries ||
+      work.tocEntries.length === 0 ||
+      !work.editions ||
+      work.editions.length === 0
+    ) {
+      throw "Work not completely loaded";
+    }
+
+    newChapter.edition = work?.editions?.find((edition) => {
+      return edition.id === editionId;
+    });
+    newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
+      return tocEntry.id === tocEntryId;
+    });
+
+    return newChapter;
+  }
 
   function requireContent(tocEntry: TocEntry, edition: Edition) {
     const requiredEntries = [tocEntry];
@@ -55,31 +81,9 @@ export const useChaptersStore = defineStore("chapters", () => {
 
         return api.get("/contents?" + paramString).then((chapterResponse) => {
           const chapterArray: Chapter[] = [];
-          let work: Work | undefined = undefined;
+
           chapterResponse.data.forEach((chapterData: any) => {
-            const tocEntryId = StoreUtils.extractIdFromJsonUrl(
-              chapterData.tocEntry
-            );
-            const editionId = StoreUtils.extractIdFromJsonUrl(
-              chapterData.edition
-            );
-
-            const newChapter = Object.assign(new Chapter(), chapterData);
-            if (!work) {
-              work = worksStore.works.find((work) => {
-                return work.editions?.some((edition) => {
-                  return edition.id === editionId;
-                });
-              });
-            }
-
-            newChapter.edition = work?.editions?.find((edition) => {
-              return edition.id === editionId;
-            });
-            newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
-              return tocEntry.id === tocEntryId;
-            });
-
+            const newChapter = chapterFromResponse(chapterData);
             chapterArray.push(newChapter);
           });
 
@@ -112,24 +116,22 @@ export const useChaptersStore = defineStore("chapters", () => {
     });
   }
 
-  function getRandomItem() {
+  function getRandomItem(): Promise<Chapter> {
     return api
       .get("/contents?order[random]&itemsPerPage=1&cachebuster=" + Date.now())
       .then(function (response) {
-        return response.data.entities.contents[0];
-      });
-  }
+        const chapterData = response.data[0];
+        const editionId = StoreUtils.extractIdFromJsonUrl(chapterData.edition);
+        const work = worksStore.getWorkByEdition(editionId);
 
-  function ensureDependencies(chapter: Chapter) {
-    throw "ensureDependencies not yet implemented";
-    // const edition = Edition.query()
-    //   .whereId(chapter.edition_id)
-    //   .with("work")
-    //   .first();
-    // const workLoaded = WorkService.workFullyLoaded(edition?.work);
-    // return workLoaded
-    //   ? Promise.resolve()
-    //   : WorkService.loadFullWork(edition.work);
+        if (work && !work.tocLoaded()) {
+          return worksStore.loadFullWork(work.id).then(() => {
+            return chapterFromResponse(chapterData);
+          });
+        } else {
+          return Promise.resolve(chapterFromResponse(chapterData));
+        }
+      });
   }
 
   return {
@@ -137,6 +139,5 @@ export const useChaptersStore = defineStore("chapters", () => {
     isContentItemLoaded,
     getContentItem,
     getRandomItem,
-    ensureDependencies,
   };
 });

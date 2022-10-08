@@ -6,8 +6,12 @@ import StoreUtils from "@/utils/store/StoreUtils";
 import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
 import api from "@/utils/api";
+import { useGeneralStore } from "@/stores/general";
 
 export const useWorksStore = defineStore("works", () => {
+  const generalStore = useGeneralStore();
+  generalStore.loading = true;
+
   const activeWork = ref<Work | null>(null);
 
   const works = ref<Work[]>([]);
@@ -16,8 +20,8 @@ export const useWorksStore = defineStore("works", () => {
   const worksRequest = api.get("/works");
   const editionsRequest = api.get("/editions");
 
-  Promise.all([authorsRequest, worksRequest, editionsRequest]).then(
-    ([authorsResponse, worksResponse, editionsResponse]) => {
+  Promise.all([authorsRequest, worksRequest, editionsRequest])
+    .then(([authorsResponse, worksResponse, editionsResponse]) => {
       const authorArray: Author[] = [];
       authorsResponse.data.forEach((authorData: any) => {
         authorArray.push(Object.assign(new Author(), authorData));
@@ -61,16 +65,18 @@ export const useWorksStore = defineStore("works", () => {
       });
 
       works.value = workArray;
-    }
-  );
+    })
+    .finally(() => {
+      generalStore.loading = false;
+    });
 
-  function getWorkDetails(workId: number): Work | undefined {
+  function loadFullWork(workId: number): Promise<any> {
     const work = works.value.find((work: Work) => {
       return work.id === workId;
     });
 
     if (work && !work.tocLoaded()) {
-      api.get("/toc_entries?work=" + work.id).then((tocResponse) => {
+      return api.get("/toc_entries?work=" + work.id).then((tocResponse) => {
         let tocEntryArray: TocEntry[] = [];
         tocResponse.data.forEach((tocEntryData: any) => {
           tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
@@ -93,8 +99,16 @@ export const useWorksStore = defineStore("works", () => {
       });
     }
 
-    return work;
+    return Promise.resolve();
   }
 
-  return { works, activeWork, getWorkDetails };
+  function getWorkByEdition(editionId: number) {
+    return works.value.find((work) => {
+      return work.editions?.some((edition) => {
+        return edition.id === editionId;
+      });
+    });
+  }
+
+  return { works, activeWork, loadFullWork, getWorkByEdition };
 });

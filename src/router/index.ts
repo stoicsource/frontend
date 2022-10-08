@@ -18,12 +18,13 @@ const router = createRouter({
       path: "/:author/:workSlug/:tocSlug",
       component: ChapterView,
       props: true,
+      name: "contentByToc",
     },
     {
       path: "/:author/:workSlug/:tocSlug/:translatorSlug",
       component: ChapterView,
       props: true,
-      name: "contentByToc",
+      name: "contentByTocAndTranslator",
     },
 
     // {
