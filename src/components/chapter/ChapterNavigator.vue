@@ -123,3 +123,87 @@ function getContent() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.translation-content >>> blockquote {
+  border-left: 3px solid #eaecf0;
+  padding: 8px 22px;
+}
+
+li, .translation-content >>> a {
+  scroll-margin-top: 80px;
+}
+
+.translation-content >>> a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.translation-content >>> sup {
+  margin-left: 0.2em;
+  margin-right: 0.3em;
+}
+</style>
+
+<style lang="scss" scoped>
+
+.btn {
+  display: block;
+}
+
+.translation-content {
+  max-width: 35em;
+  line-height: 1.6em;
+
+  .content-action {
+    visibility: hidden;
+    display: inline-block;
+    padding: 0 5px;
+    color: gray;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: 6px;
+
+    &:not(:first-child) {
+      margin-left: 0.5em;
+    }
+  }
+
+  &:hover {
+    .content-action {
+      visibility: visible;
+    }
+  }
+}
+
+.translator-notes {
+  font-size: 0.8em;
+  line-height: 1.3em;
+  font-style: italic;
+  color: #444;
+}
+
+.content-navigation {
+  float: left;
+  position: relative;
+  top: 6px;
+  margin-right: 0.75em;
+  margin-bottom: 0.5em;
+  border-radius: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgb(222, 226, 230);
+
+  a {
+    margin-top: 0.2em;
+  }
+}
+
+.footnote-backlink {
+  margin-top: -1em;
+  margin-bottom: 1em;
+}
+
+</style>
