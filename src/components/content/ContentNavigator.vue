@@ -62,15 +62,6 @@ export default {
       return SelectionInfoService.getSelectionInfo(this.work?.id);
     },
 
-    sortedEditions() {
-      let editionsIds = this.work ? this.work.editions.map((edition) => edition.id) : null;
-      return editionsIds ? Edition.query().whereIdIn(editionsIds).where('quality', (value) => value >= 6).orderBy('year').with('author').all() : null;
-    },
-
-    sortedTocEntries() {
-      return TocEntry.query().whereIdIn(this.work.tocEntries.map((tocEntry) => tocEntry.id)).orderBy('sort_order').withAllRecursive().all();
-    },
-
     contentItem() {
       return ContentService.getContentItem(this.tocEntry, this.edition);
     },
@@ -149,14 +140,6 @@ export default {
       this.navigateToTocEntry(nextEntry);
     },
 
-    isTocEntrySelected(tocEntry) {
-      return this.tocEntry.id === tocEntry.id;
-    },
-
-    selectEdition(edition) {
-      this.$emit('edition-selected', edition)
-    },
-
     canShare() {
       return navigator.share;
     },
@@ -171,10 +154,6 @@ export default {
         })
         .catch(console.error);
       }
-    },
-
-    editionInfo() {
-      this.$emit('edition-info-clicked');
     },
 
     scrollToNote(noteNr) {
