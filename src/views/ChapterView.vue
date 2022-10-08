@@ -3,8 +3,9 @@ import { useWorksStore } from "@/stores/works";
 import { computed } from "vue";
 import { Work } from "@/models/Work";
 import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
-import {Edition} from "@/models/Edition";
-import {TocEntry} from "@/models/TocEntry";
+import { Edition } from "@/models/Edition";
+import { TocEntry } from "@/models/TocEntry";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   workSlug: string;
@@ -12,6 +13,7 @@ const props = defineProps<{
   translatorSlug?: string;
 }>();
 
+const router = useRouter();
 const store = useWorksStore();
 
 const work = computed(() => {
@@ -24,10 +26,10 @@ const work = computed(() => {
 
 const edition = computed(() => {
   if (!work.value) {
-    return null;
+    return undefined;
   }
   if (props.translatorSlug) {
-    return work.value.editions.find((edition) => {
+    return work.value.editions?.find((edition) => {
       return edition.author.urlSlug === props.translatorSlug;
     });
   }
@@ -39,7 +41,7 @@ const edition = computed(() => {
   // }
 
   // TODO:
-  return work.value.editions[0];
+  return work.value.editions ? work.value.editions[0] : undefined;
 });
 
 const tocEntry = computed(() => {
@@ -61,22 +63,73 @@ const tocEntry = computed(() => {
     return null;
   }
 
-  return work.value.tocLoaded() ? work.value.tocEntries[0] : null;
+  return work.value.tocEntries ? work.value.tocEntries[0] : null;
 });
 
 function isMobile() {
   return window.screen.width <= 768;
-};
+}
 
 const sortedEditions = computed(() => {
-  return work.value?.editions?.filter((edition) => { return edition.quality >= 6; }).sort((a: Edition, b: Edition) => { return a.year > b.year ? 1 : -1; });
+  return work.value?.editions
+    ?.filter((edition) => {
+      return edition.quality >= 6;
+    })
+    .sort((a: Edition, b: Edition) => {
+      return a.year > b.year ? 1 : -1;
+    });
 });
 
 const sortedTocEntries = computed(() => {
-  return work.value?.tocEntries?.filter(() => { return true; }).sort((a: TocEntry, b: TocEntry) => { return a.sortOrder > b.sortOrder ? 1 : -1; });
+  return work.value?.tocEntries
+    ?.filter(() => {
+      return true;
+    })
+    .sort((a: TocEntry, b: TocEntry) => {
+      return a.sortOrder > b.sortOrder ? 1 : -1;
+    });
 });
 
+function navigateToTocEntry(tocEntry: TocEntry | null) {
+  if (tocEntry) {
+    // TODO: this.selectionInfo.replaceTocEntry(tocEntry.id);
+    // TODO: SelectionInfoService.saveToLocalStorage();
+    router.push({
+      name: "contentByToc",
+      params: {
+        author: work.value?.author?.urlSlug,
+        workSlug: work.value?.urlSlug,
+        tocSlug: tocEntry.label,
+        translatorSlug: edition.value?.author?.urlSlug,
+      },
+    });
+  }
+}
 
+function selectEdition(edition: Edition) {
+  setTimeout(function () {
+    // TODO:
+    // this.selectionInfo.editions[0] = edition.id;
+    //
+    // SelectionInfo.update({
+    //   where: this.work.id,
+    //   data: {
+    //     editions: this.selectionInfo.editions,
+    //   },
+    // });
+    //
+    // SelectionInfoService.saveToLocalStorage();
+    router.push({
+      name: "contentByToc",
+      params: {
+        author: work.value?.author?.urlSlug,
+        workSlug: work.value?.urlSlug,
+        tocSlug: tocEntry.value?.label,
+        translatorSlug: edition.author?.urlSlug,
+      },
+    });
+  }, 1);
+}
 </script>
 
 <template>
@@ -99,6 +152,7 @@ const sortedTocEntries = computed(() => {
               >
                 <i class="fa-solid fa-xmark fa-2xl"></i>
               </a>
+              <!--
               <table-of-contents
                 :editions="sortedEditions"
                 :toc-entries="sortedTocEntries"
@@ -108,6 +162,7 @@ const sortedTocEntries = computed(() => {
                 @edition-selected="selectEdition"
                 @edition-info-clicked="editionInfo"
               ></table-of-contents>
+              -->
             </div>
           </div>
           <div class="col-12 col-lg-9">
