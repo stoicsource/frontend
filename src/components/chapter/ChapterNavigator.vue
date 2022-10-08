@@ -42,8 +42,40 @@ function nextTocEntry() {
   navigateToTocEntry(props.tocEntry?.next);
 }
 
+function randomTocEntry() {
+  let nextEntry = props.tocEntry;
+  while (
+    props.work.tocEntries &&
+    props.work.tocEntries.length > 1 &&
+    nextEntry.id === props.tocEntry.id
+  ) {
+    let entryIndex = Math.floor(Math.random() * props.work.tocEntries.length);
+    nextEntry = props.work.tocEntries[entryIndex];
+  }
+  navigateToTocEntry(nextEntry);
+}
+
 function navigateToTocEntry(tocEntry: TocEntry | null) {
   emit("on-navigate", tocEntry);
+}
+
+function shareEntry() {
+  if (navigator.share) {
+    navigator
+      .share({
+        title:
+          props.work.author?.shortName +
+          " - " +
+          props.work.name +
+          " " +
+          props.tocEntry.label,
+        url: window.location.href,
+      })
+      .then(() => {
+        console.log("Thanks for sharing!");
+      })
+      .catch(console.error);
+  }
 }
 </script>
 
@@ -142,7 +174,8 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
   padding: 8px 22px;
 }
 
-li, .translation-content >>> a {
+li,
+.translation-content >>> a {
   scroll-margin-top: 80px;
 }
 
@@ -158,7 +191,6 @@ li, .translation-content >>> a {
 </style>
 
 <style lang="scss" scoped>
-
 .btn {
   display: block;
 }
@@ -217,5 +249,4 @@ li, .translation-content >>> a {
   margin-top: -1em;
   margin-bottom: 1em;
 }
-
 </style>

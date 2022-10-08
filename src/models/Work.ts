@@ -7,8 +7,6 @@ export class Work {
   name = "";
   urlSlug = "";
 
-  // tocEntries: this.hasMany(TocEntry, 'work_id'),
-
   _author?: Author = undefined;
   get author(): Author | undefined {
     return this._author;
