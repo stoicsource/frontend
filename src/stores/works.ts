@@ -67,6 +67,7 @@ export const useWorksStore = defineStore("works", () => {
           }
         });
         newWork.editions = workEditions;
+        newWork.tocEntries = undefined;
 
         workArray.push(newWork);
       });

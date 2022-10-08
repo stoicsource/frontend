@@ -4,19 +4,24 @@ export class TocEntry {
   label = "";
   sortOrder = "";
 
-  // getPrevious () {
-  //   return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'desc').where('sortOrder', (value) => value < this.sortOrder).first();
-  // }
-  //
-  // getNext () {
-  //   return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'asc').where('sortOrder', (value) => value > this.sortOrder).first();
-  // }
-  //
-  // hasPrevious () {
-  //   return this.getPrevious() !== null;
-  // }
-  //
-  // hasNext () {
-  //   return this.getNext() !== null;
-  // }
+  // TODO: move to Work?
+  getPrevious () {
+    //return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'desc').where('sortOrder', (value) => value < this.sortOrder).first();
+    return null;
+  }
+
+  getNext () {
+    // return TocEntry.query().where('work_id', this.work.id).orderBy('sortOrder', 'asc').where('sortOrder', (value) => value > this.sortOrder).first();
+    return null;
+  }
+
+  hasPrevious () {
+    // return this.getPrevious() !== null;
+    return true;
+  }
+
+  hasNext () {
+    // return this.getNext() !== null;
+    return true;
+  }
 }

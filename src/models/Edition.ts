@@ -6,7 +6,7 @@ export class Edition {
   year = "";
   work_id = "";
   author_id = "";
-  quality = "";
+  quality = 0;
   contributor = "";
   language = "";
   source = "";

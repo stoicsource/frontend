@@ -2,6 +2,9 @@
 import { useWorksStore } from "@/stores/works";
 import { computed } from "vue";
 import { Work } from "@/models/Work";
+import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
+import {Edition} from "@/models/Edition";
+import {TocEntry} from "@/models/TocEntry";
 
 const props = defineProps<{
   workSlug: string;
@@ -58,12 +61,21 @@ const tocEntry = computed(() => {
     return null;
   }
 
-  return work.value.tocEntries[0];
+  return work.value.tocLoaded() ? work.value.tocEntries[0] : null;
 });
 
 function isMobile() {
   return window.screen.width <= 768;
 };
+
+const sortedEditions = computed(() => {
+  return work.value?.editions?.filter((edition) => { return edition.quality >= 6; }).sort((a: Edition, b: Edition) => { return a.year > b.year ? 1 : -1; });
+});
+
+const sortedTocEntries = computed(() => {
+  return work.value?.tocEntries?.filter(() => { return true; }).sort((a: TocEntry, b: TocEntry) => { return a.sortOrder > b.sortOrder ? 1 : -1; });
+});
+
 
 </script>
 
@@ -99,14 +111,14 @@ function isMobile() {
             </div>
           </div>
           <div class="col-12 col-lg-9">
-            <content-navigator
+            <chapter-navigator
               :work="work"
               :edition="edition"
               :toc-entry="tocEntry"
               @on-navigate="navigateToTocEntry"
               @edition-selected="selectEdition"
               @content-missing="requireContent"
-            ></content-navigator>
+            ></chapter-navigator>
           </div>
         </div>
         <div v-else>
