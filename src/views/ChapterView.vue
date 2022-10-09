@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { useWorksStore } from "@/stores/works";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { Work } from "@/models/Work";
 import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
 import TableOfContents from "../components/chapter/TableOfContents.vue";
 import type { Edition } from "@/models/Edition";
 import type { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
-import { useGeneralStore } from "@/stores/general";
 import { useChaptersStore } from "@/stores/chapters";
 import { useSelectionStore } from "@/stores/selection";
 
@@ -18,7 +17,6 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
-const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
 const chaptersStore = useChaptersStore();
 const selectionStore = useSelectionStore();
@@ -145,16 +143,30 @@ function selectEdition(edition: Edition) {
   }, 1);
 }
 
+const lastRequiredTocEntryId = ref<number | null>(null);
+const lastRequiredEditionId = ref<number | null>(null);
+
 function requireContent() {
-  if (tocEntry.value && edition.value && !generalStore.loading) {
-    generalStore.loading = !chaptersStore.isContentItemLoaded(
+  if (tocEntry.value && edition.value && !chaptersStore.chaptersLoading) {
+    if (
+      lastRequiredTocEntryId.value &&
+      lastRequiredTocEntryId.value === tocEntry.value.id &&
+      lastRequiredEditionId.value &&
+      lastRequiredEditionId.value === edition.value.id
+    ) {
+      return;
+    }
+
+    chaptersStore.chaptersLoading = !chaptersStore.isContentItemLoaded(
       tocEntry.value,
       edition.value
     );
     chaptersStore
       .requireContent(tocEntry.value, edition.value)
       .finally(function () {
-        generalStore.loading = false;
+        lastRequiredTocEntryId.value = tocEntry.value?.id ?? null;
+        lastRequiredEditionId.value = edition.value?.id ?? null;
+        chaptersStore.chaptersLoading = false;
       });
   }
 }

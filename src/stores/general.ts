@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 
 export const useGeneralStore = defineStore("general", () => {
-  const loading = ref(false);
+  const globalLoading = ref(false);
 
-  return { loading };
+  return { globalLoading: globalLoading };
 });

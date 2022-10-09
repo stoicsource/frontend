@@ -15,6 +15,8 @@ export const useChaptersStore = defineStore("chapters", () => {
 
   const chapters = ref<Chapter[]>([]);
 
+  const chaptersLoading = ref(false);
+
   function chapterFromResponse(chapterData: any): Chapter {
     const tocEntryId = StoreUtils.extractIdFromJsonUrl(chapterData.tocEntry);
     const editionId = StoreUtils.extractIdFromJsonUrl(chapterData.edition);
@@ -87,9 +89,10 @@ export const useChaptersStore = defineStore("chapters", () => {
             chapterArray.push(newChapter);
           });
 
-          chapters.value = chapters.value.concat(chapterArray);
+          if (chapterArray.length > 0) {
+            chapters.value = chapters.value.concat(chapterArray);
+          }
         });
-        // TODO: remove the response processing to investigate infinite loop
       } else {
         return Promise.reject();
       }
@@ -135,6 +138,7 @@ export const useChaptersStore = defineStore("chapters", () => {
   }
 
   return {
+    chaptersLoading,
     requireContent,
     isContentItemLoaded,
     getContentItem,

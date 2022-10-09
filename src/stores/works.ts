@@ -10,7 +10,7 @@ import { useGeneralStore } from "@/stores/general";
 
 export const useWorksStore = defineStore("works", () => {
   const generalStore = useGeneralStore();
-  generalStore.loading = true;
+  generalStore.globalLoading = true;
 
   const activeWork = ref<Work | null>(null);
 
@@ -67,7 +67,7 @@ export const useWorksStore = defineStore("works", () => {
       works.value = workArray;
     })
     .finally(() => {
-      generalStore.loading = false;
+      generalStore.globalLoading = false;
     });
 
   function loadFullWork(workId: number): Promise<any> {

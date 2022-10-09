@@ -52,11 +52,11 @@ function authorWorks(author: Author): Work[] {
 
 function navigateToAuthor(author: Author) {
   if (author.id === -1) {
-    generalStore.loading = true;
+    generalStore.globalLoading = true;
     chaptersStore
       .getRandomItem()
       .then(function (randomContent: Chapter) {
-        generalStore.loading = false;
+        generalStore.globalLoading = false;
 
         const work = worksStore.getWorkByEdition(
           randomContent.edition?.id ?? -1
@@ -73,7 +73,7 @@ function navigateToAuthor(author: Author) {
         }
       })
       .catch(function () {
-        generalStore.loading = false;
+        generalStore.globalLoading = false;
       });
   } else {
     const works = authorWorks(author);

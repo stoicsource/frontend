@@ -53,7 +53,7 @@ axios.interceptors.response.use(
     </nav>
 
     <div
-      v-if="generalStore.loading"
+      v-if="generalStore.globalLoading"
       class="d-flex justify-content-center align-items-center"
       style="min-height: 80vh"
     >

@@ -21,13 +21,21 @@ function canShare() {
   return navigator.share;
 }
 
+function contentAvailable() {
+  if (!contentItem.value) {
+    emit("content-missing", null);
+    return false;
+  } else {
+    return true;
+  }
+}
+
 const contentItem = computed(() => {
   return chaptersStore.getContentItem(props.tocEntry, props.edition);
 });
 
 function getContent() {
   if (!contentItem.value) {
-    emit("content-missing", null);
     return "...";
   } else {
     return contentItem.value.content;
@@ -120,56 +128,57 @@ function scrollToReference(noteNr: number) {
       ></a>
     </div>
 
-    <h1
-      v-if="
-        contentItem && contentItem.title && contentItem.contentType === 'text'
-      "
-    >
-      {{ contentItem.title }}
-    </h1>
-    <h1
-      v-else-if="contentItem && contentItem.title"
-      v-html="contentItem.title"
-    ></h1>
-
-    <div v-if="contentItem && contentItem.contentType === 'text'">
-      <p
-        v-for="paragraph in getContent().split('\n')"
-        :key="paragraph.substring(0, 12)"
-      >
-        {{ paragraph }}
-      </p>
+    <div v-if="chaptersStore.chaptersLoading">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
-    <div v-else>
-      <!--<component :is="compiledContent" @note-clicked="scrollToNote"></component>-->
-      <div v-html="getContent()"></div>
-    </div>
+    <div v-else-if="contentAvailable() && contentItem">
+      <h1 v-if="contentItem.title && contentItem.contentType === 'text'">
+        {{ contentItem.title }}
+      </h1>
+      <h1 v-else-if="contentItem.title" v-html="contentItem.title"></h1>
 
-    <div v-if="contentItem && contentItem.notes > ''" class="translator-notes">
-      Translator notes: <br />
       <div v-if="contentItem.contentType === 'text'">
-        {{ contentItem.notes }}
+        <p
+          v-for="paragraph in getContent().split('\n')"
+          :key="paragraph.substring(0, 12)"
+        >
+          {{ paragraph }}
+        </p>
       </div>
-      <div v-else-if="contentItem.notesFormat === 'json'">
-        <ol>
-          <li
-            v-for="jsonNote in contentItem.jsonNotes"
-            :key="jsonNote.id"
-            :ref="'note' + jsonNote.id"
-            :id="'note' + jsonNote.id"
-          >
-            <div v-html="jsonNote.content"></div>
-            <div
-              @click.prevent="scrollToReference(jsonNote.id)"
-              class="footnote-backlink"
+      <div v-else>
+        <!--<component :is="compiledContent" @note-clicked="scrollToNote"></component>-->
+        <div v-html="getContent()"></div>
+      </div>
+
+      <div v-if="contentItem.notes > ''" class="translator-notes">
+        Translator notes: <br />
+        <div v-if="contentItem.contentType === 'text'">
+          {{ contentItem.notes }}
+        </div>
+        <div v-else-if="contentItem.notesFormat === 'json'">
+          <ol>
+            <li
+              v-for="jsonNote in contentItem.jsonNotes"
+              :key="jsonNote.id"
+              :ref="'note' + jsonNote.id"
+              :id="'note' + jsonNote.id"
             >
-              <i class="fa-solid fa-up-long"></i>
-            </div>
-          </li>
-        </ol>
+              <div v-html="jsonNote.content"></div>
+              <div
+                @click.prevent="scrollToReference(jsonNote.id)"
+                class="footnote-backlink"
+              >
+                <i class="fa-solid fa-up-long"></i>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div v-else v-html="contentItem.notes"></div>
       </div>
-      <div v-else v-html="contentItem.notes"></div>
     </div>
+    <div v-else>Content not found</div>
   </div>
 </template>
 
