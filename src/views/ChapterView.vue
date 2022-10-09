@@ -112,7 +112,10 @@ const sortedTocEntries = computed(() => {
 function navigateToTocEntry(tocEntry: TocEntry | null) {
   if (tocEntry) {
     if (edition.value) {
-      chaptersStore.requireContent(tocEntry, edition.value);
+      chaptersStore.chaptersLoading = true;
+      chaptersStore.requireContent(tocEntry, edition.value).then(() => {
+        chaptersStore.chaptersLoading = false;
+      });
     }
     const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
     selectionInfo.replaceTocEntry(tocEntry.id);
