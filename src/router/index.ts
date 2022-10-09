@@ -26,7 +26,7 @@ const router = createRouter({
     // Starting screen
     {
       path: "/",
-      component: () => import("../views/AuthorSelect.vue"),
+      component: () => import("../views/AuthorSelectView.vue"),
       name: "authorSelect",
     },
 
@@ -41,7 +41,7 @@ const router = createRouter({
     // Work Select
     {
       path: "/:authorSlug/works",
-      component: () => import("../views/WorkSelect.vue"),
+      component: () => import("../views/WorkSelectView.vue"),
       props: true,
     },
 
