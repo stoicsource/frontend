@@ -42,6 +42,38 @@ function getContent() {
   }
 }
 
+function getHtmlContent() {
+  if (!contentItem.value) {
+    return "...";
+  } else {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(contentItem.value.content, "text/html");
+
+    let supElements = doc.getElementsByTagName("sup");
+    for (let i = supElements.length - 1; i >= 0; i--) {
+      let supElement = supElements[i];
+      let footnoteNr = supElement.getAttribute("data-footnote-reference");
+
+      if (footnoteNr !== null) {
+        let anchorElement = doc.createElement("a");
+        supElement.innerHTML = "[" + supElement.innerHTML + "]";
+        anchorElement.innerHTML = supElement.outerHTML;
+        anchorElement.setAttribute("id", "reference" + footnoteNr);
+        anchorElement.setAttribute("href", "#note" + footnoteNr);
+        // anchorElement.setAttribute(
+        //   "click.prevent",
+        //   "scrollToNote(" + footnoteNr + ")"
+        // );
+        supElement.parentNode?.replaceChild(anchorElement, supElement);
+      }
+    }
+
+    let html = doc.getElementsByTagName("body")[0].innerHTML;
+    // html = html.replaceAll("click.prevent", "@click.prevent");
+    return html;
+  }
+}
+
 function previousTocEntry() {
   navigateToTocEntry(props.tocEntry?.previous);
 }
@@ -86,9 +118,44 @@ function shareEntry() {
   }
 }
 
+function contentClicked(event: MouseEvent) {
+  let target = event.target as HTMLElement;
+  if (target.tagName === "A") {
+    const child = target.firstChild as HTMLElement;
+    if (child.tagName === "SUP") {
+      target = child;
+    }
+  }
+
+  let reference: string | null = null;
+  if (target.tagName === "SUP") {
+    reference = target.getAttribute("data-footnote-reference");
+  }
+
+  if (reference) {
+    scrollToNote(parseInt(reference));
+  }
+}
+
+let lastScrollTop = 0;
+let lastNoteNumber = 0;
+function scrollToNote(noteNr: number) {
+  lastScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  lastNoteNumber = noteNr;
+  document
+    .getElementById("note" + noteNr)
+    ?.scrollIntoView({ behavior: "smooth" });
+}
+
 function scrollToReference(noteNr: number) {
-  // document.getElementById('reference' + noteNr).scrollIntoView({ behavior: 'smooth' });
-  console.log(noteNr);
+  if (lastNoteNumber === noteNr) {
+    document.documentElement.scrollTop = document.body.scrollTop =
+      lastScrollTop;
+  } else {
+    document
+      .getElementById("reference" + noteNr)
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
 }
 </script>
 
@@ -148,8 +215,7 @@ function scrollToReference(noteNr: number) {
         </p>
       </div>
       <div v-else>
-        <!--<component :is="compiledContent" @note-clicked="scrollToNote"></component>-->
-        <div v-html="getContent()"></div>
+        <div v-html="getHtmlContent()" @click.prevent="contentClicked"></div>
       </div>
 
       <div v-if="contentItem.notes > ''" class="translator-notes">
