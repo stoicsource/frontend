@@ -111,6 +111,9 @@ const sortedTocEntries = computed(() => {
 
 function navigateToTocEntry(tocEntry: TocEntry | null) {
   if (tocEntry) {
+    if (edition.value) {
+      chaptersStore.requireContent(tocEntry, edition.value);
+    }
     const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
     selectionInfo.replaceTocEntry(tocEntry.id);
     selectionStore.saveToLocalStorage();
