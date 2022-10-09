@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { elementScrollIntoViewPolyfill } from "seamless-scroll-polyfill";
 import type { Work } from "@/models/Work";
 import type { TocEntry } from "@/models/TocEntry";
 import type { Edition } from "@/models/Edition";
@@ -13,9 +14,9 @@ const props = defineProps<{
 
 const emit = defineEmits(["content-missing", "on-navigate"]);
 
-const chaptersStore = useChaptersStore();
+elementScrollIntoViewPolyfill();
 
-// elementScrollIntoViewPolyfill();
+const chaptersStore = useChaptersStore();
 
 function canShare() {
   return navigator.share;
