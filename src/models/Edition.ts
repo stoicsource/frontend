@@ -1,4 +1,5 @@
 import type { Author } from "@/models/Author";
+import type Contributor from "@/models/Contributor";
 
 export class Edition {
   id = 0;
@@ -7,7 +8,7 @@ export class Edition {
   work_id = "";
   author_id = "";
   quality = 0;
-  contributor = "";
+  contributor: Contributor | null = null;
   language = "";
   source = "";
 
