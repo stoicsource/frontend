@@ -77,10 +77,6 @@ const tocEntry = computed(() => {
   return tocEntry;
 });
 
-function isMobile() {
-  return window.screen.width <= 768;
-}
-
 const sortedEditions = computed(() => {
   if (!work.value || !work.value.editions) {
     return [];
@@ -151,7 +147,6 @@ function selectEdition(edition: Edition) {
 
 const lastRequiredTocEntryId = ref<number | null>(null);
 const lastRequiredEditionId = ref<number | null>(null);
-
 function requireContent() {
   if (tocEntry.value && edition.value && !chaptersStore.chaptersLoading) {
     if (
@@ -184,6 +179,10 @@ function editionInfo() {
       editionId: edition.value?.id,
     },
   });
+}
+
+function isMobile() {
+  return window.screen.width <= 768;
 }
 </script>
 
