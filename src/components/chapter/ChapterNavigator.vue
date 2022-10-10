@@ -249,33 +249,7 @@ function scrollToReference(noteNr: number) {
   </div>
 </template>
 
-<style scoped>
-.translation-content >>> blockquote {
-  border-left: 3px solid #eaecf0;
-  padding: 8px 22px;
-}
-
-li,
-.translation-content >>> a {
-  scroll-margin-top: 80px;
-}
-
-.translation-content >>> a {
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.translation-content >>> sup {
-  margin-left: 0.2em;
-  margin-right: 0.3em;
-}
-</style>
-
 <style lang="scss" scoped>
-.btn {
-  display: block;
-}
-
 .translation-content {
   max-width: 35em;
   line-height: 1.6em;
@@ -299,13 +273,22 @@ li,
       visibility: visible;
     }
   }
-}
 
-.translator-notes {
-  font-size: 0.8em;
-  line-height: 1.3em;
-  font-style: italic;
-  color: #444;
+  :deep(blockquote) {
+    border-left: 3px solid #eaecf0;
+    padding: 8px 22px;
+  }
+
+  :deep(a) {
+    scroll-margin-top: 80px;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  :deep(sup) {
+    margin-left: 0.2em;
+    margin-right: 0.3em;
+  }
 }
 
 .content-navigation {
@@ -326,8 +309,19 @@ li,
   }
 }
 
-.footnote-backlink {
-  margin-top: -1em;
-  margin-bottom: 1em;
+.translator-notes {
+  font-size: 0.8em;
+  line-height: 1.3em;
+  font-style: italic;
+  color: #444;
+
+  .footnote-backlink {
+    margin-top: -1em;
+    margin-bottom: 1em;
+  }
+
+  li {
+    scroll-margin-top: 80px;
+  }
 }
 </style>
