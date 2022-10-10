@@ -6,6 +6,8 @@ import type { Edition } from "@/models/Edition";
 import { computed } from "vue";
 import { useChaptersStore } from "@/stores/chapters";
 
+elementScrollIntoViewPolyfill();
+
 const props = defineProps<{
   work: Work;
   tocEntry: TocEntry;
@@ -14,13 +16,11 @@ const props = defineProps<{
 
 const emit = defineEmits(["content-missing", "on-navigate"]);
 
-elementScrollIntoViewPolyfill();
-
 const chaptersStore = useChaptersStore();
 
-function canShare() {
-  return navigator.share;
-}
+const contentItem = computed(() => {
+  return chaptersStore.getContentItem(props.tocEntry, props.edition);
+});
 
 function contentAvailable() {
   if (!contentItem.value) {
@@ -31,47 +31,11 @@ function contentAvailable() {
   }
 }
 
-const contentItem = computed(() => {
-  return chaptersStore.getContentItem(props.tocEntry, props.edition);
-});
-
 function getContent() {
   if (!contentItem.value) {
     return "...";
   } else {
     return contentItem.value.content;
-  }
-}
-
-function getHtmlContent() {
-  if (!contentItem.value) {
-    return "...";
-  } else {
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(contentItem.value.content, "text/html");
-
-    let supElements = doc.getElementsByTagName("sup");
-    for (let i = supElements.length - 1; i >= 0; i--) {
-      let supElement = supElements[i];
-      let footnoteNr = supElement.getAttribute("data-footnote-reference");
-
-      if (footnoteNr !== null) {
-        let anchorElement = doc.createElement("a");
-        supElement.innerHTML = "[" + supElement.innerHTML + "]";
-        anchorElement.innerHTML = supElement.outerHTML;
-        anchorElement.setAttribute("id", "reference" + footnoteNr);
-        anchorElement.setAttribute("href", "#note" + footnoteNr);
-        // anchorElement.setAttribute(
-        //   "click.prevent",
-        //   "scrollToNote(" + footnoteNr + ")"
-        // );
-        supElement.parentNode?.replaceChild(anchorElement, supElement);
-      }
-    }
-
-    let html = doc.getElementsByTagName("body")[0].innerHTML;
-    // html = html.replaceAll("click.prevent", "@click.prevent");
-    return html;
   }
 }
 
@@ -100,6 +64,10 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
   emit("on-navigate", tocEntry);
 }
 
+function canShare() {
+  return navigator.share;
+}
+
 function shareEntry() {
   if (navigator.share) {
     navigator
@@ -121,13 +89,6 @@ function shareEntry() {
 
 function contentClicked(event: MouseEvent) {
   let target = event.target as HTMLElement;
-  if (target.tagName === "A") {
-    const child = target.firstChild as HTMLElement;
-    if (child.tagName === "SUP") {
-      target = child;
-    }
-  }
-
   let reference: string | null = null;
   if (target.tagName === "SUP") {
     reference = target.getAttribute("data-footnote-reference");
@@ -216,7 +177,7 @@ function scrollToReference(noteNr: number) {
         </p>
       </div>
       <div v-else>
-        <div v-html="getHtmlContent()" @click.prevent="contentClicked"></div>
+        <div v-html="getContent()" @click.prevent="contentClicked"></div>
       </div>
 
       <div v-if="contentItem.notes > ''" class="translator-notes">
@@ -288,6 +249,18 @@ function scrollToReference(noteNr: number) {
   :deep(sup) {
     margin-left: 0.2em;
     margin-right: 0.3em;
+    font-weight: 700;
+    color: #0b54a1;
+  }
+
+  :deep(sup[data-footnote-reference]) {
+    &:before {
+      content: "[";
+    }
+
+    &:after {
+      content: "]";
+    }
   }
 }
 
