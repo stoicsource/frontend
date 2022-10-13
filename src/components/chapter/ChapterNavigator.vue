@@ -18,12 +18,12 @@ const emit = defineEmits(["content-missing", "on-navigate"]);
 
 const chaptersStore = useChaptersStore();
 
-const contentItem = computed(() => {
-  return chaptersStore.getContentItem(props.tocEntry, props.edition);
+const chapter = computed(() => {
+  return chaptersStore.getChapter(props.tocEntry, props.edition);
 });
 
-function contentAvailable() {
-  if (!contentItem.value) {
+function chapterAvailable() {
+  if (!chapter.value) {
     emit("content-missing", null);
     return false;
   } else {
@@ -31,23 +31,23 @@ function contentAvailable() {
   }
 }
 
-function getContent() {
-  if (!contentItem.value) {
+function getChapterContent() {
+  if (!chapter.value) {
     return "...";
   } else {
-    return contentItem.value.content;
+    return chapter.value.content;
   }
 }
 
-function previousTocEntry() {
-  navigateToTocEntry(props.tocEntry?.previous);
+function previousChapter() {
+  navigateToChapter(props.tocEntry?.previous);
 }
 
-function nextTocEntry() {
-  navigateToTocEntry(props.tocEntry?.next);
+function nextChapter() {
+  navigateToChapter(props.tocEntry?.next);
 }
 
-function randomTocEntry() {
+function randomChapter() {
   let nextEntry = props.tocEntry;
   while (
     props.work.tocEntries &&
@@ -57,10 +57,10 @@ function randomTocEntry() {
     let entryIndex = Math.floor(Math.random() * props.work.tocEntries.length);
     nextEntry = props.work.tocEntries[entryIndex];
   }
-  navigateToTocEntry(nextEntry);
+  navigateToChapter(nextEntry);
 }
 
-function navigateToTocEntry(tocEntry: TocEntry | null) {
+function navigateToChapter(tocEntry: TocEntry | null) {
   emit("on-navigate", tocEntry);
 }
 
@@ -122,19 +122,19 @@ function scrollToReference(noteNr: number) {
 </script>
 
 <template>
-  <div class="translation-content" v-if="work && tocEntry">
-    <div class="content-navigation bg-light">
+  <div class="chapter" v-if="work && tocEntry">
+    <div class="chapter-navigation bg-light">
       <span
         ><strong>{{ tocEntry.label }}</strong></span
       >
       <a
-        @click="previousTocEntry()"
+        @click="previousChapter()"
         v-if="tocEntry.previous"
         class="btn btn-outline-secondary btn-sm"
         ><i class="fa-solid fa-circle-up"></i
       ></a>
       <a
-        @click="nextTocEntry()"
+        @click="nextChapter()"
         v-if="tocEntry.next"
         class="btn btn-outline-secondary btn-sm"
         ><i class="fa-solid fa-circle-down"></i
@@ -146,7 +146,7 @@ function scrollToReference(noteNr: number) {
         role="button"
         ><i class="fa-solid fa-list"></i
       ></a>
-      <a @click="randomTocEntry()" class="btn btn-outline-secondary btn-sm"
+      <a @click="randomChapter()" class="btn btn-outline-secondary btn-sm"
         ><i class="fa-solid fa-shuffle"></i
       ></a>
       <a
@@ -162,33 +162,33 @@ function scrollToReference(noteNr: number) {
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    <div v-else-if="contentAvailable() && contentItem">
-      <h1 v-if="contentItem.title && contentItem.contentType === 'text'">
-        {{ contentItem.title }}
+    <div v-else-if="chapterAvailable() && chapter">
+      <h1 v-if="chapter.title && chapter.contentType === 'text'">
+        {{ chapter.title }}
       </h1>
-      <h1 v-else-if="contentItem.title" v-html="contentItem.title"></h1>
+      <h1 v-else-if="chapter.title" v-html="chapter.title"></h1>
 
-      <div v-if="contentItem.contentType === 'text'">
+      <div v-if="chapter.contentType === 'text'">
         <p
-          v-for="paragraph in getContent().split('\n')"
+          v-for="paragraph in getChapterContent().split('\n')"
           :key="paragraph.substring(0, 12)"
         >
           {{ paragraph }}
         </p>
       </div>
       <div v-else>
-        <div v-html="getContent()" @click.prevent="contentClicked"></div>
+        <div v-html="getChapterContent()" @click.prevent="contentClicked"></div>
       </div>
 
-      <div v-if="contentItem.notes > ''" class="translator-notes">
+      <div v-if="chapter.notes > ''" class="translator-notes">
         Translator notes: <br />
-        <div v-if="contentItem.contentType === 'text'">
-          {{ contentItem.notes }}
+        <div v-if="chapter.contentType === 'text'">
+          {{ chapter.notes }}
         </div>
-        <div v-else-if="contentItem.notesFormat === 'json'">
+        <div v-else-if="chapter.notesFormat === 'json'">
           <ol>
             <li
-              v-for="jsonNote in contentItem.jsonNotes"
+              v-for="jsonNote in chapter.jsonNotes"
               :key="jsonNote.id"
               :ref="'note' + jsonNote.id"
               :id="'note' + jsonNote.id"
@@ -203,7 +203,7 @@ function scrollToReference(noteNr: number) {
             </li>
           </ol>
         </div>
-        <div v-else v-html="contentItem.notes"></div>
+        <div v-else v-html="chapter.notes"></div>
       </div>
     </div>
     <div v-else>Content not found</div>
@@ -211,29 +211,9 @@ function scrollToReference(noteNr: number) {
 </template>
 
 <style lang="scss" scoped>
-.translation-content {
+.chapter {
   max-width: 35em;
   line-height: 1.6em;
-
-  .content-action {
-    visibility: hidden;
-    display: inline-block;
-    padding: 0 5px;
-    color: gray;
-    cursor: pointer;
-    border: 1px solid lightgray;
-    border-radius: 6px;
-
-    &:not(:first-child) {
-      margin-left: 0.5em;
-    }
-  }
-
-  &:hover {
-    .content-action {
-      visibility: visible;
-    }
-  }
 
   :deep(blockquote) {
     border-left: 3px solid #eaecf0;
@@ -264,7 +244,7 @@ function scrollToReference(noteNr: number) {
   }
 }
 
-.content-navigation {
+.chapter-navigation {
   float: left;
   position: relative;
   top: 6px;

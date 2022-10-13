@@ -54,12 +54,12 @@ function navigateToAuthor(author: Author) {
   if (author.id === -1) {
     generalStore.globalLoading = true;
     chaptersStore
-      .getRandomItem()
-      .then(function (randomContent: Chapter) {
+      .getRandomChapter()
+      .then(function (randomChapter: Chapter) {
         generalStore.globalLoading = false;
 
         const work = worksStore.getWorkByEdition(
-          randomContent.edition?.id ?? -1
+          randomChapter.edition?.id ?? -1
         );
         if (work) {
           router.push({
@@ -67,7 +67,7 @@ function navigateToAuthor(author: Author) {
             params: {
               author: work.author?.urlSlug,
               workSlug: work.urlSlug,
-              tocSlug: randomContent.tocEntry?.label,
+              tocSlug: randomChapter.tocEntry?.label,
             },
           });
         }

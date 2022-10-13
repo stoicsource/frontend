@@ -109,7 +109,7 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
   if (tocEntry) {
     if (edition.value) {
       chaptersStore.chaptersLoading = true;
-      chaptersStore.requireContent(tocEntry, edition.value).then(() => {
+      chaptersStore.requireChapter(tocEntry, edition.value).then(() => {
         chaptersStore.chaptersLoading = false;
       });
     }
@@ -147,7 +147,7 @@ function selectEdition(edition: Edition) {
 
 const lastRequiredTocEntryId = ref<number | null>(null);
 const lastRequiredEditionId = ref<number | null>(null);
-function requireContent() {
+function requireChapter() {
   if (tocEntry.value && edition.value && !chaptersStore.chaptersLoading) {
     if (
       lastRequiredTocEntryId.value &&
@@ -158,12 +158,12 @@ function requireContent() {
       return;
     }
 
-    chaptersStore.chaptersLoading = !chaptersStore.isContentItemLoaded(
+    chaptersStore.chaptersLoading = !chaptersStore.isChapterLoaded(
       tocEntry.value,
       edition.value
     );
     chaptersStore
-      .requireContent(tocEntry.value, edition.value)
+      .requireChapter(tocEntry.value, edition.value)
       .finally(function () {
         lastRequiredTocEntryId.value = tocEntry.value?.id ?? null;
         lastRequiredEditionId.value = edition.value?.id ?? null;
@@ -224,7 +224,7 @@ function isMobile() {
               :toc-entry="tocEntry"
               @on-navigate="navigateToTocEntry"
               @edition-selected="selectEdition"
-              @content-missing="requireContent"
+              @content-missing="requireChapter"
             ></chapter-navigator>
           </div>
         </div>

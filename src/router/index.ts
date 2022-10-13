@@ -45,7 +45,7 @@ const router = createRouter({
       props: true,
     },
 
-    // Main content view
+    // Main chapter view
     {
       path: "/:author/:workSlug",
       component: () => import("../views/ChapterView.vue"),

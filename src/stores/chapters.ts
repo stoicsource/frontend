@@ -44,7 +44,7 @@ export const useChaptersStore = defineStore("chapters", () => {
     return newChapter;
   }
 
-  function requireContent(tocEntry: TocEntry, edition: Edition) {
+  function requireChapter(tocEntry: TocEntry, edition: Edition) {
     const requiredEntries = [tocEntry];
 
     if (entryPadding === 1) {
@@ -81,7 +81,7 @@ export const useChaptersStore = defineStore("chapters", () => {
       if (paramString !== lastRequestParamString) {
         lastRequestParamString = paramString;
 
-        return api.get("/contents?" + paramString).then((chapterResponse) => {
+        return api.get("/chapters?" + paramString).then((chapterResponse) => {
           const chapterArray: Chapter[] = [];
 
           chapterResponse.data.forEach((chapterData: any) => {
@@ -101,7 +101,7 @@ export const useChaptersStore = defineStore("chapters", () => {
     return Promise.resolve();
   }
 
-  function isContentItemLoaded(tocEntry: TocEntry, edition: Edition) {
+  function isChapterLoaded(tocEntry: TocEntry, edition: Edition) {
     return chapters.value.some((chapter) => {
       return (
         chapter.tocEntry?.id === tocEntry.id &&
@@ -110,7 +110,7 @@ export const useChaptersStore = defineStore("chapters", () => {
     });
   }
 
-  function getContentItem(tocEntry: TocEntry, edition: Edition) {
+  function getChapter(tocEntry: TocEntry, edition: Edition) {
     return chapters.value.find((chapter) => {
       return (
         chapter.tocEntry?.id === tocEntry.id &&
@@ -119,9 +119,9 @@ export const useChaptersStore = defineStore("chapters", () => {
     });
   }
 
-  function getRandomItem(): Promise<Chapter> {
+  function getRandomChapter(): Promise<Chapter> {
     return api
-      .get("/contents?order[random]&itemsPerPage=1&cachebuster=" + Date.now())
+      .get("/chapters?order[random]&itemsPerPage=1&cachebuster=" + Date.now())
       .then(function (response) {
         const chapterData = response.data[0];
         const editionId = StoreUtils.extractIdFromJsonUrl(chapterData.edition);
@@ -139,9 +139,9 @@ export const useChaptersStore = defineStore("chapters", () => {
 
   return {
     chaptersLoading,
-    requireContent,
-    isContentItemLoaded,
-    getContentItem,
-    getRandomItem,
+    requireChapter,
+    isChapterLoaded,
+    getChapter,
+    getRandomChapter,
   };
 });
