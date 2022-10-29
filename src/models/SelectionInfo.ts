@@ -23,7 +23,7 @@ export class SelectionInfo {
   }
 
   selectEdition(editionId: number) {
-    this.editionIds.push(editionId);
+    this.editionIds = [editionId];
   }
 
   deselectEdition(editionId: number) {
