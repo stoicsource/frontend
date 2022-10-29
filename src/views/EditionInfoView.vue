@@ -27,7 +27,7 @@ const edition = computed(() => {
 
     <h1>{{ edition.name }}</h1>
     <p>
-      published {{ edition.year }} by
+      published in {{ edition.year }}, translated by
       <span v-if="edition.author.moreInfoUrl"
         ><a :href="edition.author.moreInfoUrl" target="_blank">{{
           edition.author.name
@@ -43,10 +43,13 @@ const edition = computed(() => {
         >)
       </span>
     </p>
-    <p v-if="edition.source">
-      <a :href="edition.source" target="_blank">full text</a>
-      <i class="fa-solid fa-arrow-up-right-from-square"></i>
-    </p>
+    <div v-if="edition.sources" class="mb-4">
+      Sources:
+      <div v-for="source in edition.sources" :key="source.url">
+        <a :href="source.url" target="_blank">{{ source.type }}</a>&nbsp;
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </div>
+    </div>
     <p v-if="edition.contributor">
       contributed to StoicSource by <br />
       {{ edition.contributor.name }} (<a

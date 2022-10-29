@@ -1,5 +1,6 @@
 import type { Author } from "@/models/Author";
 import type Contributor from "@/models/Contributor";
+import type Source from "@/models/Source";
 
 export class Edition {
   id = 0;
@@ -11,6 +12,7 @@ export class Edition {
   contributor: Contributor | null = null;
   language = "";
   source = "";
+  sources: Source[] = [];
 
   _author?: Author = undefined;
 
