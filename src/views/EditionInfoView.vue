@@ -43,7 +43,7 @@ const edition = computed(() => {
         >)
       </span>
     </p>
-    <div v-if="edition.sources" class="mb-4">
+    <div v-if="edition.sources.length > 0" class="mb-4">
       Sources:
       <div v-for="source in edition.sources" :key="source.url">
         <a :href="source.url" target="_blank">{{ source.type }}</a>&nbsp;
