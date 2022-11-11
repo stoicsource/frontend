@@ -101,18 +101,21 @@ function contentClicked(event: MouseEvent) {
 
 let lastScrollTop = 0;
 let lastNoteNumber = 0;
+
 function scrollToNote(noteNr: number) {
   lastScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   lastNoteNumber = noteNr;
-  document
-    .getElementById("note" + noteNr)
-    ?.scrollIntoView({ behavior: "smooth" });
+  let targetFootnoteElement = document.getElementById("note" + noteNr);
+  targetFootnoteElement?.classList.add("active");
+  targetFootnoteElement?.scrollIntoView({ behavior: "smooth" });
 }
 
 function scrollToReference(noteNr: number) {
   if (lastNoteNumber === noteNr) {
     document.documentElement.scrollTop = document.body.scrollTop =
       lastScrollTop;
+    let footnoteElement = document.getElementById("note" + noteNr);
+    footnoteElement?.classList.remove("active");
   } else {
     document
       .getElementById("reference" + noteNr)
@@ -166,7 +169,11 @@ function scrollToReference(noteNr: number) {
       <h1 v-if="chapter.title && chapter.contentType === 'text'">
         {{ chapter.title }}
       </h1>
-      <h1 v-else-if="chapter.title" v-html="chapter.title"></h1>
+      <h1
+        v-else-if="chapter.title"
+        v-html="chapter.title"
+        @click.prevent="contentClicked"
+      ></h1>
 
       <div v-if="chapter.contentType === 'text'">
         <p
@@ -268,13 +275,19 @@ function scrollToReference(noteNr: number) {
   font-style: italic;
   color: #444;
 
-  .footnote-backlink {
-    margin-top: -1em;
-    margin-bottom: 1em;
-  }
-
   li {
     scroll-margin-top: 80px;
+
+    .footnote-backlink {
+      visibility: hidden;
+    }
+
+    &.active {
+      .footnote-backlink {
+        visibility: visible;
+        margin-bottom: 1em;
+      }
+    }
   }
 }
 </style>
