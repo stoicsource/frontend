@@ -42,11 +42,14 @@ const edition = computed(() => {
   }
 
   const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
-  return selectionInfo.editionIds.length > 0
-    ? work.value.editions.find((edition) => {
-        return edition.id === selectionInfo.editionIds[0];
-      })
-    : work.value.editions[0];
+  const selectedEdition =
+    selectionInfo.editionIds.length > 0
+      ? work.value.editions.find((edition) => {
+          return edition.id === selectionInfo.editionIds[0];
+        })
+      : null;
+
+  return selectedEdition ?? work.value.editions[0];
 });
 
 const tocEntry = computed(() => {
