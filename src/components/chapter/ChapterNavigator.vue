@@ -237,6 +237,7 @@ function scrollToReference(noteNr: number) {
     margin-right: 0.3em;
     font-weight: 700;
     color: #0b54a1;
+    cursor: pointer;
   }
 
   :deep(sup[data-footnote-reference]) {
@@ -285,6 +286,7 @@ function scrollToReference(noteNr: number) {
       .footnote-backlink {
         visibility: visible;
         margin-bottom: 1em;
+        cursor: pointer;
       }
     }
   }
