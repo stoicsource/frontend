@@ -114,12 +114,11 @@ function scrollToReference(noteNr: number) {
   if (lastNoteNumber === noteNr) {
     document.documentElement.scrollTop = document.body.scrollTop =
       lastScrollTop;
-    let footnoteElement = document.getElementById("note" + noteNr);
-    footnoteElement?.classList.remove("active");
-  } else {
-    document
-      .getElementById("reference" + noteNr)
-      ?.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      // The following lines break the above scroll functionality in Firefox with live build if they are not executed async. Dunno why, works in dev mode.
+      let footnoteElement = document.getElementById("note" + noteNr);
+      footnoteElement?.classList.remove("active");
+    }, 1);
   }
 }
 </script>
