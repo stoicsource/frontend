@@ -115,10 +115,10 @@ function scrollToReference(noteNr: number) {
     document.documentElement.scrollTop = document.body.scrollTop =
       lastScrollTop;
     setTimeout(() => {
-      // The following lines break the above scroll functionality in Firefox with live build if they are not executed async. Dunno why, works in dev mode.
+      // removing the class hides the element, that seems to loose the click event on Firefox. Delay the hiding.
       let footnoteElement = document.getElementById("note" + noteNr);
       footnoteElement?.classList.remove("active");
-    }, 1);
+    }, 50);
   }
 }
 </script>
