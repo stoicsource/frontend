@@ -5,14 +5,11 @@ import { useWorksStore } from "@/stores/works";
 import { Author } from "@/models/Author";
 import { Work } from "@/models/Work";
 import { useGeneralStore } from "@/stores/general";
-import { useChaptersStore } from "@/stores/chapters";
-import type { Chapter } from "@/models/Chapter";
 
 const worksStore = useWorksStore();
 worksStore.activeWork = null;
 
 const generalStore = useGeneralStore();
-const chaptersStore = useChaptersStore();
 const router = useRouter();
 
 const authorList = computed(() => {
@@ -53,24 +50,23 @@ function authorWorks(author: Author): Work[] {
 function navigateToAuthor(author: Author) {
   if (author.id === -1) {
     generalStore.globalLoading = true;
-    chaptersStore
-      .getRandomChapter()
-      .then(function (randomChapter: Chapter) {
+
+    let randomWork = worksStore.getRandomWork();
+    worksStore
+      .loadFullWork(randomWork.id)
+      .then(function () {
         generalStore.globalLoading = false;
 
-        const work = worksStore.getWorkByEdition(
-          randomChapter.edition?.id ?? -1
-        );
-        if (work) {
-          router.push({
-            name: "contentByToc",
-            params: {
-              author: work.author?.urlSlug,
-              workSlug: work.urlSlug,
-              tocSlug: randomChapter.tocEntry?.label,
-            },
-          });
-        }
+        let tocEntry = randomWork.tocEntries !== undefined ? randomWork.tocEntries[Math.floor(Math.random() * randomWork.tocEntries.length)] : null;
+
+        router.push({
+          name: "contentByToc",
+          params: {
+            author: randomWork.author?.urlSlug,
+            workSlug: randomWork.urlSlug,
+            tocSlug: tocEntry?.label,
+          },
+        });
       })
       .catch(function () {
         generalStore.globalLoading = false;

@@ -110,5 +110,9 @@ export const useWorksStore = defineStore("works", () => {
     });
   }
 
-  return { works, activeWork, loadFullWork, getWorkByEdition };
+  function getRandomWork() {
+    return works.value[Math.floor(Math.random() * works.value.length)];
+  }
+
+  return { works, activeWork, loadFullWork, getWorkByEdition, getRandomWork };
 });
