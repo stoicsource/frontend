@@ -30,6 +30,12 @@ const router = createRouter({
       name: "authorSelect",
     },
 
+    // Show a "not available info" for Musonius Rufus by Lutz
+    {
+      path: '/rufus/:pathMatch(.*)*',
+      component: () => import("../views/RufusLutzView.vue"),
+    },
+
     // Information about a specific edition
     {
       path: "/edition/:editionId/info",
