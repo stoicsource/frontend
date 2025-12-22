@@ -7,6 +7,12 @@ import { Edition } from "@/models/Edition";
 import { TocEntry } from "@/models/TocEntry";
 import api from "@/utils/api";
 import { useGeneralStore } from "@/stores/general";
+import type {
+  AuthorApiResponse,
+  EditionApiResponse,
+  WorkApiResponse,
+  TocEntryApiResponse,
+} from "@/types/api";
 
 export const useWorksStore = defineStore("works", () => {
   const generalStore = useGeneralStore();
@@ -23,41 +29,36 @@ export const useWorksStore = defineStore("works", () => {
   Promise.all([authorsRequest, worksRequest, editionsRequest])
     .then(([authorsResponse, worksResponse, editionsResponse]) => {
       const authorArray: Author[] = [];
-      authorsResponse.data.forEach((authorData: any) => {
+      authorsResponse.data.forEach((authorData: AuthorApiResponse) => {
         authorArray.push(Object.assign(new Author(), authorData));
       });
 
       const editionArray: Edition[] = [];
-      editionsResponse.data.forEach((editionData: any) => {
-        const newEdition = Object.assign(new Edition(), editionData);
+      editionsResponse.data.forEach((editionData: EditionApiResponse) => {
+        const { author, ...editionProps } = editionData;
+        const newEdition = Object.assign(new Edition(), editionProps);
 
-        const authorId = StoreUtils.extractIdFromJsonUrl(editionData.author);
-        newEdition.author = authorArray.find((author: Author) => {
-          return author.id === authorId;
-        });
+        const authorId = StoreUtils.extractIdFromJsonUrl(author);
+        newEdition.author = authorArray.find((a: Author) => a.id === authorId);
 
         editionArray.push(newEdition);
       });
 
       const workArray: Work[] = [];
-      worksResponse.data.forEach((workData: any) => {
-        const newWork = Object.assign(new Work(), workData);
+      worksResponse.data.forEach((workData: WorkApiResponse) => {
+        const { author, editions, ...workProps } = workData;
+        const newWork = Object.assign(new Work(), workProps);
 
-        const authorId = StoreUtils.extractIdFromJsonUrl(workData.author);
-        newWork.author = authorArray.find((author: Author) => {
-          return author.id === authorId;
-        });
+        const authorId = StoreUtils.extractIdFromJsonUrl(author);
+        newWork.author = authorArray.find((a: Author) => a.id === authorId);
 
-        const workEditions: Edition[] = [];
-        workData.editions.forEach((workEditionIdUrl: string) => {
-          const editionId = StoreUtils.extractIdFromJsonUrl(workEditionIdUrl);
-          const workEdition = editionArray.find((edition: Edition) => {
-            return edition.id === editionId;
-          });
-          if (workEdition) {
-            workEditions.push(workEdition);
-          }
-        });
+        const workEditions = editions
+          .map((url: string) => {
+            const editionId = StoreUtils.extractIdFromJsonUrl(url);
+            return editionArray.find((e: Edition) => e.id === editionId);
+          })
+          .filter((e): e is Edition => e !== undefined);
+
         newWork.editions = workEditions;
         newWork.tocEntries = undefined;
 
@@ -78,7 +79,7 @@ export const useWorksStore = defineStore("works", () => {
     if (work && !work.tocLoaded()) {
       return api.get("/toc_entries?work=" + work.id).then((tocResponse) => {
         let tocEntryArray: TocEntry[] = [];
-        tocResponse.data.forEach((tocEntryData: any) => {
+        tocResponse.data.forEach((tocEntryData: TocEntryApiResponse) => {
           tocEntryArray.push(Object.assign(new TocEntry(), tocEntryData));
         });
         tocEntryArray = tocEntryArray.sort((a, b) => {

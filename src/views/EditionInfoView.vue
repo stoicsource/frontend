@@ -26,7 +26,7 @@ const edition = computed(() => {
     </div>
 
     <h1>{{ edition.name }}</h1>
-    <p>
+    <p v-if="edition.author">
       published in {{ edition.year }}, translated by
       <span v-if="edition.author.moreInfoUrl"
         ><a :href="edition.author.moreInfoUrl" target="_blank">{{

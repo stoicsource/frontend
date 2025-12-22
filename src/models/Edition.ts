@@ -14,24 +14,13 @@ export class Edition {
   source = "";
   sources: Source[] = [];
 
-  _author?: Author = undefined;
-
-  get author(): Author {
-    if (!this._author) {
-      throw new Error("Author not set");
-    }
-    return this._author;
-  }
-
-  set author(value: Author) {
-    this._author = value;
-  }
+  author?: Author = undefined;
 
   get authorsFormatted() {
-    return this._author?.name;
+    return this.author?.name;
   }
 
   get authorsShortnames() {
-    return this._author?.shortestName;
+    return this.author?.shortestName;
   }
 }

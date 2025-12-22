@@ -9,6 +9,7 @@ import type { TocEntry } from "@/models/TocEntry";
 import { useRouter } from "vue-router";
 import { useChaptersStore } from "@/stores/chapters";
 import { useSelectionStore } from "@/stores/selection";
+import { EDITION_QUALITY_THRESHOLD } from "@/constants";
 
 const props = defineProps<{
   workSlug: string;
@@ -37,7 +38,7 @@ const edition = computed(() => {
 
   if (props.translatorSlug) {
     return work.value.editions?.find((edition) => {
-      return edition.author.urlSlug === props.translatorSlug;
+      return edition.author?.urlSlug === props.translatorSlug;
     });
   }
 
@@ -85,9 +86,9 @@ const sortedEditions = computed(() => {
     return [];
   }
 
-  return work.value?.editions
-    ?.filter((edition) => {
-      return edition.quality >= 6;
+  return work.value.editions
+    .filter((edition) => {
+      return edition.quality >= EDITION_QUALITY_THRESHOLD;
     })
     .sort((a: Edition, b: Edition) => {
       return a.year > b.year ? 1 : -1;
@@ -99,13 +100,9 @@ const sortedTocEntries = computed(() => {
     return [];
   }
 
-  return work.value?.tocEntries
-    ?.filter(() => {
-      return true;
-    })
-    .sort((a: TocEntry, b: TocEntry) => {
-      return a.sortOrder > b.sortOrder ? 1 : -1;
-    });
+  return work.value.tocEntries.sort((a: TocEntry, b: TocEntry) => {
+    return a.sortOrder > b.sortOrder ? 1 : -1;
+  });
 });
 
 function navigateToTocEntry(tocEntry: TocEntry | null) {

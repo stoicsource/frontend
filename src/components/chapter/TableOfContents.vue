@@ -2,6 +2,7 @@
 import type { TocEntry } from "@/models/TocEntry";
 import type { Edition } from "@/models/Edition";
 import { computed } from "vue";
+import { EDITION_QUALITY_THRESHOLD } from "@/constants";
 
 const props = defineProps<{
   tocEntries: TocEntry[];
@@ -19,7 +20,7 @@ const emit = defineEmits([
 const sortedEditions = computed(() => {
   return props.editions
     .filter((edition) => {
-      return edition.quality >= 6;
+      return edition.quality >= EDITION_QUALITY_THRESHOLD;
     })
     .sort((a, b) => {
       return a.year > b.year ? 1 : -1;
@@ -27,13 +28,9 @@ const sortedEditions = computed(() => {
 });
 
 const sortedTocEntries = computed(() => {
-  return props.tocEntries
-    .filter(() => {
-      return true;
-    })
-    .sort((a, b) => {
-      return a.sortOrder > b.sortOrder ? 1 : -1;
-    });
+  return props.tocEntries.sort((a, b) => {
+    return a.sortOrder > b.sortOrder ? 1 : -1;
+  });
 });
 
 function selectTocEntry(tocEntry: TocEntry) {

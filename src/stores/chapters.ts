@@ -6,22 +6,24 @@ import { Chapter } from "@/models/Chapter";
 import { useWorksStore } from "@/stores/works";
 import StoreUtils from "@/utils/store/StoreUtils";
 import api from "@/utils/api";
+import { CHAPTER_PADDING } from "@/constants";
+import type { ChapterApiResponse } from "@/types/api";
 
 export const useChaptersStore = defineStore("chapters", () => {
   const worksStore = useWorksStore();
 
-  const entryPadding = 1;
   let lastRequestParamString: String | null = null;
 
   const chapters = ref<Chapter[]>([]);
 
   const chaptersLoading = ref(false);
 
-  function chapterFromResponse(chapterData: any): Chapter {
-    const tocEntryId = StoreUtils.extractIdFromJsonUrl(chapterData.tocEntry);
-    const editionId = StoreUtils.extractIdFromJsonUrl(chapterData.edition);
+  function chapterFromResponse(chapterData: ChapterApiResponse): Chapter {
+    const { tocEntry, edition, ...chapterProps } = chapterData;
+    const newChapter = Object.assign(new Chapter(), chapterProps);
 
-    const newChapter = Object.assign(new Chapter(), chapterData);
+    const tocEntryId = StoreUtils.extractIdFromJsonUrl(tocEntry);
+    const editionId = StoreUtils.extractIdFromJsonUrl(edition);
 
     const work = worksStore.getWorkByEdition(editionId);
     if (
@@ -34,12 +36,12 @@ export const useChaptersStore = defineStore("chapters", () => {
       throw new Error("Work not completely loaded");
     }
 
-    newChapter.edition = work?.editions?.find((edition) => {
+    newChapter.edition = work.editions?.find((edition) => {
       return edition.id === editionId;
-    });
-    newChapter.tocEntry = work?.tocEntries?.find((tocEntry) => {
+    }) ?? null;
+    newChapter.tocEntry = work.tocEntries?.find((tocEntry) => {
       return tocEntry.id === tocEntryId;
-    });
+    }) ?? null;
 
     return newChapter;
   }
@@ -47,7 +49,7 @@ export const useChaptersStore = defineStore("chapters", () => {
   function requireChapter(tocEntry: TocEntry, edition: Edition) {
     const requiredEntries = [tocEntry];
 
-    if (entryPadding === 1) {
+    if (CHAPTER_PADDING === 1) {
       if (tocEntry.previous) {
         requiredEntries.push(tocEntry.previous);
       }
@@ -84,7 +86,7 @@ export const useChaptersStore = defineStore("chapters", () => {
         return api.get("/chapters?" + paramString).then((chapterResponse) => {
           const chapterArray: Chapter[] = [];
 
-          chapterResponse.data.forEach((chapterData: any) => {
+          chapterResponse.data.forEach((chapterData: ChapterApiResponse) => {
             const newChapter = chapterFromResponse(chapterData);
             chapterArray.push(newChapter);
           });

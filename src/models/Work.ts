@@ -7,34 +7,11 @@ export class Work {
   name = "";
   urlSlug = "";
 
-  _author?: Author = undefined;
-  get author(): Author | undefined {
-    return this._author;
-  }
-
-  set author(value: Author | undefined) {
-    this._author = value;
-  }
-
-  _editions?: Edition[] = undefined;
-  get editions(): Edition[] | undefined {
-    return this._editions;
-  }
-
-  set editions(value: Edition[] | undefined) {
-    this._editions = value;
-  }
-
-  _tocEntries?: TocEntry[] = undefined;
-  get tocEntries(): TocEntry[] | undefined {
-    return this._tocEntries;
-  }
-
-  set tocEntries(value: TocEntry[] | undefined) {
-    this._tocEntries = value;
-  }
+  author?: Author = undefined;
+  editions?: Edition[] = undefined;
+  tocEntries?: TocEntry[] = undefined;
 
   tocLoaded() {
-    return this._tocEntries !== undefined;
+    return this.tocEntries !== undefined;
   }
 }
