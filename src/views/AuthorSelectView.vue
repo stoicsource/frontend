@@ -47,35 +47,25 @@ function authorWorks(author: Author): Work[] {
   });
 }
 
-function navigateToAuthor(author: Author) {
+async function navigateToAuthor(author: Author) {
   if (author.id === -1) {
     generalStore.globalLoading = true;
 
-    let randomWork = worksStore.getRandomWork();
-    if (!randomWork) {
-      generalStore.globalLoading = false;
-      return;
-    }
-    worksStore
-      .loadFullWork(randomWork.id)
-      .then(function () {
-        generalStore.globalLoading = false;
-        if (!randomWork) return;
-
-        let tocEntry = randomWork.tocEntries !== undefined ? randomWork.tocEntries[Math.floor(Math.random() * randomWork.tocEntries.length)] : null;
-
+    try {
+      const randomNav = await worksStore.getRandomChapterNavigation();
+      if (randomNav) {
         router.push({
           name: "contentByToc",
           params: {
-            author: randomWork.author?.urlSlug,
-            workSlug: randomWork.urlSlug,
-            tocSlug: tocEntry?.label,
+            author: randomNav.work.author?.urlSlug,
+            workSlug: randomNav.work.urlSlug,
+            tocSlug: randomNav.tocLabel,
           },
         });
-      })
-      .catch(function () {
-        generalStore.globalLoading = false;
-      });
+      }
+    } finally {
+      generalStore.globalLoading = false;
+    }
   } else {
     const works = authorWorks(author);
     const firstWork = works[0];

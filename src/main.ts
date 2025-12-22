@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
+import { useSelectionStore } from "@/stores/selection";
 
 import "bootstrap/js/dist/collapse";
 import "bootstrap/js/dist/dropdown";
@@ -18,5 +19,9 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+
+// Initialize stores
+const selectionStore = useSelectionStore();
+selectionStore.loadFromLocalStorage();
 
 app.mount("#app");

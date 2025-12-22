@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import { useWorksStore } from "@/stores/works";
-import { computed, ref } from "vue";
-import type { Work } from "@/models/Work";
 import ChapterNavigator from "../components/chapter/ChapterNavigator.vue";
 import TableOfContents from "../components/chapter/TableOfContents.vue";
-import type { Edition } from "@/models/Edition";
-import type { TocEntry } from "@/models/TocEntry";
-import { useRouter } from "vue-router";
-import { useChaptersStore } from "@/stores/chapters";
-import { useSelectionStore } from "@/stores/selection";
-import { EDITION_QUALITY_THRESHOLD } from "@/constants";
+import { useWorkContext } from "@/composables/useWorkContext";
+import { useChapterNavigation } from "@/composables/useChapterNavigation";
+import { useChapterLoader } from "@/composables/useChapterLoader";
 
 const props = defineProps<{
   workSlug: string;
@@ -17,167 +11,16 @@ const props = defineProps<{
   translatorSlug?: string;
 }>();
 
-const router = useRouter();
-const worksStore = useWorksStore();
-const chaptersStore = useChaptersStore();
-const selectionStore = useSelectionStore();
+const { work, edition, tocEntry, sortedEditions, sortedTocEntries } =
+  useWorkContext(props);
 
-const work = computed(() => {
-  const workFromStore = worksStore.works.find((work: Work) => {
-    return work.urlSlug === props.workSlug;
-  });
-  worksStore.loadFullWork(workFromStore?.id ?? -1);
-  return workFromStore;
-});
-worksStore.activeWork = work.value !== undefined ? work.value : null;
+const { navigateToTocEntry, selectEdition, editionInfo } = useChapterNavigation(
+  work,
+  edition,
+  tocEntry
+);
 
-const edition = computed(() => {
-  if (!work.value || !work.value.editions) {
-    return null;
-  }
-
-  if (props.translatorSlug) {
-    return work.value.editions?.find((edition) => {
-      return edition.author?.urlSlug === props.translatorSlug;
-    });
-  }
-
-  const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
-  const selectedEdition =
-    selectionInfo.editionIds.length > 0
-      ? work.value.editions.find((edition) => {
-          return edition.id === selectionInfo.editionIds[0];
-        })
-      : null;
-
-  return selectedEdition ?? work.value.editions[0];
-});
-
-const tocEntry = computed(() => {
-  if (!work.value || !work.value.tocEntries) {
-    return null;
-  }
-
-  // order: 1. url, 2. selection, 3. first chapter
-  let tocEntry = props.tocSlug
-    ? work.value.tocEntries.find((tocEntry) => {
-        return tocEntry.label === props.tocSlug;
-      })
-    : null;
-
-  if (!tocEntry) {
-    const selectionInfo = selectionStore.getSelectionInfo(work.value.id);
-    if (selectionInfo.tocEntryIds.length > 0) {
-      tocEntry = work.value.tocEntries.find((tocEntry) => {
-        return tocEntry.id === selectionInfo.tocEntryIds[0];
-      });
-    }
-  }
-
-  if (!tocEntry) {
-    tocEntry = work.value.tocEntries[0];
-  }
-
-  return tocEntry;
-});
-
-const sortedEditions = computed(() => {
-  if (!work.value || !work.value.editions) {
-    return [];
-  }
-
-  return work.value.editions
-    .filter((edition) => {
-      return edition.quality >= EDITION_QUALITY_THRESHOLD;
-    })
-    .sort((a: Edition, b: Edition) => {
-      return a.year > b.year ? 1 : -1;
-    });
-});
-
-const sortedTocEntries = computed(() => {
-  if (!work.value || !work.value.tocEntries) {
-    return [];
-  }
-
-  return work.value.tocEntries.sort((a: TocEntry, b: TocEntry) => {
-    return a.sortOrder > b.sortOrder ? 1 : -1;
-  });
-});
-
-function navigateToTocEntry(tocEntry: TocEntry | null) {
-  if (tocEntry) {
-    if (edition.value) {
-      chaptersStore.chaptersLoading = true;
-      chaptersStore.requireChapter(tocEntry, edition.value).then(() => {
-        chaptersStore.chaptersLoading = false;
-      });
-    }
-    const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
-    selectionInfo.replaceTocEntry(tocEntry.id);
-    selectionStore.saveToLocalStorage();
-    router.push({
-      name: "contentByTocAndTranslator",
-      params: {
-        author: work.value?.author?.urlSlug,
-        workSlug: work.value?.urlSlug,
-        tocSlug: tocEntry.label,
-        translatorSlug: edition.value?.author?.urlSlug,
-      },
-    });
-  }
-}
-
-function selectEdition(edition: Edition) {
-  const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
-  selectionInfo.selectEdition(edition.id);
-  selectionStore.saveToLocalStorage();
-  router.push({
-    name: "contentByTocAndTranslator",
-    params: {
-      author: work.value?.author?.urlSlug,
-      workSlug: work.value?.urlSlug,
-      tocSlug: tocEntry.value?.label,
-      translatorSlug: edition.author?.urlSlug,
-    },
-  });
-}
-
-const lastRequiredTocEntryId = ref<number | null>(null);
-const lastRequiredEditionId = ref<number | null>(null);
-function requireChapter() {
-  if (tocEntry.value && edition.value && !chaptersStore.chaptersLoading) {
-    if (
-      lastRequiredTocEntryId.value &&
-      lastRequiredTocEntryId.value === tocEntry.value.id &&
-      lastRequiredEditionId.value &&
-      lastRequiredEditionId.value === edition.value.id
-    ) {
-      return;
-    }
-
-    chaptersStore.chaptersLoading = !chaptersStore.isChapterLoaded(
-      tocEntry.value,
-      edition.value
-    );
-    chaptersStore
-      .requireChapter(tocEntry.value, edition.value)
-      .finally(function () {
-        lastRequiredTocEntryId.value = tocEntry.value?.id ?? null;
-        lastRequiredEditionId.value = edition.value?.id ?? null;
-        chaptersStore.chaptersLoading = false;
-      });
-  }
-}
-
-function editionInfo() {
-  router.push({
-    name: "editionInfo",
-    params: {
-      editionId: edition.value?.id,
-    },
-  });
-}
+const { requireChapter } = useChapterLoader(tocEntry, edition);
 
 function isMobile() {
   return window.screen.width <= 768;

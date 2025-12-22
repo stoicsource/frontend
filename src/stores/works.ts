@@ -117,5 +117,46 @@ export const useWorksStore = defineStore("works", () => {
     return works.value[Math.floor(Math.random() * works.value.length)];
   }
 
-  return { works, activeWork, loadFullWork, getWorkByEdition, getRandomWork };
+  /**
+   * Get random work with random chapter for navigation
+   * Loads the work's TOC if needed and returns navigation params
+   */
+  async function getRandomChapterNavigation(): Promise<{
+    work: Work;
+    tocLabel: string;
+  } | null> {
+    const randomWork = getRandomWork();
+    if (!randomWork) {
+      return null;
+    }
+
+    await loadFullWork(randomWork.id);
+
+    if (!randomWork.tocEntries || randomWork.tocEntries.length === 0) {
+      return null;
+    }
+
+    const randomTocEntry =
+      randomWork.tocEntries[
+        Math.floor(Math.random() * randomWork.tocEntries.length)
+      ];
+
+    if (!randomTocEntry) {
+      return null;
+    }
+
+    return {
+      work: randomWork,
+      tocLabel: randomTocEntry.label,
+    };
+  }
+
+  return {
+    works,
+    activeWork,
+    loadFullWork,
+    getWorkByEdition,
+    getRandomWork,
+    getRandomChapterNavigation,
+  };
 });

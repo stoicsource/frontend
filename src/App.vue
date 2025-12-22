@@ -3,17 +3,13 @@ import { RouterView } from "vue-router";
 import { useWorksStore } from "@/stores/works";
 import { useGeneralStore } from "@/stores/general";
 import ContactForm from "./components/ContactForm.vue";
-import { useSelectionStore } from "@/stores/selection";
 import axios from "axios";
 import { ref } from "vue";
 
 const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
-const selectionStore = useSelectionStore();
 
 const errorMessage = ref<string | null>(null);
-
-selectionStore.loadFromLocalStorage();
 
 function showError(message: string) {
   errorMessage.value = message;
