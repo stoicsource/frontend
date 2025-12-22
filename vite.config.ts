@@ -17,5 +17,26 @@ export default defineConfig({
         quietDeps: true
       }
     }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'json'],
+      include: ['src/**/*.{js,ts,vue}'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        'coverage/',
+        '**/*.config.*',
+        '**/*.d.ts',
+        '**/__tests__/**',
+        'src/main.ts',
+        'src/router/',
+        '.pnp.*',
+        '.yarn/',
+      ]
+    }
   }
 })
