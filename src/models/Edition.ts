@@ -18,7 +18,7 @@ export class Edition {
 
   get author(): Author {
     if (!this._author) {
-      throw "Author not set";
+      throw new Error("Author not set");
     }
     return this._author;
   }

@@ -31,7 +31,7 @@ export const useChaptersStore = defineStore("chapters", () => {
       !work.editions ||
       work.editions.length === 0
     ) {
-      throw "Work not completely loaded";
+      throw new Error("Work not completely loaded");
     }
 
     newChapter.edition = work?.editions?.find((edition) => {

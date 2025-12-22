@@ -5,20 +5,31 @@ import { useGeneralStore } from "@/stores/general";
 import ContactForm from "./components/ContactForm.vue";
 import { useSelectionStore } from "@/stores/selection";
 import axios from "axios";
+import { ref } from "vue";
 
 const generalStore = useGeneralStore();
 const worksStore = useWorksStore();
 const selectionStore = useSelectionStore();
 
+const errorMessage = ref<string | null>(null);
+
 selectionStore.loadFromLocalStorage();
+
+function showError(message: string) {
+  errorMessage.value = message;
+  setTimeout(() => {
+    errorMessage.value = null;
+  }, 5000);
+}
 
 axios.interceptors.response.use(
   function (response) {
     return response;
   },
   function (error) {
-    console.log(error);
-    alert(error.message);
+    console.error("API Error:", error);
+    const message = error.response?.data?.message || error.message || "An unexpected error occurred";
+    showError(message);
     return Promise.reject(error);
   }
 );
@@ -26,6 +37,20 @@ axios.interceptors.response.use(
 
 <template>
   <div>
+    <div
+      v-if="errorMessage"
+      class="alert alert-danger alert-dismissible fade show m-0 rounded-0"
+      role="alert"
+      style="position: sticky; top: 0; z-index: 1050"
+    >
+      <strong>Error:</strong> {{ errorMessage }}
+      <button
+        type="button"
+        class="btn-close"
+        @click="errorMessage = null"
+        aria-label="Close"
+      ></button>
+    </div>
     <nav
       class="navbar modified-nav sticky-top navbar-dark bg-primary navbar-expand-lg"
     >

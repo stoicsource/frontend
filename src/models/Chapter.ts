@@ -13,6 +13,14 @@ export class Chapter {
   edition: Edition | null = null;
 
   get jsonNotes() {
-    return this.notesFormat === "json" ? JSON.parse(this.notes) : [];
+    if (this.notesFormat !== "json") {
+      return [];
+    }
+    try {
+      return JSON.parse(this.notes);
+    } catch (error) {
+      console.error("Failed to parse notes JSON:", error);
+      return [];
+    }
   }
 }
