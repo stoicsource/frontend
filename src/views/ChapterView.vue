@@ -132,20 +132,18 @@ function navigateToTocEntry(tocEntry: TocEntry | null) {
 }
 
 function selectEdition(edition: Edition) {
-  setTimeout(function () {
-    const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
-    selectionInfo.selectEdition(edition.id);
-    selectionStore.saveToLocalStorage();
-    router.push({
-      name: "contentByTocAndTranslator",
-      params: {
-        author: work.value?.author?.urlSlug,
-        workSlug: work.value?.urlSlug,
-        tocSlug: tocEntry.value?.label,
-        translatorSlug: edition.author?.urlSlug,
-      },
-    });
-  }, 1);
+  const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
+  selectionInfo.selectEdition(edition.id);
+  selectionStore.saveToLocalStorage();
+  router.push({
+    name: "contentByTocAndTranslator",
+    params: {
+      author: work.value?.author?.urlSlug,
+      workSlug: work.value?.urlSlug,
+      tocSlug: tocEntry.value?.label,
+      translatorSlug: edition.author?.urlSlug,
+    },
+  });
 }
 
 const lastRequiredTocEntryId = ref<number | null>(null);
