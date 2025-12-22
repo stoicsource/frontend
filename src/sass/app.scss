@@ -1,8 +1,7 @@
-// Define variable defaults
-$primary: #0B54A1;
-
-// Then import Bootstrap an BootstrapVue SCSS files (order is important)
-@use 'bootstrap/scss/bootstrap.scss';
+// Define variable defaults and import Bootstrap (order is important)
+@use 'bootstrap/scss/bootstrap.scss' with (
+  $primary: #0B54A1
+);
 // @import 'node_modules/bootstrap-vue/src/index.scss';
 
 h1 {
