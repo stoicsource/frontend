@@ -21,7 +21,8 @@ const sortedWorks = computed(() => {
 });
 
 const workAuthor = computed(() => {
-  return sortedWorks.value.length > 0 ? sortedWorks.value[0].author : null;
+  const firstWork = sortedWorks.value[0];
+  return firstWork ? firstWork.author : null;
 });
 </script>
 

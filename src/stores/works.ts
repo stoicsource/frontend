@@ -87,11 +87,13 @@ export const useWorksStore = defineStore("works", () => {
 
         for (let i = 0; i < tocEntryArray.length; i++) {
           const entryAtIndex = tocEntryArray[i];
-          if (i > 0) {
-            entryAtIndex.previous = tocEntryArray[i - 1];
-          }
-          if (i < tocEntryArray.length - 1) {
-            entryAtIndex.next = tocEntryArray[i + 1];
+          if (entryAtIndex) {
+            if (i > 0) {
+              entryAtIndex.previous = tocEntryArray[i - 1] || null;
+            }
+            if (i < tocEntryArray.length - 1) {
+              entryAtIndex.next = tocEntryArray[i + 1] || null;
+            }
           }
         }
 

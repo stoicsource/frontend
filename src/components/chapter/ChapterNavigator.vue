@@ -55,7 +55,10 @@ function randomChapter() {
     nextEntry.id === props.tocEntry.id
   ) {
     let entryIndex = Math.floor(Math.random() * props.work.tocEntries.length);
-    nextEntry = props.work.tocEntries[entryIndex];
+    const entry = props.work.tocEntries[entryIndex];
+    if (entry) {
+      nextEntry = entry;
+    }
   }
   navigateToChapter(nextEntry);
 }

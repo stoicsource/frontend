@@ -28,8 +28,9 @@ export const useSelectionStore = defineStore("selection", () => {
     }
 
     if (!selectionInfo.tocEntryIds) {
+      const firstEntry = work.tocEntries[0];
       selectionInfo.tocEntryIds =
-        work.tocEntries.length > 0 ? [work.tocEntries[0].id] : [];
+        firstEntry ? [firstEntry.id] : [];
     }
 
     if (!selectionInfo.editionIds) {
@@ -40,7 +41,8 @@ export const useSelectionStore = defineStore("selection", () => {
         .sort((a, b) => {
           return a.year > b.year ? 1 : -1;
         });
-      selectionInfo.editionIds = editions ? [editions[0].id] : [];
+      const firstEdition = editions[0];
+      selectionInfo.editionIds = firstEdition ? [firstEdition.id] : [];
     }
 
     return selectionInfo;

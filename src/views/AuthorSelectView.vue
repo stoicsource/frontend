@@ -52,10 +52,15 @@ function navigateToAuthor(author: Author) {
     generalStore.globalLoading = true;
 
     let randomWork = worksStore.getRandomWork();
+    if (!randomWork) {
+      generalStore.globalLoading = false;
+      return;
+    }
     worksStore
       .loadFullWork(randomWork.id)
       .then(function () {
         generalStore.globalLoading = false;
+        if (!randomWork) return;
 
         let tocEntry = randomWork.tocEntries !== undefined ? randomWork.tocEntries[Math.floor(Math.random() * randomWork.tocEntries.length)] : null;
 
@@ -73,8 +78,9 @@ function navigateToAuthor(author: Author) {
       });
   } else {
     const works = authorWorks(author);
-    if (works.length === 1) {
-      router.push("/" + author.urlSlug + "/" + works[0].urlSlug);
+    const firstWork = works[0];
+    if (works.length === 1 && firstWork) {
+      router.push("/" + author.urlSlug + "/" + firstWork.urlSlug);
     } else {
       router.push("/" + author.urlSlug + "/works");
     }
@@ -90,7 +96,7 @@ function navigateToAuthor(author: Author) {
 
         <p class="card-text">
           <span v-if="authorWorks(author).length === 1">
-            {{ authorWorks(author)[0].name }}
+            {{ authorWorks(author)[0]?.name }}
           </span>
           <span v-else> {{ authorWorks(author).length }} works available </span>
         </p>

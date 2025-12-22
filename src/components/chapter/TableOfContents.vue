@@ -54,7 +54,7 @@ function isTocEntrySelected(tocEntry: TocEntry) {
 
 function isSelectedTocEntryInGroup(groupIndex: number) {
   let label = props.selectedTocEntry ? props.selectedTocEntry.label : "";
-  let preDot = parseInt(label.split(".")[0]);
+  let preDot = parseInt(label.split(".")[0] || "0");
   return preDot === groupIndex;
 }
 
@@ -64,7 +64,7 @@ function tocGroups(tocEntries: TocEntry[]) {
   tocEntries.forEach(function (tocEntry) {
     let labelParts = tocEntry.label.split(".");
 
-    let chapter = parseInt(labelParts.length > 1 ? labelParts[0] : "0");
+    let chapter = parseInt(labelParts.length > 1 ? (labelParts[0] || "0") : "0");
     let entries = [tocEntry];
     let entriesInGroup = groups.get(chapter);
     if (entriesInGroup) {
