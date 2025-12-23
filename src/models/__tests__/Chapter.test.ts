@@ -65,7 +65,7 @@ describe("Chapter", () => {
     expect(result).toEqual([]);
     expect(consoleSpy).toHaveBeenCalledWith(
       "Failed to parse notes JSON:",
-      expect.any(Error)
+      expect.any(Error),
     );
 
     consoleSpy.mockRestore();

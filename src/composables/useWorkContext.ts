@@ -24,9 +24,7 @@ interface WorkContextReturn {
  * Composable for managing work, edition, and TOC entry context
  * Handles selection logic and sorting
  */
-export function useWorkContext(
-  props: WorkContextProps
-): WorkContextReturn {
+export function useWorkContext(props: WorkContextProps): WorkContextReturn {
   const worksStore = useWorksStore();
   const selectionStore = useSelectionStore();
 

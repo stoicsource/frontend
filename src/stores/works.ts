@@ -71,7 +71,7 @@ export const useWorksStore = defineStore("works", () => {
       generalStore.globalLoading = false;
     });
 
-  function loadFullWork(workId: number): Promise<any> {
+  function loadFullWork(workId: number): Promise<void> {
     const work = works.value.find((work: Work) => {
       return work.id === workId;
     });

@@ -17,7 +17,7 @@ const { work, edition, tocEntry, sortedEditions, sortedTocEntries } =
 const { navigateToTocEntry, selectEdition, editionInfo } = useChapterNavigation(
   work,
   edition,
-  tocEntry
+  tocEntry,
 );
 
 const { requireChapter } = useChapterLoader(tocEntry, edition);

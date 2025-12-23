@@ -54,7 +54,7 @@ function randomChapter() {
     props.work.tocEntries.length > 1 &&
     nextEntry.id === props.tocEntry.id
   ) {
-    let entryIndex = Math.floor(Math.random() * props.work.tocEntries.length);
+    const entryIndex = Math.floor(Math.random() * props.work.tocEntries.length);
     const entry = props.work.tocEntries[entryIndex];
     if (entry) {
       nextEntry = entry;
@@ -91,7 +91,7 @@ function shareEntry() {
 }
 
 function contentClicked(event: MouseEvent) {
-  let target = event.target as HTMLElement;
+  const target = event.target as HTMLElement;
   let reference: string | null = null;
   if (target.tagName === "SUP") {
     reference = target.getAttribute("data-footnote-reference");
@@ -108,7 +108,7 @@ let lastNoteNumber = 0;
 function scrollToNote(noteNr: number) {
   lastScrollTop = document.documentElement.scrollTop || document.body.scrollTop;
   lastNoteNumber = noteNr;
-  let targetFootnoteElement = document.getElementById("note" + noteNr);
+  const targetFootnoteElement = document.getElementById("note" + noteNr);
   targetFootnoteElement?.classList.add("active");
   targetFootnoteElement?.scrollIntoView({ behavior: "smooth" });
 }
@@ -119,7 +119,7 @@ function scrollToReference(noteNr: number) {
       lastScrollTop;
     setTimeout(() => {
       // removing the class hides the element, that seems to loose the click event on Firefox. Delay the hiding.
-      let footnoteElement = document.getElementById("note" + noteNr);
+      const footnoteElement = document.getElementById("note" + noteNr);
       footnoteElement?.classList.remove("active");
     }, 50);
   }

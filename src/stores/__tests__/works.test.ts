@@ -3,10 +3,6 @@ import { createPinia, setActivePinia } from "pinia";
 import { useWorksStore } from "../works";
 import { useGeneralStore } from "../general";
 import api from "@/utils/api";
-import { Work } from "@/models/Work";
-import { Edition } from "@/models/Edition";
-import { Author } from "@/models/Author";
-import { TocEntry } from "@/models/TocEntry";
 
 // Mock the API module
 vi.mock("@/utils/api", () => ({
@@ -115,7 +111,7 @@ describe("useWorksStore", () => {
     vi.mocked(api.get).mockResolvedValue({ data: [] });
 
     const generalStore = useGeneralStore();
-    const worksStore = useWorksStore();
+    useWorksStore();
 
     expect(generalStore.globalLoading).toBe(true);
 
@@ -244,16 +240,16 @@ describe("useWorksStore", () => {
     // Load TOC first time
     await store.loadFullWork(1);
 
-    const firstCallCount = vi.mocked(api.get).mock.calls.filter((call) =>
-      call[0].startsWith("/toc_entries")
-    ).length;
+    const firstCallCount = vi
+      .mocked(api.get)
+      .mock.calls.filter((call) => call[0].startsWith("/toc_entries")).length;
 
     // Load TOC second time - should not make another API call
     await store.loadFullWork(1);
 
-    const secondCallCount = vi.mocked(api.get).mock.calls.filter((call) =>
-      call[0].startsWith("/toc_entries")
-    ).length;
+    const secondCallCount = vi
+      .mocked(api.get)
+      .mock.calls.filter((call) => call[0].startsWith("/toc_entries")).length;
 
     expect(secondCallCount).toBe(firstCallCount);
   });

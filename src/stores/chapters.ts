@@ -12,7 +12,7 @@ import type { ChapterApiResponse } from "@/types/api";
 export const useChaptersStore = defineStore("chapters", () => {
   const worksStore = useWorksStore();
 
-  let lastRequestParamString: String | null = null;
+  let lastRequestParamString: string | null = null;
 
   const chapters = ref<Chapter[]>([]);
 
@@ -36,12 +36,14 @@ export const useChaptersStore = defineStore("chapters", () => {
       throw new Error("Work not completely loaded");
     }
 
-    newChapter.edition = work.editions?.find((edition) => {
-      return edition.id === editionId;
-    }) ?? null;
-    newChapter.tocEntry = work.tocEntries?.find((tocEntry) => {
-      return tocEntry.id === tocEntryId;
-    }) ?? null;
+    newChapter.edition =
+      work.editions?.find((edition) => {
+        return edition.id === editionId;
+      }) ?? null;
+    newChapter.tocEntry =
+      work.tocEntries?.find((tocEntry) => {
+        return tocEntry.id === tocEntryId;
+      }) ?? null;
 
     return newChapter;
   }
@@ -74,7 +76,7 @@ export const useChaptersStore = defineStore("chapters", () => {
 
     if (tocIdsToLoad.length > 0) {
       const tocParams = tocIdsToLoad.map(
-        (tocEntryId) => "tocEntry[]=" + tocEntryId
+        (tocEntryId) => "tocEntry[]=" + tocEntryId,
       );
       const editionParams = ["edition[]=" + edition.id];
 

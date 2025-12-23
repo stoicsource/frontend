@@ -32,7 +32,7 @@ const router = createRouter({
 
     // Show a "not available info" for Musonius Rufus by Lutz
     {
-      path: '/rufus/:pathMatch(.*)*',
+      path: "/rufus/:pathMatch(.*)*",
       component: () => import("../views/RufusLutzView.vue"),
     },
 

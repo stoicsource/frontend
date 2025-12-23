@@ -37,7 +37,7 @@ jobs:
       run: yarn install --immutable
 
     - name: Run linter
-      run: yarn lint
+      run: yarn lint:check
 
     - name: Run type check
       run: yarn type-check

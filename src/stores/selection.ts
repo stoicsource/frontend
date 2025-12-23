@@ -2,7 +2,6 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { SelectionInfo } from "@/models/SelectionInfo";
 import { useWorksStore } from "@/stores/works";
-import { TocEntry } from "@/models/TocEntry";
 
 export const useSelectionStore = defineStore("selection", () => {
   const worksStore = useWorksStore();
@@ -29,8 +28,7 @@ export const useSelectionStore = defineStore("selection", () => {
 
     if (!selectionInfo.tocEntryIds) {
       const firstEntry = work.tocEntries[0];
-      selectionInfo.tocEntryIds =
-        firstEntry ? [firstEntry.id] : [];
+      selectionInfo.tocEntryIds = firstEntry ? [firstEntry.id] : [];
     }
 
     if (!selectionInfo.editionIds) {

@@ -13,7 +13,7 @@ interface ChapterLoaderReturn {
  */
 export function useChapterLoader(
   tocEntry: ComputedRef<TocEntry | null | undefined>,
-  edition: ComputedRef<Edition | null | undefined>
+  edition: ComputedRef<Edition | null | undefined>,
 ): ChapterLoaderReturn {
   const chaptersStore = useChaptersStore();
   const lastRequiredTocEntryId = ref<number | null>(null);
@@ -32,7 +32,7 @@ export function useChapterLoader(
 
       chaptersStore.chaptersLoading = !chaptersStore.isChapterLoaded(
         tocEntry.value,
-        edition.value
+        edition.value,
       );
       chaptersStore
         .requireChapter(tocEntry.value, edition.value)

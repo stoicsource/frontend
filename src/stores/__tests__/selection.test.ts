@@ -8,22 +8,32 @@ import { TocEntry } from "@/models/TocEntry";
 import { Author } from "@/models/Author";
 
 // Mock localStorage with proxy to handle direct property access
-let localStorageData: Record<string, any> = {};
+let localStorageData: Record<string, string> = {};
 const localStorageMock = new Proxy(
   {},
   {
     get: (target, prop) => {
-      if (prop === "getItem") return (key: string) => localStorageData[key] || null;
-      if (prop === "setItem") return (key: string, value: string) => { localStorageData[key] = value; };
-      if (prop === "removeItem") return (key: string) => { delete localStorageData[key]; };
-      if (prop === "clear") return () => { localStorageData = {}; };
+      if (prop === "getItem")
+        return (key: string) => localStorageData[key] || null;
+      if (prop === "setItem")
+        return (key: string, value: string) => {
+          localStorageData[key] = value;
+        };
+      if (prop === "removeItem")
+        return (key: string) => {
+          delete localStorageData[key];
+        };
+      if (prop === "clear")
+        return () => {
+          localStorageData = {};
+        };
       return localStorageData[prop as string];
     },
     set: (target, prop, value) => {
       localStorageData[prop as string] = value;
       return true;
     },
-  }
+  },
 );
 
 vi.stubGlobal("localStorage", localStorageMock);

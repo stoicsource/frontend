@@ -24,10 +24,13 @@ axios.interceptors.response.use(
   },
   function (error) {
     console.error("API Error:", error);
-    const message = error.response?.data?.message || error.message || "An unexpected error occurred";
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "An unexpected error occurred";
     showError(message);
     return Promise.reject(error);
-  }
+  },
 );
 </script>
 

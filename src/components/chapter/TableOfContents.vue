@@ -28,7 +28,7 @@ const sortedEditions = computed(() => {
 });
 
 const sortedTocEntries = computed(() => {
-  return props.tocEntries.sort((a, b) => {
+  return [...props.tocEntries].sort((a, b) => {
     return a.sortOrder > b.sortOrder ? 1 : -1;
   });
 });
@@ -50,20 +50,22 @@ function isTocEntrySelected(tocEntry: TocEntry) {
 }
 
 function isSelectedTocEntryInGroup(groupIndex: number) {
-  let label = props.selectedTocEntry ? props.selectedTocEntry.label : "";
-  let preDot = parseInt(label.split(".")[0] || "0");
+  const label = props.selectedTocEntry ? props.selectedTocEntry.label : "";
+  const preDot = parseInt(label.split(".")[0] || "0");
   return preDot === groupIndex;
 }
 
 function tocGroups(tocEntries: TocEntry[]) {
-  let groups = new Map<number, TocEntry[]>();
+  const groups = new Map<number, TocEntry[]>();
 
   tocEntries.forEach(function (tocEntry) {
-    let labelParts = tocEntry.label.split(".");
+    const labelParts = tocEntry.label.split(".");
 
-    let chapter = parseInt(labelParts.length > 1 ? (labelParts[0] || "0") : "0");
+    const chapter = parseInt(
+      labelParts.length > 1 ? labelParts[0] || "0" : "0",
+    );
     let entries = [tocEntry];
-    let entriesInGroup = groups.get(chapter);
+    const entriesInGroup = groups.get(chapter);
     if (entriesInGroup) {
       entries = entriesInGroup.concat(entries);
     }
@@ -144,7 +146,10 @@ function tocGroups(tocEntries: TocEntry[]) {
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li v-for="edition in sortedEditions" :key="edition.id">
-            <a @click.prevent="selectEdition(edition)" class="dropdown-item" href="#"
+            <a
+              @click.prevent="selectEdition(edition)"
+              class="dropdown-item"
+              href="#"
               >{{ edition.authorsFormatted }} ({{ edition.year
               }}<span v-if="edition.language !== 'eng'"
                 >, {{ edition.language }}</span

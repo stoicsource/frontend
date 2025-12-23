@@ -11,7 +11,8 @@
     "test:coverage": "vitest run --coverage",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix",
+    "lint:check": "eslint ."
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.1.0",
@@ -24,6 +25,8 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@eslint/compat": "^2.0.0",
+    "@eslint/eslintrc": "^3.3.3",
     "@rushstack/eslint-patch": "^1.15.0",
     "@types/jsdom": "^27.0.0",
     "@types/node": "^25.0.3",

@@ -18,7 +18,7 @@ interface ChapterNavigationReturn {
 export function useChapterNavigation(
   work: ComputedRef<Work | undefined>,
   edition: ComputedRef<Edition | null | undefined>,
-  tocEntry: ComputedRef<TocEntry | null | undefined>
+  tocEntry: ComputedRef<TocEntry | null | undefined>,
 ): ChapterNavigationReturn {
   const router = useRouter();
   const chaptersStore = useChaptersStore();
@@ -32,7 +32,9 @@ export function useChapterNavigation(
           chaptersStore.chaptersLoading = false;
         });
       }
-      const selectionInfo = selectionStore.getSelectionInfo(work.value?.id ?? -1);
+      const selectionInfo = selectionStore.getSelectionInfo(
+        work.value?.id ?? -1,
+      );
       selectionInfo.replaceTocEntry(tocEntry.id);
       selectionStore.saveToLocalStorage();
       router.push({

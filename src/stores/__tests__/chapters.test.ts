@@ -5,7 +5,6 @@ import { useWorksStore } from "../works";
 import api from "@/utils/api";
 import { Work } from "@/models/Work";
 import { Edition } from "@/models/Edition";
-import { Author } from "@/models/Author";
 import { TocEntry } from "@/models/TocEntry";
 
 // Mock the API module
@@ -22,7 +21,6 @@ describe("useChaptersStore", () => {
   let testEdition: Edition;
   let testTocEntry1: TocEntry;
   let testTocEntry2: TocEntry;
-  let testTocEntry3: TocEntry;
 
   beforeEach(async () => {
     setActivePinia(createPinia());
@@ -104,7 +102,6 @@ describe("useChaptersStore", () => {
     testEdition = testWork.editions![0]!;
     testTocEntry1 = testWork.tocEntries![0]!;
     testTocEntry2 = testWork.tocEntries![1]!;
-    testTocEntry3 = testWork.tocEntries![2]!;
 
     // Initialize chapters store
     chaptersStore = useChaptersStore();
@@ -180,8 +177,12 @@ describe("useChaptersStore", () => {
     // Request middle chapter, which should also load previous and next due to padding
     await chaptersStore.requireChapter(testTocEntry2, testEdition);
 
-    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(true);
-    expect(chaptersStore.isChapterLoaded(testTocEntry2, testEdition)).toBe(true);
+    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(
+      true,
+    );
+    expect(chaptersStore.isChapterLoaded(testTocEntry2, testEdition)).toBe(
+      true,
+    );
   });
 
   test("requireChapter should not reload already loaded chapters", async () => {
@@ -229,7 +230,9 @@ describe("useChaptersStore", () => {
   });
 
   test("isChapterLoaded should return false for unloaded chapter", () => {
-    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(false);
+    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(
+      false,
+    );
   });
 
   test("isChapterLoaded should return true for loaded chapter", async () => {
@@ -255,7 +258,9 @@ describe("useChaptersStore", () => {
 
     await chaptersStore.requireChapter(testTocEntry1, testEdition);
 
-    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(true);
+    expect(chaptersStore.isChapterLoaded(testTocEntry1, testEdition)).toBe(
+      true,
+    );
   });
 
   test("getChapter should return undefined for unloaded chapter", () => {
@@ -399,7 +404,7 @@ describe("useChaptersStore", () => {
 
     // This should throw when trying to create chapter from response
     await expect(
-      chaptersStore.requireChapter(testTocEntry, testEdition)
+      chaptersStore.requireChapter(testTocEntry, testEdition),
     ).rejects.toThrow("Work not completely loaded");
   });
 });

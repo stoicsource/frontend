@@ -38,7 +38,7 @@ const authorList = computed(() => {
 
 function authorWorks(author: Author): Work[] {
   if (author.id === -1) {
-    let fakeWork = new Work();
+    const fakeWork = new Work();
     fakeWork.name = "Let fate decide where to take you";
     return [fakeWork];
   }

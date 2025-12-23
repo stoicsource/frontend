@@ -4,6 +4,9 @@
  * These interfaces define the shape of data received from the API.
  */
 
+import type Contributor from "@/models/Contributor";
+import type Source from "@/models/Source";
+
 /**
  * Author data as received from the API
  */
@@ -26,10 +29,10 @@ export interface EditionApiResponse {
   work_id: string;
   author_id: string;
   quality: number;
-  contributor: any; // Could be typed more specifically if needed
+  contributor: Contributor | null;
   language: string;
   source: string;
-  sources: any[]; // Could be typed more specifically if needed
+  sources: Source[];
   author: string; // URL reference to author (resolved separately, not assigned)
 }
 
@@ -66,5 +69,5 @@ export interface ChapterApiResponse {
   title: string;
   contentType: string;
   tocEntry: string; // URL reference to TOC entry
-  edition: string;  // URL reference to edition
+  edition: string; // URL reference to edition
 }
