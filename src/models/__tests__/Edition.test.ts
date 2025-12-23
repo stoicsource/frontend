@@ -100,6 +100,6 @@ describe("Edition", () => {
     ];
 
     expect(edition.sources).toHaveLength(2);
-    expect(edition.sources[0].type).toBe("web");
+    expect(edition.sources[0]?.type).toBe("web");
   });
 });

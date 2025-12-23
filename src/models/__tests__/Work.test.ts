@@ -51,7 +51,7 @@ describe("Work", () => {
     work.editions = [edition1, edition2];
 
     expect(work.editions).toHaveLength(2);
-    expect(work.editions[0].id).toBe(1);
+    expect(work.editions[0]?.id).toBe(1);
   });
 
   test("should support tocEntries array", () => {
@@ -67,7 +67,7 @@ describe("Work", () => {
     work.tocEntries = [toc1, toc2];
 
     expect(work.tocEntries).toHaveLength(2);
-    expect(work.tocEntries[1].label).toBe("1.2");
+    expect(work.tocEntries[1]?.label).toBe("1.2");
   });
 
   test("tocLoaded() should return false when tocEntries is undefined", () => {
