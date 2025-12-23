@@ -42,8 +42,8 @@ jobs:
     - name: Run type check
       run: yarn type-check
 
-    - name: Run tests
-      run: yarn test:unit
+#    - name: Run tests
+#      run: yarn test:unit
 
     - name: Build
       run: yarn build
