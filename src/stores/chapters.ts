@@ -17,6 +17,7 @@ export const useChaptersStore = defineStore("chapters", () => {
   const chapters = ref<Chapter[]>([]);
 
   const chaptersLoading = ref(false);
+  const isPrefetching = ref(false);
 
   function chapterFromResponse(chapterData: ChapterApiResponse): Chapter {
     const { tocEntry, edition, ...chapterProps } = chapterData;
@@ -75,6 +76,14 @@ export const useChaptersStore = defineStore("chapters", () => {
     });
 
     if (tocIdsToLoad.length > 0) {
+      // Check if the requested chapter (not just adjacent ones) needs to be loaded
+      // If the requested tocEntry is in tocIdsToLoad, it's a blocking load
+      // If it's not in tocIdsToLoad, we're only prefetching adjacent chapters
+      const requestedChapterNeedsLoading = tocIdsToLoad.includes(tocEntry.id);
+
+      isPrefetching.value = !requestedChapterNeedsLoading;
+      chaptersLoading.value = true;
+
       const tocParams = tocIdsToLoad.map(
         (tocEntryId) => "tocEntry[]=" + tocEntryId,
       );
@@ -96,6 +105,9 @@ export const useChaptersStore = defineStore("chapters", () => {
           if (chapterArray.length > 0) {
             chapters.value = chapters.value.concat(chapterArray);
           }
+        }).finally(() => {
+          chaptersLoading.value = false;
+          isPrefetching.value = false;
         });
       } else {
         return Promise.reject();
@@ -143,6 +155,7 @@ export const useChaptersStore = defineStore("chapters", () => {
 
   return {
     chaptersLoading,
+    isPrefetching,
     requireChapter,
     isChapterLoaded,
     getChapter,

@@ -27,10 +27,7 @@ export function useChapterNavigation(
   function navigateToTocEntry(tocEntry: TocEntry | null) {
     if (tocEntry) {
       if (edition.value) {
-        chaptersStore.chaptersLoading = true;
-        chaptersStore.requireChapter(tocEntry, edition.value).then(() => {
-          chaptersStore.chaptersLoading = false;
-        });
+        chaptersStore.requireChapter(tocEntry, edition.value);
       }
       const selectionInfo = selectionStore.getSelectionInfo(
         work.value?.id ?? -1,

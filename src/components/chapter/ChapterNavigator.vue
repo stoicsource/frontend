@@ -162,7 +162,7 @@ function scrollToReference(noteNr: number) {
       ></a>
     </div>
 
-    <div v-if="chaptersStore.chaptersLoading">
+    <div v-if="chaptersStore.chaptersLoading && !chaptersStore.isPrefetching">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>

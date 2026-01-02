@@ -30,16 +30,11 @@ export function useChapterLoader(
         return;
       }
 
-      chaptersStore.chaptersLoading = !chaptersStore.isChapterLoaded(
-        tocEntry.value,
-        edition.value,
-      );
       chaptersStore
         .requireChapter(tocEntry.value, edition.value)
         .finally(function () {
           lastRequiredTocEntryId.value = tocEntry.value?.id ?? null;
           lastRequiredEditionId.value = edition.value?.id ?? null;
-          chaptersStore.chaptersLoading = false;
         });
     }
   }
